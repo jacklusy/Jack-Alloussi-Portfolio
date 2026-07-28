@@ -3,7 +3,6 @@ import { projects } from '@/content/projects';
 import { Container } from '@/components/layout/Container';
 import { ProjectCard } from '@/components/features/projects/ProjectCard';
 import { ProjectsFilter } from '@/features/projects/ProjectsFilter';
-import { AmbientBackdrop } from '@/components/layout/AmbientBackdrop';
 
 export const metadata: Metadata = {
   title: 'Projects',
@@ -26,9 +25,8 @@ export default async function ProjectsPage({ searchParams }: ProjectsPageProps) 
     : projects;
 
   return (
-    <div className="relative overflow-hidden py-[var(--section-y)]">
-      <AmbientBackdrop variant="section" className="opacity-40" />
-      <Container className="relative z-10">
+    <div className="relative py-[var(--section-y)]">
+      <Container>
         <p className="font-mono-label text-[var(--color-brand)]">System.resources_04</p>
         <h1 className="mt-3 max-w-[16ch] text-[length:var(--text-h1)] tracking-tight uppercase">
           Technical artifacts

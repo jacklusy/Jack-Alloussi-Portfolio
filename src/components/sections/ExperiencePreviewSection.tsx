@@ -4,7 +4,6 @@ import { Section } from '@/components/layout/Section';
 import { ExperienceTimeline } from '@/components/features/experience/ExperienceTimeline';
 import { ButtonLink } from '@/components/ui/ButtonLink';
 import { Reveal } from '@/components/motion/Reveal';
-import { AmbientBackdrop } from '@/components/layout/AmbientBackdrop';
 
 export type ExperiencePreviewSectionProps = {
   previewCount?: number;
@@ -19,10 +18,7 @@ export function ExperiencePreviewSection({ previewCount = 2 }: ExperiencePreview
       eyebrow="System.timeline_04"
       title="Experience nodes"
       description="Dates match the CV. Client work is generalised on purpose."
-      className="relative overflow-hidden"
-      containerClassName="relative z-10"
     >
-      <AmbientBackdrop variant="section" className="opacity-50" />
       <Reveal>
         <ExperienceTimeline roles={roles} />
       </Reveal>

@@ -10,6 +10,8 @@ export type SectionProps = {
   title?: string;
   description?: string;
   children: ReactNode;
+  /** Full-bleed layer behind content (outside the max-width container). */
+  backdrop?: ReactNode;
   className?: string;
   containerClassName?: string;
   headerAction?: { label: string; href: string };
@@ -22,6 +24,7 @@ export function Section({
   title,
   description,
   children,
+  backdrop,
   className,
   containerClassName,
   headerAction,
@@ -31,12 +34,13 @@ export function Section({
     <section
       id={id}
       className={cn(
-        'scroll-mt-[calc(var(--header-height)+1rem)] py-[var(--section-y)]',
+        'relative scroll-mt-[calc(var(--header-height)+1rem)] py-[var(--section-y)]',
         className,
       )}
       aria-labelledby={title ? `${id}-title` : undefined}
     >
-      <Container className={containerClassName}>
+      {backdrop}
+      <Container className={cn('relative z-10', containerClassName)}>
         {(eyebrow || title || description || headerAction) && (
           <Reveal
             className={cn(

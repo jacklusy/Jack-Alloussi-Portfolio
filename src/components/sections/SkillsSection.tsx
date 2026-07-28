@@ -3,7 +3,6 @@ import Link from 'next/link';
 import { Database, Layers, Smartphone } from 'lucide-react';
 import { skillGroups } from '@/content/skills';
 import { Section } from '@/components/layout/Section';
-import { AmbientBackdrop } from '@/components/layout/AmbientBackdrop';
 import { Stagger, StaggerItem } from '@/components/motion/Reveal';
 import { TiltCard } from '@/components/motion/TiltCard';
 import type { ReactNode } from 'react';
@@ -75,11 +74,8 @@ export function SkillsSection() {
       eyebrow="System.stack_02"
       title="Core technology matrix"
       description="How I ship — grouped by surface area, not vanity percentages."
-      className="relative overflow-hidden"
-      containerClassName="relative z-10"
     >
-      <AmbientBackdrop variant="section" className="opacity-60" />
-      <Stagger className="relative z-10 grid gap-4 md:grid-cols-3 md:gap-5" stagger={0.06}>
+      <Stagger className="grid gap-4 md:grid-cols-3 md:gap-5" stagger={0.06}>
         {columns.map((column) => {
           const skills = skillsForGroups(column.groupIds);
           return (

@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 
 export type DynamicSceneProps = {
   className?: string;
-  variant?: 'hero' | 'section';
+  variant?: 'hero' | 'section' | 'page';
 };
 
 /**
@@ -23,6 +23,9 @@ export function DynamicScene({ className, variant = 'hero' }: DynamicSceneProps)
     setRichMotion(fine && !reduce);
   }, []);
 
+  const meshClass =
+    variant === 'hero' ? 'bg-hero-mesh' : variant === 'page' ? 'bg-page-mesh' : 'bg-section-mesh';
+
   return (
     <div
       className={cn(
@@ -31,9 +34,7 @@ export function DynamicScene({ className, variant = 'hero' }: DynamicSceneProps)
       )}
       aria-hidden
     >
-      <div
-        className={cn('absolute inset-0', variant === 'hero' ? 'bg-hero-mesh' : 'bg-section-mesh')}
-      />
+      <div className={cn('absolute inset-0', meshClass)} />
       <FluidAmbientGlow />
       {richMotion && variant === 'hero' ? (
         <>
@@ -43,9 +44,9 @@ export function DynamicScene({ className, variant = 'hero' }: DynamicSceneProps)
           </div>
         </>
       ) : null}
-      {richMotion && variant === 'section' ? (
-        <div className="absolute inset-0 opacity-40">
-          <ParticleMesh density={24} />
+      {richMotion && (variant === 'section' || variant === 'page') ? (
+        <div className={cn('absolute inset-0', variant === 'page' ? 'opacity-35' : 'opacity-40')}>
+          <ParticleMesh density={variant === 'page' ? 36 : 24} />
         </div>
       ) : null}
       <div className="absolute inset-0 bg-spec-grid opacity-40" />

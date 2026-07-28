@@ -174,9 +174,19 @@
   }
 
   .bg-section-mesh {
+    /* Gradients only — no solid surface fill (avoids a boxed panel over page bg). */
     background:
-      radial-gradient(ellipse 70% 40% at 100% 0%, rgb(var(--color-brand-rgb) / 0.08), transparent 55%),
-      var(--color-surface);
+      radial-gradient(ellipse 70% 50% at 100% 0%, rgb(var(--color-brand-rgb) / 0.1), transparent 55%),
+      radial-gradient(ellipse 55% 45% at 0% 100%, rgb(var(--color-brand-rgb) / 0.06), transparent 50%),
+      radial-gradient(ellipse 40% 30% at 50% 40%, rgb(var(--color-brand-rgb) / 0.04), transparent 60%);
+  }
+
+  .bg-page-mesh {
+    background:
+      radial-gradient(ellipse 90% 55% at 15% 8%, rgb(var(--color-brand-rgb) / 0.09), transparent 55%),
+      radial-gradient(ellipse 70% 50% at 92% 18%, rgb(var(--color-brand-rgb) / 0.07), transparent 50%),
+      radial-gradient(ellipse 60% 40% at 50% 85%, rgb(var(--color-brand-rgb) / 0.05), transparent 55%),
+      var(--color-bg);
   }
 
   .bg-spec-grid {

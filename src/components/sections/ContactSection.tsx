@@ -3,8 +3,6 @@ import { Section } from '@/components/layout/Section';
 import { ButtonLink } from '@/components/ui/ButtonLink';
 import { Reveal } from '@/components/motion/Reveal';
 import { isUsableHref } from '@/lib/content-text';
-import { AmbientBackdrop } from '@/components/layout/AmbientBackdrop';
-
 /**
  * Home closing CTA — large statement + direct contact. Full form lives on /contact.
  */
@@ -13,12 +11,9 @@ export function ContactSection() {
     <Section
       id="contact"
       eyebrow="System.contact_06"
-      className="relative overflow-hidden"
-      containerClassName="relative z-10"
       align="center"
     >
-      <AmbientBackdrop variant="section" className="opacity-70" />
-      <Reveal className="relative z-10 mx-auto max-w-3xl text-center">
+      <Reveal className="mx-auto max-w-3xl text-center">
         <h2 className="text-display uppercase tracking-[-0.03em] text-[var(--color-text)]">
           Let&apos;s build what&apos;s next
         </h2>

@@ -4,6 +4,7 @@ import { Footer } from '@/components/layout/Footer';
 import { Header } from '@/components/layout/Header';
 import { FloatingHireButton } from '@/components/layout/FloatingHireButton';
 import { MagneticCursor } from '@/components/motion/MagneticCursor';
+import { AmbientBackdrop } from '@/components/layout/AmbientBackdrop';
 import { ScrollDrivenPath } from '@/components/motion/ScrollDrivenPath';
 import { siteConfig } from '@/config/site';
 import { profile } from '@/content/profile';
@@ -119,8 +120,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         </a>
         <Header />
         <ScrollDrivenPath />
-        <main id="main-content" className="relative z-[2] flex-1">
-          {children}
+        <main id="main-content" className="relative z-[2] flex-1 overflow-x-clip">
+          <AmbientBackdrop variant="page" />
+          <div className="relative z-10">{children}</div>
         </main>
         <Footer />
         <FloatingHireButton />
