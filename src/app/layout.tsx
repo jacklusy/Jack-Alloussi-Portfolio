@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { IBM_Plex_Mono, IBM_Plex_Sans, Syne } from 'next/font/google';
 import { Footer } from '@/components/layout/Footer';
 import { Header } from '@/components/layout/Header';
+import { ScrollDrivenPath } from '@/components/motion/ScrollDrivenPath';
 import { siteConfig } from '@/config/site';
 import { profile } from '@/content/profile';
 import '@/styles/globals.css';
@@ -112,7 +113,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           Skip to content
         </a>
         <Header />
-        <main id="main-content" className="flex-1">
+        <ScrollDrivenPath />
+        <main id="main-content" className="relative z-[2] flex-1">
           {children}
         </main>
         <Footer />

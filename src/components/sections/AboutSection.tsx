@@ -3,6 +3,7 @@ import { profile } from '@/content/profile';
 import { Section } from '@/components/layout/Section';
 import { ButtonLink } from '@/components/ui/ButtonLink';
 import { Reveal, Stagger, StaggerItem } from '@/components/motion/Reveal';
+import { PhotoMoments } from '@/components/sections/PhotoMoments';
 import { renderContentText } from '@/lib/content-text';
 
 export function AboutSection() {
@@ -39,7 +40,7 @@ export function AboutSection() {
         <Reveal className="lg:col-span-5" delay={0.08}>
           <div className="relative mx-auto w-full max-w-md">
             <div
-              className="absolute -inset-3 rounded-[calc(var(--radius-xl)+0.5rem)] bg-gradient-to-br from-[var(--color-brand)]/20 via-transparent to-[var(--color-brand)]/10"
+              className="absolute -inset-3 rounded-[calc(var(--radius-xl)+0.5rem)] bg-gradient-to-br from-[var(--color-brand)]/25 via-transparent to-[var(--color-brand)]/10"
               aria-hidden
             />
             <div className="relative aspect-[4/5] overflow-hidden rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface-sunken)] shadow-[var(--shadow-lg)]">
@@ -52,7 +53,7 @@ export function AboutSection() {
                 sizes="(max-width: 1024px) 100vw, 420px"
               />
               <div
-                className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[var(--color-text)]/50 to-transparent p-5"
+                className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[var(--color-text)]/55 to-transparent p-5"
                 aria-hidden
               >
                 <p className="font-mono-label text-[var(--color-text-inverse)]">Amman · Jordan</p>
@@ -61,6 +62,7 @@ export function AboutSection() {
           </div>
         </Reveal>
       </div>
+      <PhotoMoments />
     </Section>
   );
 }

@@ -2,22 +2,32 @@
 
 ## Pass 1 — Direction
 
-### Colour
+### Colour (client-specified palette)
 
-Cool ink-and-steel palette — systems documentation, not creative-agency cream or terminal neon.
+**Light (60 / 30 / 10)**
 
-| Token role | Hex | Role |
+| Role | Hex | Token |
 | --- | --- | --- |
-| `--color-bg` | `#EEF1F4` | Cool paper (blue-gray, not cream) |
-| `--color-surface` | `#F7F9FB` | Raised panels |
-| `--color-text` | `#141C27` | Ink |
-| `--color-brand` | `#0A5C63` | Deep teal accent — one accent only |
-| `--color-border` | `#C8D0DA` | Structural lines |
-| Dark `--color-bg` | `#12171F` | Lifted slate, not pure black |
+| Dominant | `#F8F9FA` | `--color-bg` |
+| Secondary | `#212529` | `--color-text` |
+| Accent | `#4361EE` Electric Indigo | `--color-brand` |
+| Muted | `#E9ECEF` | `--color-surface-sunken` |
 
-**Sentence:** A cool, slightly blue-tinted paper field with charcoal ink and a single deep-teal accent — the colour of a verified status light, not a gradient hobby site.
+**Dark**
+
+| Role | Hex | Token |
+| --- | --- | --- |
+| Dominant | `#0B0C10` Deep Midnight | `--color-bg` |
+| Secondary | `#C5C6C7` Ice Blue | `--color-text` |
+| Accent | `#66FCF1` Vibrant Teal | `--color-brand` |
+| Muted | `#1F2833` Slate Gray | `--color-surface` |
+
+### Dynamic atmosphere
+
+Hero/section backdrops compose: fluid ambient glow, pointer-driven parallax geometry, interactive particle mesh, and scroll-drawn SVG paths. All disabled under `prefers-reduced-motion`.
 
 ### Type
+
 
 | Role | Face | Why |
 | --- | --- | --- |

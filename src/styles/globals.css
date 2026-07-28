@@ -138,32 +138,109 @@
     text-transform: uppercase;
   }
 
-  /* Spec-sheet atmosphere */
+  /* Spec-sheet + accent atmosphere */
   .bg-hero-mesh {
     background:
-      radial-gradient(ellipse 80% 60% at 12% 20%, rgb(10 92 99 / 0.14), transparent 55%),
-      radial-gradient(ellipse 60% 50% at 88% 10%, rgb(10 92 99 / 0.08), transparent 50%),
+      radial-gradient(ellipse 80% 60% at 12% 20%, rgb(var(--color-brand-rgb) / 0.16), transparent 55%),
+      radial-gradient(ellipse 60% 50% at 88% 10%, rgb(var(--color-brand-rgb) / 0.1), transparent 50%),
       linear-gradient(165deg, var(--color-surface) 0%, var(--color-bg) 55%, var(--color-surface-sunken) 100%);
   }
 
   .bg-section-mesh {
     background:
-      radial-gradient(ellipse 70% 40% at 100% 0%, rgb(10 92 99 / 0.06), transparent 55%),
+      radial-gradient(ellipse 70% 40% at 100% 0%, rgb(var(--color-brand-rgb) / 0.08), transparent 55%),
       var(--color-surface);
   }
 
   .bg-spec-grid {
     background-image:
-      linear-gradient(to right, rgb(20 28 39 / 0.04) 1px, transparent 1px),
-      linear-gradient(to bottom, rgb(20 28 39 / 0.04) 1px, transparent 1px);
+      linear-gradient(to right, rgb(33 37 41 / 0.045) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(33 37 41 / 0.045) 1px, transparent 1px);
     background-size: 48px 48px;
     mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, black 20%, transparent 75%);
   }
 
   [data-theme='dark'] .bg-spec-grid {
     background-image:
-      linear-gradient(to right, rgb(232 236 241 / 0.04) 1px, transparent 1px),
-      linear-gradient(to bottom, rgb(232 236 241 / 0.04) 1px, transparent 1px);
+      linear-gradient(to right, rgb(197 198 199 / 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(197 198 199 / 0.05) 1px, transparent 1px);
+  }
+
+  .ambient-orb {
+    filter: blur(48px);
+    opacity: 0.55;
+    will-change: transform;
+    background: radial-gradient(circle, rgb(var(--color-brand-rgb) / 0.55), transparent 70%);
+  }
+
+  .ambient-orb-a {
+    opacity: 0.45;
+  }
+
+  .ambient-orb-b {
+    opacity: 0.35;
+  }
+
+  .ambient-orb-c {
+    opacity: 0.4;
+  }
+
+  .animate-ambient-a {
+    animation: ambient-drift-a 18s var(--ease-standard) infinite alternate;
+  }
+
+  .animate-ambient-b {
+    animation: ambient-drift-b 22s var(--ease-standard) infinite alternate;
+  }
+
+  .animate-ambient-c {
+    animation: ambient-drift-c 26s var(--ease-standard) infinite alternate;
+  }
+
+  @keyframes ambient-drift-a {
+    0% {
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+    100% {
+      transform: translate3d(8%, 12%, 0) scale(1.15);
+    }
+  }
+
+  @keyframes ambient-drift-b {
+    0% {
+      transform: translate3d(0, 0, 0) scale(1.05);
+    }
+    100% {
+      transform: translate3d(-10%, 8%, 0) scale(0.92);
+    }
+  }
+
+  @keyframes ambient-drift-c {
+    0% {
+      transform: translate3d(0, 0, 0) scale(0.95);
+    }
+    100% {
+      transform: translate3d(6%, -10%, 0) scale(1.12);
+    }
+  }
+
+  .parallax-layer {
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+
+  .parallax-layer-far {
+    transform: translate3d(calc(var(--tilt-x) * -12px), calc(var(--tilt-y) * -10px), 0)
+      rotateX(calc(var(--tilt-y) * -3deg)) rotateY(calc(var(--tilt-x) * 3deg));
+  }
+
+  .parallax-layer-mid {
+    transform: translate3d(calc(var(--tilt-x) * -24px), calc(var(--tilt-y) * -18px), 0)
+      rotateX(calc(var(--tilt-y) * -5deg)) rotateY(calc(var(--tilt-x) * 5deg));
+  }
+
+  .parallax-layer-near {
+    transform: translate3d(calc(var(--tilt-x) * -36px), calc(var(--tilt-y) * -28px), 0);
   }
 
   .status-pulse {
@@ -210,8 +287,17 @@
 
   @media (prefers-reduced-motion: reduce) {
     .status-pulse::after,
-    .scroll-cue-dot {
+    .scroll-cue-dot,
+    .animate-ambient-a,
+    .animate-ambient-b,
+    .animate-ambient-c {
       animation: none;
+    }
+
+    .parallax-layer-far,
+    .parallax-layer-mid,
+    .parallax-layer-near {
+      transform: none;
     }
   }
 }
