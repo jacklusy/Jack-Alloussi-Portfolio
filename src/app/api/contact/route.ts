@@ -1,6 +1,10 @@
 import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
 import { contactFormSchema } from '@/content/schemas';
+import {
+  buildContactEmailHtml,
+  buildContactEmailText,
+} from '@/features/contact/contact-email-template';
 import { env } from '@/lib/env';
 
 type RateBucket = { count: number; resetAt: number };
@@ -37,15 +41,6 @@ function checkRateLimit(ip: string): boolean {
   return true;
 }
 
-function escapeHtml(value: string): string {
-  return value
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&#39;');
-}
-
 export async function POST(request: Request) {
   const ip = getClientIp(request);
 
@@ -74,6 +69,14 @@ export async function POST(request: Request) {
   }
 
   const { name, email, subject, message } = parsed.data;
+  const safeSubject = subject.trim() || 'Portfolio contact';
+  const emailPayload = {
+    name,
+    email,
+    subject: safeSubject,
+    message,
+    receivedAt: new Date(),
+  };
 
   if (!env.RESEND_API_KEY) {
     if (env.NODE_ENV === 'production') {
@@ -86,7 +89,7 @@ export async function POST(request: Request) {
       );
     }
 
-    console.info('[contact] Dev mode — email not sent', { name, email, subject, message });
+    console.info('[contact] Dev mode — email not sent', emailPayload);
     return NextResponse.json({ data: { ok: true } });
   }
 
@@ -101,14 +104,6 @@ export async function POST(request: Request) {
   }
 
   const resend = new Resend(env.RESEND_API_KEY);
-  const safeSubject = subject.trim() || 'Portfolio contact';
-  const html = `
-    <h2>New portfolio message</h2>
-    <p><strong>From:</strong> ${escapeHtml(name)} &lt;${escapeHtml(email)}&gt;</p>
-    <p><strong>Subject:</strong> ${escapeHtml(safeSubject)}</p>
-    <p><strong>Message:</strong></p>
-    <p>${escapeHtml(message).replaceAll('\n', '<br/>')}</p>
-  `;
 
   try {
     const { error } = await resend.emails.send({
@@ -116,8 +111,8 @@ export async function POST(request: Request) {
       to: [env.CONTACT_TO_EMAIL],
       replyTo: email,
       subject: `[Portfolio] ${safeSubject}`,
-      html,
-      text: `From: ${name} <${email}>\nSubject: ${safeSubject}\n\n${message}`,
+      html: buildContactEmailHtml(emailPayload),
+      text: buildContactEmailText(emailPayload),
     });
 
     if (error) {
