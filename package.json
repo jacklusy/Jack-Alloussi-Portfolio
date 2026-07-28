@@ -12,7 +12,7 @@
     "lint": "eslint .",
     "lint:fix": "prettier --check .",
     "format": "prettier --write .",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
     "analyze": "ANALYZE=true next build"
