@@ -53,11 +53,12 @@
 
   /* Shadow */
   --shadow-sm: 0 1px 2px rgb(20 28 39 / 0.06);
-  --shadow-md: 0 4px 12px rgb(20 28 39 / 0.08);
-  --shadow-lg: 0 12px 32px rgb(20 28 39 / 0.12);
+  --shadow-md: 0 4px 16px rgb(20 28 39 / 0.08), 0 1px 0 rgb(20 28 39 / 0.04);
+  --shadow-lg: 0 16px 40px rgb(20 28 39 / 0.12), 0 2px 0 rgb(20 28 39 / 0.04);
+  --shadow-glow: 0 0 0 1px rgb(10 92 99 / 0.12), 0 12px 32px rgb(10 92 99 / 0.12);
 
   /* Type scale (clamp fluid) */
-  --text-display: clamp(2.25rem, 4vw + 1rem, 4rem);
+  --text-display: clamp(2.5rem, 5vw + 1rem, 4.5rem);
   --text-h1: clamp(1.875rem, 2.5vw + 1rem, 3rem);
   --text-h2: clamp(1.5rem, 1.5vw + 0.75rem, 2.125rem);
   --text-h3: clamp(1.25rem, 0.5vw + 1rem, 1.5rem);
@@ -118,8 +119,9 @@
   --color-info: #5ba3d0;
 
   --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.35);
-  --shadow-md: 0 4px 12px rgb(0 0 0 / 0.4);
-  --shadow-lg: 0 12px 32px rgb(0 0 0 / 0.5);
+  --shadow-md: 0 4px 16px rgb(0 0 0 / 0.4), 0 1px 0 rgb(255 255 255 / 0.03);
+  --shadow-lg: 0 16px 40px rgb(0 0 0 / 0.5);
+  --shadow-glow: 0 0 0 1px rgb(61 158 166 / 0.25), 0 12px 32px rgb(61 158 166 / 0.15);
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -40,8 +40,8 @@ export function Header() {
   return (
     <header
       className={cn(
-        'sticky top-0 z-[var(--z-header)] border-b border-[var(--color-border)] bg-[var(--color-bg)]/90 backdrop-blur-md transition-[height,box-shadow] duration-[var(--duration-standard)]',
-        isCondensed && 'shadow-[var(--shadow-sm)]',
+        'sticky top-0 z-[var(--z-header)] border-b border-[var(--color-border)] bg-[var(--color-bg)]/85 backdrop-blur-md transition-[box-shadow,background-color] duration-[var(--duration-standard)]',
+        isCondensed && 'bg-[var(--color-bg)]/95 shadow-[var(--shadow-md)]',
       )}
     >
       <Container className="flex h-[var(--header-height)] items-center justify-between gap-4">

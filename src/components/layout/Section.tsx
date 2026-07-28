@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { Container } from '@/components/layout/Container';
+import { Reveal } from '@/components/motion/Reveal';
 import { cn } from '@/lib/utils';
 
 export type SectionProps = {
@@ -29,21 +30,26 @@ export function Section({
     >
       <Container className={containerClassName}>
         {(eyebrow || title || description) && (
-          <header className="mb-10 max-w-[var(--prose-max)] md:mb-12">
-            {eyebrow ? (
-              <p className="font-mono-label mb-3 text-[var(--color-brand)]">{eyebrow}</p>
-            ) : null}
-            {title ? (
-              <h2 id={`${id}-title`} className="text-[length:var(--text-h2)] text-[var(--color-text)]">
-                {title}
-              </h2>
-            ) : null}
-            {description ? (
-              <p className="mt-4 text-[length:var(--text-body-lg)] text-[var(--color-text-muted)]">
-                {description}
-              </p>
-            ) : null}
-          </header>
+          <Reveal className="mb-10 max-w-[var(--prose-max)] md:mb-14">
+            <header>
+              {eyebrow ? (
+                <p className="font-mono-label mb-3 text-[var(--color-brand)]">{eyebrow}</p>
+              ) : null}
+              {title ? (
+                <h2
+                  id={`${id}-title`}
+                  className="text-[length:var(--text-h2)] text-[var(--color-text)]"
+                >
+                  {title}
+                </h2>
+              ) : null}
+              {description ? (
+                <p className="mt-4 text-[length:var(--text-body-lg)] text-[var(--color-text-muted)]">
+                  {description}
+                </p>
+              ) : null}
+            </header>
+          </Reveal>
         )}
         {children}
       </Container>
