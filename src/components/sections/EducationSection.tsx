@@ -6,22 +6,26 @@ import { Card } from '@/components/ui/Card';
 import { Stagger, StaggerItem } from '@/components/motion/Reveal';
 import { renderContentText } from '@/lib/content-text';
 import { formatMonthYear } from '@/lib/utils';
+import { GraduationCap, Award } from 'lucide-react';
 
 export function EducationSection() {
   return (
     <Section
       id="education"
-      eyebrow="Credentials"
-      title="Education & certifications"
-      description="Degree recognition matters for EU Blue Card eligibility — credentials are listed without invented dates."
+      eyebrow="System.credentials_05"
+      title="Architectural education"
+      description="Formal credentials that matter for EU Blue Card degree recognition."
     >
       <div className="grid gap-10 lg:grid-cols-2">
         <div className="space-y-4">
-          <h3 className="text-[length:var(--text-h3)]">Education</h3>
+          <h3 className="inline-flex items-center gap-2 text-[length:var(--text-h3)]">
+            <GraduationCap className="h-5 w-5 text-[var(--color-brand)]" aria-hidden />
+            Education
+          </h3>
           <Stagger className="space-y-4" stagger={0.05}>
             {education.map((item) => (
               <StaggerItem key={item.id}>
-                <Card interactive>
+                <Card interactive variant="panel">
                   <p className="font-mono-label text-[var(--color-text-subtle)]">
                     {formatMonthYear(item.startDate)} — {formatMonthYear(item.endDate)}
                     {item.status === 'expected' ? ' (expected)' : ''}
@@ -44,14 +48,14 @@ export function EducationSection() {
         </div>
 
         <div className="space-y-4">
-          <h3 className="text-[length:var(--text-h3)]">Certifications</h3>
-          <Stagger
-            className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2"
-            stagger={0.05}
-          >
+          <h3 className="inline-flex items-center gap-2 text-[length:var(--text-h3)]">
+            <Award className="h-5 w-5 text-[var(--color-brand)]" aria-hidden />
+            Certifications
+          </h3>
+          <Stagger className="grid auto-rows-fr gap-4 sm:grid-cols-2" stagger={0.05}>
             {certifications.map((cert) => (
               <StaggerItem key={cert.id} className="h-full">
-                <Card interactive className="h-full">
+                <Card interactive variant="panel" className="h-full">
                   <Badge tone={cert.status === 'in-progress' ? 'muted' : 'brand'}>
                     {cert.status === 'in-progress' ? 'In progress' : 'Earned'}
                   </Badge>

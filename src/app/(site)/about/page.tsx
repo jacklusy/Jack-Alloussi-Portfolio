@@ -9,6 +9,7 @@ import { ExperienceTimeline } from '@/components/features/experience/ExperienceT
 import { Badge } from '@/components/ui/Badge';
 import { Card } from '@/components/ui/Card';
 import { ButtonLink } from '@/components/ui/ButtonLink';
+import { PhotoMoments } from '@/components/sections/PhotoMoments';
 import { renderContentText } from '@/lib/content-text';
 import { formatMonthYear } from '@/lib/utils';
 
@@ -21,10 +22,10 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <div className="py-16 md:py-24">
+    <div className="py-[var(--section-y)]">
       <Container>
-        <p className="font-mono-label text-[var(--color-brand)]">About</p>
-        <h1 className="mt-3 max-w-[20ch] text-[length:var(--text-h1)]">
+        <p className="font-mono-label text-[var(--color-brand)]">System.about</p>
+        <h1 className="mt-3 max-w-[18ch] text-[length:var(--text-h1)] tracking-tight">
           Building production systems across stacks — with architecture discipline
         </h1>
         <div className="mt-12 grid gap-12 lg:grid-cols-12">
@@ -34,19 +35,20 @@ export default function AboutPage() {
             ))}
             <h2 className="pt-4 text-[length:var(--text-h2)] text-[var(--color-text)]">How I work</h2>
             <p>
-              I favour clear boundaries, typed contracts, and reversible decisions. Formal training in
-              Clean Architecture, DDD, and SOLID shapes how I structure NestJS and Laravel services —
-              without ceremony for its own sake.
+              I favour clear boundaries, typed contracts, and reversible decisions. Formal training
+              in Clean Architecture, DDD, and SOLID shapes how I structure NestJS and Laravel
+              services — without ceremony for its own sake.
             </p>
             <p>
-              Spoken languages: {profile.spokenLanguages.map((l) => `${l.language} (${l.level})`).join('; ')}.
+              Spoken languages:{' '}
+              {profile.spokenLanguages.map((l) => `${l.language} (${l.level})`).join('; ')}.
             </p>
             <ButtonLink href={profile.cv.href} variant="primary" download={profile.cv.filename}>
               {profile.cv.label}
             </ButtonLink>
           </div>
           <div className="lg:col-span-5">
-            <div className="relative aspect-[4/5] overflow-hidden rounded-[var(--radius-xl)] border border-[var(--color-border)]">
+            <div className="relative aspect-[4/5] overflow-hidden rounded-[var(--radius-xl)] border border-[var(--color-border)] shadow-[var(--shadow-lg)]">
               <Image
                 src={profile.portrait.src}
                 alt={profile.portrait.alt}
@@ -59,6 +61,8 @@ export default function AboutPage() {
             </div>
           </div>
         </div>
+
+        <PhotoMoments />
 
         <section className="mt-20" aria-labelledby="about-experience">
           <h2 id="about-experience" className="text-[length:var(--text-h2)]">
@@ -76,7 +80,7 @@ export default function AboutPage() {
           <ul className="mt-8 grid gap-4 md:grid-cols-2">
             {education.map((item) => (
               <li key={item.id}>
-                <Card>
+                <Card variant="panel" interactive>
                   <p className="font-mono-label text-[var(--color-text-subtle)]">
                     {formatMonthYear(item.startDate)} — {formatMonthYear(item.endDate)}
                   </p>
@@ -94,7 +98,7 @@ export default function AboutPage() {
             ))}
             {certifications.map((cert) => (
               <li key={cert.id}>
-                <Card>
+                <Card variant="panel" interactive>
                   <Badge tone={cert.status === 'in-progress' ? 'muted' : 'brand'}>
                     {cert.status === 'in-progress' ? 'In progress' : 'Earned'}
                   </Badge>

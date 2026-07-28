@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { IBM_Plex_Mono, IBM_Plex_Sans, Syne } from 'next/font/google';
 import { Footer } from '@/components/layout/Footer';
 import { Header } from '@/components/layout/Header';
+import { FloatingHireButton } from '@/components/layout/FloatingHireButton';
+import { MagneticCursor } from '@/components/motion/MagneticCursor';
 import { ScrollDrivenPath } from '@/components/motion/ScrollDrivenPath';
 import { siteConfig } from '@/config/site';
 import { profile } from '@/content/profile';
@@ -61,9 +63,12 @@ const themeInitScript = `
 (function(){
   try {
     var stored = localStorage.getItem('theme');
-    var theme = stored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    // Dark-first: default to dark when no stored preference
+    var theme = stored || 'dark';
     document.documentElement.setAttribute('data-theme', theme);
-  } catch (e) {}
+  } catch (e) {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  }
 })();
 `;
 
@@ -118,6 +123,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           {children}
         </main>
         <Footer />
+        <FloatingHireButton />
+        <MagneticCursor />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}

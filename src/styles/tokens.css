@@ -58,19 +58,19 @@
   --shadow-lg: 0 16px 40px rgb(33 37 41 / 0.12);
   --shadow-glow: 0 0 0 1px rgb(67 97 238 / 0.18), 0 12px 32px rgb(67 97 238 / 0.18);
 
-  /* Type scale */
-  --text-display: clamp(2.5rem, 5vw + 1rem, 4.5rem);
-  --text-h1: clamp(1.875rem, 2.5vw + 1rem, 3rem);
-  --text-h2: clamp(1.5rem, 1.5vw + 0.75rem, 2.125rem);
+  /* Type scale — premium hierarchy */
+  --text-display: clamp(2.75rem, 6vw + 1rem, 5rem);
+  --text-h1: clamp(2rem, 3vw + 1rem, 3.25rem);
+  --text-h2: clamp(1.625rem, 1.8vw + 0.75rem, 2.25rem);
   --text-h3: clamp(1.25rem, 0.5vw + 1rem, 1.5rem);
-  --text-body-lg: clamp(1.0625rem, 0.2vw + 1rem, 1.25rem);
+  --text-body-lg: clamp(1.0625rem, 0.25vw + 1rem, 1.25rem);
   --text-body: 1.0625rem;
   --text-sm: 0.875rem;
-  --text-xs: 0.8125rem;
+  --text-xs: 0.75rem;
 
-  --leading-display: 1.15;
-  --leading-heading: 1.3;
-  --leading-body: 1.6;
+  --leading-display: 1.08;
+  --leading-heading: 1.25;
+  --leading-body: 1.65;
 
   /* Motion */
   --duration-micro: 140ms;
@@ -82,10 +82,11 @@
   --ease-in: cubic-bezier(0.4, 0, 1, 1);
 
   /* Layout */
-  --container-max: 78rem;
-  --prose-max: 68ch;
-  --header-height: 4rem;
+  --container-max: 72rem;
+  --prose-max: 65ch;
+  --header-height: 4.25rem;
   --status-rail-width: 11rem;
+  --section-y: clamp(4rem, 8vw, 7.5rem);
 
   /* Z-index */
   --z-header: 40;

@@ -5,22 +5,18 @@ import { Moon, Sun } from 'lucide-react';
 
 type Theme = 'light' | 'dark';
 
-function getSystemTheme(): Theme {
-  if (typeof window === 'undefined') return 'light';
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-}
-
 export type ThemeToggleProps = {
   className?: string;
 };
 
 export function ThemeToggle({ className }: ThemeToggleProps) {
-  const [theme, setTheme] = useState<Theme>('light');
+  const [theme, setTheme] = useState<Theme>('dark');
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     const stored = window.localStorage.getItem('theme') as Theme | null;
-    const initial = stored ?? getSystemTheme();
+    // Dark-first when unset
+    const initial: Theme = stored === 'light' || stored === 'dark' ? stored : 'dark';
     setTheme(initial);
     document.documentElement.setAttribute('data-theme', initial);
     setMounted(true);

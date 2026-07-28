@@ -13,7 +13,10 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
 
     return (
       <div className="flex flex-col gap-2">
-        <label htmlFor={inputId} className="text-[var(--text-sm)] font-medium text-[var(--color-text)]">
+        <label
+          htmlFor={inputId}
+          className="text-[var(--text-sm)] font-medium text-[var(--color-text)]"
+        >
           {label}
         </label>
         <textarea
@@ -22,8 +25,8 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           aria-invalid={error ? true : undefined}
           aria-describedby={errorId}
           className={cn(
-            'min-h-32 w-full rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface-raised)] px-4 py-3 text-[var(--color-text)] transition-colors duration-[var(--duration-micro)] placeholder:text-[var(--color-text-subtle)] focus:border-[var(--color-brand)] focus:outline-none focus:ring-2 focus:ring-[var(--color-focus)]/30',
-            error && 'border-[var(--color-danger)]',
+            'field-control min-h-36 w-full resize-y rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-bg)] px-4 py-3 text-[length:var(--text-body)] text-[var(--color-text)] caret-[var(--color-brand)] shadow-[inset_0_1px_2px_rgb(0_0_0/0.04)] transition-[border-color,box-shadow,background-color] duration-[var(--duration-micro)] placeholder:text-[var(--color-text-subtle)] focus:border-[var(--color-brand)] focus:bg-[var(--color-surface-raised)] focus:outline-none focus:ring-2 focus:ring-[var(--color-focus)]/35',
+            error && 'border-[var(--color-danger)] focus:ring-[var(--color-danger)]/30',
             className,
           )}
           {...props}

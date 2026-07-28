@@ -3,6 +3,7 @@ import { projects } from '@/content/projects';
 import { Container } from '@/components/layout/Container';
 import { ProjectCard } from '@/components/features/projects/ProjectCard';
 import { ProjectsFilter } from '@/features/projects/ProjectsFilter';
+import { AmbientBackdrop } from '@/components/layout/AmbientBackdrop';
 
 export const metadata: Metadata = {
   title: 'Projects',
@@ -25,13 +26,16 @@ export default async function ProjectsPage({ searchParams }: ProjectsPageProps) 
     : projects;
 
   return (
-    <div className="py-16 md:py-24">
-      <Container>
-        <p className="font-mono-label text-[var(--color-brand)]">Projects</p>
-        <h1 className="mt-3 text-[length:var(--text-h1)]">Work worth interviewing for</h1>
+    <div className="relative overflow-hidden py-[var(--section-y)]">
+      <AmbientBackdrop variant="section" className="opacity-40" />
+      <Container className="relative z-10">
+        <p className="font-mono-label text-[var(--color-brand)]">System.resources_04</p>
+        <h1 className="mt-3 max-w-[16ch] text-[length:var(--text-h1)] tracking-tight uppercase">
+          Technical artifacts
+        </h1>
         <p className="mt-4 max-w-[var(--prose-max)] text-[length:var(--text-body-lg)] text-[var(--color-text-muted)]">
-          Case studies carry confidential professional work in prose. Personal repos are listed once
-          names and URLs are confirmed.
+          Curated evidence — confidential client delivery in prose, public work when URLs are
+          confirmed.
         </p>
         <div className="mt-8">
           <ProjectsFilter activeTech={tech} />
@@ -41,9 +45,9 @@ export default async function ProjectsPage({ searchParams }: ProjectsPageProps) 
             No projects match that technology. Clear the filter to see everything.
           </p>
         ) : (
-          <ul className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          <ul className="mt-10 grid auto-rows-fr gap-5 sm:gap-6 md:grid-cols-2 xl:grid-cols-3">
             {filtered.map((project) => (
-              <li key={project.slug}>
+              <li key={project.slug} className="h-full min-w-0">
                 <ProjectCard project={project} />
               </li>
             ))}

@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { FluidAmbientGlow } from '@/components/motion/FluidAmbientGlow';
 import { ParallaxTilt } from '@/components/motion/ParallaxTilt';
 import { ParticleMesh } from '@/components/motion/ParticleMesh';
@@ -11,9 +12,17 @@ export type DynamicSceneProps = {
 };
 
 /**
- * Composes ambient glow, parallax geometry, and particle mesh for a living backdrop.
+ * Ambient glow always; particles/parallax only on fine pointers (desktop).
  */
 export function DynamicScene({ className, variant = 'hero' }: DynamicSceneProps) {
+  const [richMotion, setRichMotion] = useState(false);
+
+  useEffect(() => {
+    const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    setRichMotion(fine && !reduce);
+  }, []);
+
   return (
     <div
       className={cn(
@@ -23,24 +32,22 @@ export function DynamicScene({ className, variant = 'hero' }: DynamicSceneProps)
       aria-hidden
     >
       <div
-        className={cn(
-          'absolute inset-0',
-          variant === 'hero' ? 'bg-hero-mesh' : 'bg-section-mesh',
-        )}
+        className={cn('absolute inset-0', variant === 'hero' ? 'bg-hero-mesh' : 'bg-section-mesh')}
       />
       <FluidAmbientGlow />
-      {variant === 'hero' ? (
+      {richMotion && variant === 'hero' ? (
         <>
           <ParallaxTilt />
           <div className="absolute inset-0">
-            <ParticleMesh density={52} />
+            <ParticleMesh density={48} />
           </div>
         </>
-      ) : (
-        <div className="absolute inset-0 opacity-50">
-          <ParticleMesh density={28} />
+      ) : null}
+      {richMotion && variant === 'section' ? (
+        <div className="absolute inset-0 opacity-40">
+          <ParticleMesh density={24} />
         </div>
-      )}
+      ) : null}
       <div className="absolute inset-0 bg-spec-grid opacity-40" />
     </div>
   );

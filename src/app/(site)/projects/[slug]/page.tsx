@@ -5,8 +5,9 @@ import { getAllProjectSlugs, getProjectBySlug, projects } from '@/content/projec
 import { Container } from '@/components/layout/Container';
 import { Badge } from '@/components/ui/Badge';
 import { ButtonLink } from '@/components/ui/ButtonLink';
+import { Card } from '@/components/ui/Card';
 import { ArchitectureDiagram } from '@/components/features/projects/ArchitectureDiagram';
-import { renderContentText, isUsableHref } from '@/lib/content-text';
+import { isUsableHref, renderContentText } from '@/lib/content-text';
 import { siteConfig } from '@/config/site';
 
 type ProjectPageProps = {
@@ -34,6 +35,15 @@ export async function generateMetadata({ params }: ProjectPageProps): Promise<Me
   };
 }
 
+const TOC = [
+  ['problem', '01 The problem'],
+  ['approach', '02 Approach'],
+  ['architecture', '03 Architecture'],
+  ['decisions', '04 Decisions'],
+  ['outcomes', '05 Outcome'],
+  ['retrospective', '06 Retrospective'],
+] as const;
+
 export default async function ProjectDetailPage({ params }: ProjectPageProps) {
   const { slug } = await params;
   const project = getProjectBySlug(slug);
@@ -42,6 +52,7 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
   const index = projects.findIndex((item) => item.slug === slug);
   const prev = index > 0 ? projects[index - 1] : undefined;
   const next = index >= 0 && index < projects.length - 1 ? projects[index + 1] : undefined;
+  const category = project.categories[0] ?? project.kind;
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -53,9 +64,9 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
   };
 
   return (
-    <article className="py-16 md:py-24">
-      <Container>
-        <nav aria-label="Breadcrumb" className="text-[var(--text-sm)] text-[var(--color-text-subtle)]">
+    <article className="pb-[var(--section-y)]">
+      <Container className="pt-10 md:pt-14">
+        <nav aria-label="Breadcrumb" className="font-mono text-[var(--text-xs)] tracking-wide text-[var(--color-text-subtle)] uppercase">
           <ol className="flex flex-wrap gap-2">
             <li>
               <Link href="/" className="hover:text-[var(--color-brand)]">
@@ -73,106 +84,168 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
           </ol>
         </nav>
 
-        <header className="mt-8 max-w-[var(--prose-max)]">
-          <div className="mb-4 flex flex-wrap gap-2">
-            {project.confidential ? <Badge tone="muted">Confidential client work</Badge> : null}
-            <Badge tone="brand">{project.status}</Badge>
-            <Badge>{project.kind}</Badge>
-          </div>
-          <h1 className="text-[length:var(--text-h1)]">{renderContentText(project.title)}</h1>
-          <p className="mt-4 text-[length:var(--text-body-lg)] text-[var(--color-text-muted)]">
+        <header className="mt-8 max-w-4xl">
+          <p className="font-mono-label text-[var(--color-brand)]">
+            {category} — {renderContentText(project.timeframe)}
+          </p>
+          <h1 className="mt-3 text-[length:var(--text-h1)] tracking-tight">
+            {renderContentText(project.title)}
+          </h1>
+          <p className="mt-4 max-w-[var(--prose-max)] text-[length:var(--text-body-lg)] text-[var(--color-text-muted)]">
             {project.summary}
           </p>
-          <p className="mt-3 font-mono text-[var(--text-sm)] text-[var(--color-text-subtle)]">
-            {project.role} · {renderContentText(project.timeframe)}
-          </p>
-          <ul className="mt-6 flex flex-wrap gap-2">
-            {project.technologies.map((tech) => (
-              <li key={tech}>
-                <Badge>{tech}</Badge>
-              </li>
-            ))}
-          </ul>
+          <div className="mt-5 flex flex-wrap gap-2">
+            {project.confidential ? <Badge tone="muted">Confidential client work</Badge> : null}
+            <Badge tone="brand">{project.status}</Badge>
+            <Badge tone="mono">{project.role}</Badge>
+          </div>
         </header>
 
-        <div className="mt-12 grid gap-12 lg:grid-cols-12">
-          <div className="prose-width space-y-10 text-[var(--color-text-muted)] lg:col-span-8">
-            <p>{project.description}</p>
+        {project.hasCaseStudy ? (
+          <div className="mt-10">
+            <ArchitectureDiagram
+              diagramId={project.caseStudy.architecture.diagramId}
+              altText={project.caseStudy.architecture.altText}
+            />
+          </div>
+        ) : null}
 
-            {project.hasCaseStudy ? (
-              <>
-                <section id="context" className="scroll-mt-24">
-                  <h2 className="text-[length:var(--text-h2)] text-[var(--color-text)]">Context</h2>
-                  <p className="mt-4">{project.caseStudy.context}</p>
-                </section>
-                <section id="problem" className="scroll-mt-24">
-                  <h2 className="text-[length:var(--text-h2)] text-[var(--color-text)]">The problem</h2>
-                  <p className="mt-4">{project.caseStudy.problem}</p>
-                </section>
-                <section id="approach" className="scroll-mt-24">
-                  <h2 className="text-[length:var(--text-h2)] text-[var(--color-text)]">Approach</h2>
-                  <p className="mt-4">{project.caseStudy.approach}</p>
-                </section>
-                <section id="architecture" className="scroll-mt-24">
-                  <h2 className="text-[length:var(--text-h2)] text-[var(--color-text)]">Architecture</h2>
-                  <div className="mt-6">
-                    <ArchitectureDiagram
-                      diagramId={project.caseStudy.architecture.diagramId}
-                      altText={project.caseStudy.architecture.altText}
-                    />
-                  </div>
-                </section>
-                <section id="decisions" className="scroll-mt-24">
-                  <h2 className="text-[length:var(--text-h2)] text-[var(--color-text)]">
-                    Decisions & tradeoffs
-                  </h2>
-                  <ul className="mt-6 space-y-6">
-                    {project.caseStudy.decisions.map((decision) => (
-                      <li
-                        key={decision.decision}
-                        className="border-l-2 border-[var(--color-brand)] pl-4"
-                      >
-                        <blockquote className="text-[length:var(--text-body-lg)] text-[var(--color-text)]">
-                          Chose {decision.decision}
-                        </blockquote>
-                        <p className="mt-2">
-                          <span className="font-medium text-[var(--color-text)]">Over:</span>{' '}
-                          {decision.alternatives}
-                        </p>
-                        <p className="mt-2">{decision.reasoning}</p>
-                        <p className="mt-2 text-[var(--text-sm)]">
-                          Tradeoff: {renderContentText(decision.tradeoff)}
-                        </p>
+        <div className="mt-14 grid gap-12 lg:grid-cols-12">
+          <aside className="lg:col-span-3">
+            <div className="sticky top-28 space-y-8">
+              {project.hasCaseStudy ? (
+                <nav aria-label="On this page">
+                  <p className="font-mono-label mb-3 text-[var(--color-text-subtle)]">Contents</p>
+                  <ul className="space-y-2">
+                    {TOC.map(([id, label]) => (
+                      <li key={id}>
+                        <a
+                          href={`#${id}`}
+                          className="font-mono text-[11px] tracking-wide text-[var(--color-text-muted)] uppercase transition-colors hover:text-[var(--color-brand)]"
+                        >
+                          {label}
+                        </a>
                       </li>
                     ))}
                   </ul>
+                </nav>
+              ) : null}
+              <div>
+                <p className="font-mono-label mb-3 text-[var(--color-text-subtle)]">Stack</p>
+                <ul className="flex flex-wrap gap-2">
+                  {project.technologies.map((tech) => (
+                    <li key={tech}>
+                      <Badge tone="mono">{tech}</Badge>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <ButtonLink href="/contact" variant="primary" className="w-full">
+                Discuss this work
+              </ButtonLink>
+            </div>
+          </aside>
+
+          <div className="space-y-14 text-[var(--color-text-muted)] lg:col-span-9">
+            <p className="prose-width text-[length:var(--text-body-lg)]">{project.description}</p>
+
+            {project.hasCaseStudy ? (
+              <>
+                <section id="problem" className="scroll-mt-28">
+                  <h2 className="text-[length:var(--text-h2)] text-[var(--color-text)]">
+                    01 · The problem
+                  </h2>
+                  <p className="prose-width mt-4">{project.caseStudy.context}</p>
+                  <div className="mt-6 grid gap-4 md:grid-cols-2">
+                    <Card variant="panel" className="border-l-2 border-l-[var(--color-danger)]">
+                      <p className="font-mono-label text-[var(--color-danger)]">Challenge</p>
+                      <p className="mt-3 text-[var(--color-text-muted)]">{project.caseStudy.problem}</p>
+                    </Card>
+                    <Card variant="panel" className="border-l-2 border-l-[var(--color-brand)]">
+                      <p className="font-mono-label text-[var(--color-brand)]">Goal</p>
+                      <p className="mt-3 text-[var(--color-text-muted)]">{project.caseStudy.approach}</p>
+                    </Card>
+                  </div>
                 </section>
-                <section id="challenges" className="scroll-mt-24">
-                  <h2 className="text-[length:var(--text-h2)] text-[var(--color-text)]">Challenges</h2>
-                  <ul className="mt-4 list-disc space-y-2 pl-5">
+
+                <section id="approach" className="scroll-mt-28">
+                  <h2 className="text-[length:var(--text-h2)] text-[var(--color-text)]">
+                    02 · Technical approach
+                  </h2>
+                  <p className="prose-width mt-4">{project.caseStudy.approach}</p>
+                  <ul className="prose-width mt-4 list-disc space-y-2 pl-5">
                     {project.caseStudy.challenges.map((item) => (
                       <li key={item}>{item}</li>
                     ))}
                   </ul>
                 </section>
-                <section id="outcomes" className="scroll-mt-24">
-                  <h2 className="text-[length:var(--text-h2)] text-[var(--color-text)]">Outcome</h2>
-                  <ul className="mt-4 list-disc space-y-2 pl-5">
-                    {project.caseStudy.outcomes.map((item) => (
-                      <li key={item}>{renderContentText(item)}</li>
+
+                <section id="architecture" className="scroll-mt-28">
+                  <h2 className="text-[length:var(--text-h2)] text-[var(--color-text)]">
+                    03 · Architecture
+                  </h2>
+                  <p className="prose-width mt-4">{project.caseStudy.architecture.altText}</p>
+                </section>
+
+                <section id="decisions" className="scroll-mt-28">
+                  <h2 className="text-[length:var(--text-h2)] text-[var(--color-text)]">
+                    04 · Key decisions & tradeoffs
+                  </h2>
+                  <ul className="mt-6 space-y-5">
+                    {project.caseStudy.decisions.map((decision) => (
+                      <li key={decision.decision}>
+                        <Card variant="panel">
+                          <blockquote className="text-[length:var(--text-body-lg)] text-[var(--color-text)]">
+                            Chose {decision.decision}
+                          </blockquote>
+                          <p className="mt-3">
+                            <span className="font-medium text-[var(--color-text)]">Over:</span>{' '}
+                            {decision.alternatives}
+                          </p>
+                          <p className="mt-2">{decision.reasoning}</p>
+                          <p className="mt-2 text-[var(--text-sm)] text-[var(--color-text-subtle)]">
+                            Tradeoff: {renderContentText(decision.tradeoff)}
+                          </p>
+                        </Card>
+                      </li>
                     ))}
                   </ul>
                 </section>
-                <section id="retrospective" className="scroll-mt-24">
+
+                <section id="outcomes" className="scroll-mt-28">
                   <h2 className="text-[length:var(--text-h2)] text-[var(--color-text)]">
-                    What I would do differently
+                    05 · Outcome
                   </h2>
-                  <p className="mt-4">{project.caseStudy.retrospective}</p>
+                  <ul className="mt-6 grid gap-4 sm:grid-cols-2">
+                    {project.caseStudy.outcomes.map((item) => (
+                      <li key={item}>
+                        <Card variant="panel" className="h-full">
+                          <p className="text-[var(--color-text)]">{renderContentText(item)}</p>
+                        </Card>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+
+                <section id="retrospective" className="scroll-mt-28">
+                  <h2 className="text-[length:var(--text-h2)] text-[var(--color-text)]">
+                    06 · What I would do differently
+                  </h2>
+                  <Card variant="panel" className="mt-4">
+                    <p className="prose-width">{project.caseStudy.retrospective}</p>
+                  </Card>
                 </section>
               </>
-            ) : null}
+            ) : (
+              <Card variant="panel">
+                <p>
+                  Summary project — full case study pending publishable detail. Placeholders are
+                  tracked in content gaps.
+                </p>
+              </Card>
+            )}
 
-            <section id="links" className="scroll-mt-24">
+            <section id="links" className="scroll-mt-28">
               <h2 className="text-[length:var(--text-h2)] text-[var(--color-text)]">Links</h2>
               <ul className="mt-4 flex flex-wrap gap-3">
                 {project.links.live && isUsableHref(project.links.live) ? (
@@ -196,57 +269,30 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
               </ul>
             </section>
           </div>
-
-          <aside className="lg:col-span-4">
-            <div className="sticky top-24 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface-raised)] p-5">
-              <p className="font-mono-label text-[var(--color-text-subtle)]">On this page</p>
-              {project.hasCaseStudy ? (
-                <ul className="mt-4 space-y-2 text-[var(--text-sm)]">
-                  {[
-                    ['context', 'Context'],
-                    ['problem', 'Problem'],
-                    ['approach', 'Approach'],
-                    ['architecture', 'Architecture'],
-                    ['decisions', 'Decisions'],
-                    ['challenges', 'Challenges'],
-                    ['outcomes', 'Outcomes'],
-                    ['retrospective', 'Retrospective'],
-                  ].map(([id, label]) => (
-                    <li key={id}>
-                      <a href={`#${id}`} className="text-[var(--color-text-muted)] hover:text-[var(--color-brand)]">
-                        {label}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="mt-4 text-[var(--text-sm)] text-[var(--color-text-muted)]">
-                  Summary project — full case study pending publishable detail.
-                </p>
-              )}
-              <div className="mt-6">
-                <ButtonLink href="/contact" variant="primary" className="w-full">
-                  Contact about this work
-                </ButtonLink>
-              </div>
-            </div>
-          </aside>
         </div>
 
         <nav
-          className="mt-16 flex flex-col gap-4 border-t border-[var(--color-border)] pt-8 sm:flex-row sm:justify-between"
+          className="mt-16 grid gap-4 border-t border-[var(--color-border)] pt-8 sm:grid-cols-2"
           aria-label="Adjacent projects"
         >
           {prev ? (
-            <Link href={`/projects/${prev.slug}`} className="text-[var(--color-text-muted)] hover:text-[var(--color-brand)]">
-              ← {renderContentText(prev.title)}
+            <Link
+              href={`/projects/${prev.slug}`}
+              className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5 transition-colors hover:border-[var(--color-brand)]/40"
+            >
+              <p className="font-mono-label text-[var(--color-text-subtle)]">Previous</p>
+              <p className="mt-2 text-[var(--color-text)]">{renderContentText(prev.title)}</p>
             </Link>
           ) : (
             <span />
           )}
           {next ? (
-            <Link href={`/projects/${next.slug}`} className="text-[var(--color-text-muted)] hover:text-[var(--color-brand)] sm:text-right">
-              {renderContentText(next.title)} →
+            <Link
+              href={`/projects/${next.slug}`}
+              className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5 text-right transition-colors hover:border-[var(--color-brand)]/40"
+            >
+              <p className="font-mono-label text-[var(--color-text-subtle)]">Next</p>
+              <p className="mt-2 text-[var(--color-text)]">{renderContentText(next.title)}</p>
             </Link>
           ) : null}
         </nav>

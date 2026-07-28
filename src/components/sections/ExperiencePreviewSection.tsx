@@ -16,13 +16,13 @@ export function ExperiencePreviewSection({ previewCount = 2 }: ExperiencePreview
   return (
     <Section
       id="experience"
-      eyebrow="Timeline"
-      title="Professional experience"
-      description="Dates match the CV. Client work is described without identifying details."
+      eyebrow="System.timeline_04"
+      title="Experience nodes"
+      description="Dates match the CV. Client work is generalised on purpose."
       className="relative overflow-hidden"
       containerClassName="relative z-10"
     >
-      <AmbientBackdrop variant="section" />
+      <AmbientBackdrop variant="section" className="opacity-50" />
       <Reveal>
         <ExperienceTimeline roles={roles} />
       </Reveal>
@@ -34,8 +34,8 @@ export function ExperiencePreviewSection({ previewCount = 2 }: ExperiencePreview
           Also on{' '}
           <Link href="/about" className="text-[var(--color-brand)] hover:underline">
             About
-          </Link>{' '}
-          and education.
+          </Link>
+          .
         </p>
       </Reveal>
     </Section>

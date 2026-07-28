@@ -24,7 +24,7 @@ export function ExperienceTimeline({ roles, initiallyExpandedId }: ExperienceTim
         return (
           <li key={role.id} id={role.id} className="relative pb-10 last:pb-0">
             <span
-              className="absolute -left-[1.9rem] top-1 flex h-6 w-6 items-center justify-center rounded-full border border-[var(--color-brand)] bg-[var(--color-bg)] font-mono text-[10px] text-[var(--color-brand)] md:-left-[2.4rem]"
+              className="absolute -left-[1.9rem] top-1 flex h-6 w-6 items-center justify-center rounded-full border border-[var(--color-brand)] bg-[var(--color-bg)] font-mono text-[10px] text-[var(--color-brand)] shadow-[0_0_12px_rgb(var(--color-brand-rgb)/0.35)] md:-left-[2.4rem]"
               aria-hidden
             >
               {String(index + 1).padStart(2, '0')}

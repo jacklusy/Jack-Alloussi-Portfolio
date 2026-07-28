@@ -105,6 +105,33 @@
     background: var(--color-brand-subtle);
     color: var(--color-text);
   }
+
+  .field-control:-webkit-autofill,
+  .field-control:-webkit-autofill:hover,
+  .field-control:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--color-text);
+    caret-color: var(--color-brand);
+    box-shadow: 0 0 0 1000px var(--color-bg) inset;
+    transition: background-color 99999s ease-out;
+  }
+
+  html.has-magnetic-cursor,
+  html.has-magnetic-cursor * {
+    cursor: none;
+  }
+
+  html.has-magnetic-cursor a,
+  html.has-magnetic-cursor button,
+  html.has-magnetic-cursor [data-magnetic] {
+    cursor: none;
+  }
+
+  @media (max-width: 767px) {
+    html.has-magnetic-cursor,
+    html.has-magnetic-cursor * {
+      cursor: auto;
+    }
+  }
 }
 
 @layer utilities {
@@ -134,7 +161,7 @@
   .font-mono-label {
     font-family: var(--font-plex-mono), ui-monospace, monospace;
     font-size: var(--text-xs);
-    letter-spacing: 0.06em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
   }
 

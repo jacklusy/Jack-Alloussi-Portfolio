@@ -39,7 +39,10 @@ export function ContactForm() {
       const payload = (await response.json()) as { error?: string };
 
       if (!response.ok) {
-        setStatus({ kind: 'error', message: payload.error ?? 'Something went wrong. Please email me directly.' });
+        setStatus({
+          kind: 'error',
+          message: payload.error ?? 'Something went wrong. Please email me directly.',
+        });
         return;
       }
 
@@ -56,28 +59,40 @@ export function ContactForm() {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="space-y-5 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface-raised)] p-6"
+      className="relative z-10 space-y-5 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface-raised)] p-5 shadow-[var(--shadow-md)] sm:p-6"
       noValidate
     >
-      <Input label="Name" autoComplete="name" error={errors.name?.message} {...register('name')} />
+      <Input
+        label="Name"
+        autoComplete="name"
+        placeholder="Your name"
+        error={errors.name?.message}
+        {...register('name')}
+      />
       <Input
         label="Email"
         type="email"
         autoComplete="email"
         inputMode="email"
+        placeholder="you@company.com"
         error={errors.email?.message}
         {...register('email')}
       />
       <Input
         label="Subject"
         autoComplete="off"
+        placeholder="Role, intro call, or question"
         error={errors.subject?.message}
         {...register('subject')}
       />
-      <Textarea label="Message" error={errors.message?.message} {...register('message')} />
+      <Textarea
+        label="Message"
+        placeholder="A short note about the role or what you’d like to discuss…"
+        error={errors.message?.message}
+        {...register('message')}
+      />
 
-      {/* Honeypot — hidden from users */}
-      <div className="absolute -left-[9999px]" aria-hidden="true">
+      <div className="pointer-events-none absolute left-0 top-0 h-px w-px overflow-hidden opacity-0" aria-hidden="true">
         <label htmlFor="website">Website</label>
         <input id="website" type="text" tabIndex={-1} autoComplete="off" {...register('website')} />
       </div>
