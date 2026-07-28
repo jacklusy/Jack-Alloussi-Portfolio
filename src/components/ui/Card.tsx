@@ -23,10 +23,10 @@ export function Card({
         variant === 'default' &&
           'border border-[var(--color-border)] bg-[var(--color-surface-raised)] p-6 shadow-[var(--shadow-sm)]',
         variant === 'panel' &&
-          'border border-[var(--color-border)] bg-[var(--color-surface)]/80 p-6 backdrop-blur-sm',
+          'border border-[var(--color-border)] bg-[var(--color-surface)] p-6',
         variant === 'ghost' && 'border border-transparent bg-transparent p-0',
         interactive &&
-          'hover:border-[var(--color-brand)]/40 hover:shadow-[var(--shadow-glow)] [@media(hover:hover)]:hover:-translate-y-0.5',
+          'hover:border-[var(--color-brand)]/45 hover:shadow-[var(--shadow-md)] [@media(hover:hover)]:hover:-translate-y-0.5',
         className,
       )}
       {...props}

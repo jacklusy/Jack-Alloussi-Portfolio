@@ -6,14 +6,19 @@ Prioritised by impact on the 90-second recruiter journey.
 
 | Token | Location | Notes |
 | --- | --- | --- |
-| GitHub username | `profile.ts` socials | Replace placeholder URL |
-| CV PDF | `/public/documents/Jack-Alloussi-Software-Engineer-CV.pdf` | File not yet added |
 | Project 1 name + live/repo URLs | `projects/index.ts` | Multi-tenant API |
 | Project 2 name + store/repo URLs | `projects/index.ts` | Mobile app |
 | Number of client applications | experience + case study | From Jira / team count |
 | Number of production apps | experience + case study | Verifiable ops count |
 | One measured result | experience + case study | Latency, deploy time, etc. |
 | Deploy time before → after | experience + case study | Minutes |
+
+## Resolved
+
+| Item | Value |
+| --- | --- |
+| GitHub | https://github.com/jacklusy |
+| CV PDF | `/public/pdf/CV_Jack_Alloussi.pdf` → `/pdf/CV_Jack_Alloussi.pdf` |
 
 ## High (visa / credentials)
 

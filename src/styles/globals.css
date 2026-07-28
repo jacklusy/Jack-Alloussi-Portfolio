@@ -5,6 +5,9 @@
   --color-brand: var(--color-brand);
   --color-brand-hover: var(--color-brand-hover);
   --color-brand-subtle: var(--color-brand-subtle);
+  --color-cta: var(--color-cta);
+  --color-cta-hover: var(--color-cta-hover);
+  --color-cta-fg: var(--color-cta-fg);
   --color-bg: var(--color-bg);
   --color-surface: var(--color-surface);
   --color-surface-raised: var(--color-surface-raised);
@@ -102,8 +105,8 @@
   }
 
   ::selection {
-    background: var(--color-brand-subtle);
-    color: var(--color-text);
+    background: var(--color-brand);
+    color: var(--color-on-accent);
   }
 
   .field-control:-webkit-autofill,
@@ -205,21 +208,21 @@
 
   .ambient-orb {
     filter: blur(48px);
-    opacity: 0.55;
+    opacity: 0.28;
     will-change: transform;
-    background: radial-gradient(circle, rgb(var(--color-brand-rgb) / 0.55), transparent 70%);
+    background: radial-gradient(circle, rgb(var(--color-brand-rgb) / 0.4), transparent 70%);
   }
 
   .ambient-orb-a {
-    opacity: 0.45;
+    opacity: 0.22;
   }
 
   .ambient-orb-b {
-    opacity: 0.35;
+    opacity: 0.18;
   }
 
   .ambient-orb-c {
-    opacity: 0.4;
+    opacity: 0.16;
   }
 
   .animate-ambient-a {

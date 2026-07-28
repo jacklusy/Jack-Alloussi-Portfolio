@@ -13,10 +13,11 @@ export function Badge({ className, tone = 'default', ...props }: BadgeProps) {
         tone === 'default' &&
           'border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-muted)]',
         tone === 'brand' &&
-          'border border-[var(--color-brand)]/30 bg-[var(--color-brand-subtle)] text-[var(--color-brand)]',
-        tone === 'muted' && 'bg-[var(--color-surface-sunken)] text-[var(--color-text-subtle)]',
+          'border border-[var(--color-brand)]/35 bg-[var(--color-brand-subtle)] font-medium text-[var(--color-brand)]',
+        tone === 'muted' &&
+          'border border-[var(--color-border)] bg-[var(--color-surface-sunken)] text-[var(--color-text-muted)]',
         tone === 'mono' &&
-          'border border-[var(--color-border)] bg-transparent text-[var(--color-text-subtle)]',
+          'border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-muted)]',
         className,
       )}
       {...props}

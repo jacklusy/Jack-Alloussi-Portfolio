@@ -2,27 +2,38 @@
 
 ## Direction (premium redesign)
 
-**Visual thesis:** A specification sheet for a backend-leaning engineer — elevated to a dark-first, senior product UI. Inspired by premium portfolio structure (hero meta panel, uniform cards, matrix skills, case-study TOC) without copying reference copy, fake metrics, or locations.
+**Visual thesis:** A specification sheet for a backend-leaning engineer — elevated to a dark-first, senior product UI. Contrast and CTA language borrow from enterprise CSC VR design principles (ink primary, blue accent, AA text pairs) without adopting CSC branding.
 
 ### Colour
 
-**Light (60 / 30 / 10)**
+**Rules**
+
+- Primary CTA uses **ink** (`--color-cta`), not accent blue — black on light / near-white on dark.
+- Blue (`--color-brand`) is for links, focus rings, system labels, and optional accent fills.
+- Never place light text on light surfaces or washed glass panels; elevated surfaces are solid tokens.
+- Yellow/warn fills only — never yellow body text.
+
+**Light**
 
 | Role | Hex | Token |
 | --- | --- | --- |
-| Dominant | `#F8F9FA` | `--color-bg` |
-| Secondary | `#212529` | `--color-text` |
-| Accent | `#4361EE` Electric Indigo | `--color-brand` |
-| Muted | `#E9ECEF` | `--color-surface-sunken` |
+| Page | `#FFFFFF` | `--color-bg` |
+| Elevated | `#F8F9FB` | `--color-surface` |
+| Text | `#0A0A0A` | `--color-text` |
+| Muted | `#5A6470` | `--color-text-muted` |
+| CTA | `#0A0A0A` on `#FAFAFA` | `--color-cta` / `--color-cta-fg` |
+| Accent | `#1B5BB5` | `--color-brand` |
 
 **Dark (default)**
 
 | Role | Hex | Token |
 | --- | --- | --- |
-| Dominant | `#0B0C10` Deep Midnight | `--color-bg` |
-| Secondary | `#C5C6C7` Ice Blue | `--color-text` |
-| Accent | `#66FCF1` Vibrant Teal | `--color-brand` |
-| Muted | `#1F2833` Slate Gray | `--color-surface` |
+| Page | `#0B0D10` | `--color-bg` |
+| Elevated | `#14181E` / `#1A1F27` | `--color-surface` / raised |
+| Text | `#F4F6F8` | `--color-text` |
+| Muted | `#9AA3AF` | `--color-text-muted` |
+| CTA | `#FAFAFA` on `#0A0A0A` | `--color-cta` / `--color-cta-fg` |
+| Accent | `#3D82E6` | `--color-brand` |
 
 Theme defaults to **dark** when no `localStorage` preference exists. Manual toggle persists.
 
@@ -45,7 +56,7 @@ Theme defaults to **dark** when no `localStorage` preference exists. Manual togg
 
 ### Signature
 
-**Status meta panel** — machine-readable availability and work-authorisation facts above the fold (evolved from the Status Rail).
+**Status meta panel** — machine-readable availability and work-authorisation facts above the fold.
 
 ### Atmosphere
 

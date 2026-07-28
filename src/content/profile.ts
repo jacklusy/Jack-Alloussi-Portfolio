@@ -32,7 +32,7 @@ const profileData = {
     {
       id: 'github',
       label: 'GitHub',
-      href: 'https://github.com/{{NEEDS_INPUT: github-username}}',
+      href: 'https://github.com/jacklusy',
       external: true,
     },
     {
@@ -58,15 +58,15 @@ const profileData = {
     {
       id: 'cv',
       label: 'Download CV (PDF)',
-      href: '/documents/Jack-Alloussi-Software-Engineer-CV.pdf',
+      href: '/pdf/CV_Jack_Alloussi.pdf',
       variant: 'secondary' as const,
       download: true,
     },
   ],
   cv: {
-    href: '/documents/Jack-Alloussi-Software-Engineer-CV.pdf',
+    href: '/pdf/CV_Jack_Alloussi.pdf',
     label: 'Download CV (PDF)',
-    filename: 'Jack-Alloussi-Software-Engineer-CV.pdf',
+    filename: 'CV_Jack_Alloussi.pdf',
   },
   spokenLanguages: [
     { language: 'Arabic', level: 'Native' },

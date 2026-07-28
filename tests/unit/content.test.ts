@@ -31,12 +31,15 @@ describe('content helpers', () => {
   it('rejects placeholder hrefs', () => {
     expect(isUsableHref('https://github.com/{{NEEDS_INPUT: github-username}}')).toBe(false);
     expect(isUsableHref('https://linkedin.com/in/jackalloussi')).toBe(true);
+    expect(isUsableHref('https://github.com/jacklusy')).toBe(true);
   });
 });
 
 describe('content validation', () => {
   it('parses profile', () => {
     expect(profileSchema.parse(profile).name).toBe('Jack Alloussi');
+    expect(profile.socials.find((s) => s.id === 'github')?.href).toBe('https://github.com/jacklusy');
+    expect(profile.cv.href).toBe('/pdf/CV_Jack_Alloussi.pdf');
   });
 
   it('keeps experience dates matching CV', () => {

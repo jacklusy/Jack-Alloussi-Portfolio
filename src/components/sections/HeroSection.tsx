@@ -25,7 +25,7 @@ export function HeroSection() {
         <HeroMotion className="grid items-center gap-10 lg:grid-cols-12 lg:gap-12">
           <div className="lg:col-span-7">
             <HeroMotionItem>
-              <div className="mb-6 inline-flex items-center gap-2.5 rounded-full border border-[var(--color-border)] bg-[var(--color-surface-raised)]/80 px-3.5 py-1.5 shadow-[var(--shadow-sm)] backdrop-blur-sm">
+                <div className="mb-6 inline-flex items-center gap-2.5 rounded-full border border-[var(--color-border)] bg-[var(--color-surface-raised)] px-3.5 py-1.5 shadow-[var(--shadow-sm)]">
                 <span className="status-pulse relative inline-flex h-2 w-2 rounded-full bg-[var(--color-brand)]" />
                 <span className="font-mono-label text-[var(--color-text-muted)]">
                   Available for relocation
@@ -89,7 +89,7 @@ export function HeroSection() {
 
           <HeroMotionItem className="lg:col-span-5">
             <aside
-              className="rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface)]/70 p-6 shadow-[var(--shadow-md)] backdrop-blur-md md:p-7"
+              className="rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface-raised)] p-6 shadow-[var(--shadow-md)] md:p-7"
               aria-label="Availability and work authorisation"
             >
               <p className="font-mono-label mb-5 text-[var(--color-text-subtle)]">Status.panel</p>

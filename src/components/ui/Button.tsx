@@ -3,21 +3,26 @@ import { forwardRef, type ButtonHTMLAttributes } from 'react';
 import { cn } from '@/lib/utils';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 font-medium transition-[transform,opacity,background-color,color,border-color,box-shadow,border-radius] duration-[var(--duration-micro)] ease-[var(--ease-out)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg)] disabled:pointer-events-none disabled:opacity-50 active:scale-[0.96] min-h-11 hover:scale-[1.02]',
+  'inline-flex items-center justify-center gap-2 font-medium transition-[transform,opacity,background-color,color,border-color,box-shadow] duration-[var(--duration-micro)] ease-[var(--ease-out)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg)] disabled:pointer-events-none disabled:opacity-50 active:scale-[0.97] min-h-11',
   {
     variants: {
       variant: {
+        /* Ink CTA — black on light / near-white on dark */
         primary:
-          'bg-[var(--color-brand)] text-[var(--color-text-inverse)] hover:bg-[var(--color-brand-hover)] hover:shadow-[var(--shadow-glow)] rounded-[var(--radius-md)] hover:rounded-[var(--radius-lg)] px-5',
+          'bg-[var(--color-cta)] text-[var(--color-cta-fg)] hover:bg-[var(--color-cta-hover)] hover:shadow-[var(--shadow-md)] rounded-[var(--radius-md)] px-5',
+        /* Outline — calm secondary */
         secondary:
-          'border border-[var(--color-border-strong)] bg-[var(--color-surface-raised)]/90 text-[var(--color-text)] hover:border-[var(--color-brand)] hover:text-[var(--color-brand)] hover:shadow-[var(--shadow-md)] rounded-[var(--radius-md)] hover:rounded-[var(--radius-lg)] px-5 backdrop-blur-sm',
+          'border border-[var(--color-border-strong)] bg-transparent text-[var(--color-text)] hover:border-[var(--color-brand)] hover:bg-[var(--color-brand-subtle)] hover:text-[var(--color-brand)] rounded-[var(--radius-md)] px-5',
+        /* Accent fill — blue for emphasis actions */
+        accent:
+          'bg-[var(--color-brand)] text-[var(--color-on-accent)] hover:bg-[var(--color-brand-hover)] hover:shadow-[var(--shadow-glow)] rounded-[var(--radius-md)] px-5',
         ghost:
           'text-[var(--color-text)] hover:bg-[var(--color-surface-sunken)] rounded-[var(--radius-md)] px-4',
       },
       size: {
-        sm: 'min-h-11 px-3 text-sm',
+        sm: 'min-h-9 px-3 text-sm',
         md: 'min-h-11 text-[var(--text-body)]',
-        lg: 'min-h-12 px-6 text-[var(--text-body-lg)]',
+        lg: 'min-h-[3.25rem] px-6 text-[var(--text-body-lg)]',
       },
     },
     defaultVariants: {
