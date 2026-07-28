@@ -20,8 +20,8 @@ export function FloatingHireButton() {
       data-magnetic
       className={cn(
         'fixed bottom-[max(1.25rem,env(safe-area-inset-bottom))] right-[max(1.25rem,env(safe-area-inset-right))] z-[45]',
-        'inline-flex min-h-12 items-center gap-2 rounded-full bg-[var(--color-cta)] px-5 py-3',
-        'font-medium text-[var(--color-cta-fg)] shadow-[var(--shadow-md)]',
+        'btn-cta inline-flex min-h-12 items-center gap-2 rounded-full px-5 py-3',
+        'font-medium shadow-[var(--shadow-md)]',
         'transition-[transform,box-shadow] duration-[var(--duration-micro)] ease-[var(--ease-out)]',
         'hover:scale-[1.03] hover:shadow-[var(--shadow-lg)] active:scale-[0.97]',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg)]',

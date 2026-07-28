@@ -19,10 +19,10 @@ export function ExperiencePreviewSection({ previewCount = 2 }: ExperiencePreview
       title="Experience nodes"
       description="Dates match the CV. Client work is generalised on purpose."
     >
-      <Reveal>
+      <Reveal direction="left" distance={36}>
         <ExperienceTimeline roles={roles} />
       </Reveal>
-      <Reveal className="mt-10" delay={0.06}>
+      <Reveal className="mt-10" delay={0.06} direction="right" distance={28}>
         <ButtonLink href="/experience" variant="secondary">
           Full experience timeline
         </ButtonLink>

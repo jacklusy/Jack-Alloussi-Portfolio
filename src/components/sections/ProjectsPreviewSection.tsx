@@ -15,8 +15,13 @@ export function ProjectsPreviewSection() {
       headerAction={{ label: 'Explore all projects →', href: '/projects' }}
     >
       <Stagger className="grid auto-rows-fr gap-5 sm:gap-6 md:grid-cols-2 xl:grid-cols-3" stagger={0.06}>
-        {projects.map((project) => (
-          <StaggerItem key={project.slug} className="h-full min-w-0">
+        {projects.map((project, index) => (
+          <StaggerItem
+            key={project.slug}
+            className="h-full min-w-0"
+            direction={index % 2 === 0 ? 'left' : 'right'}
+            distance={28}
+          >
             <ProjectCard project={project} />
           </StaggerItem>
         ))}

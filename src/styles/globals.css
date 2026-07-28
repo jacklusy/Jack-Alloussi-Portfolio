@@ -8,6 +8,7 @@
   --color-cta: var(--color-cta);
   --color-cta-hover: var(--color-cta-hover);
   --color-cta-fg: var(--color-cta-fg);
+  --color-on-accent: var(--color-on-accent);
   --color-bg: var(--color-bg);
   --color-surface: var(--color-surface);
   --color-surface-raised: var(--color-surface-raised);
@@ -140,6 +141,17 @@
 @layer utilities {
   .prose-width {
     max-width: var(--prose-max);
+  }
+
+  /* High-contrast primary CTA — never inherit body text onto ink/paper fills */
+  .btn-cta {
+    background-color: var(--color-cta);
+    color: var(--color-cta-fg);
+  }
+
+  .btn-cta:hover {
+    background-color: var(--color-cta-hover);
+    color: var(--color-cta-fg);
   }
 
   .text-display {

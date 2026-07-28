@@ -1,10 +1,9 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { Database, Layers, Smartphone } from 'lucide-react';
+import { Code2, Database, Layers, Smartphone, Wrench } from 'lucide-react';
 import { skillGroups } from '@/content/skills';
 import { Section } from '@/components/layout/Section';
-import { Stagger, StaggerItem } from '@/components/motion/Reveal';
-import { TiltCard } from '@/components/motion/TiltCard';
+import { Reveal, Stagger, StaggerItem } from '@/components/motion/Reveal';
 import type { ReactNode } from 'react';
 
 import reactIcon from '@/assets/img/icons/react.png';
@@ -21,31 +20,43 @@ const ICON_BY_NAME: Record<string, typeof reactIcon> = {
   PHP: phpIcon,
 };
 
-type MatrixColumn = {
+type Band = {
   id: string;
   label: string;
   icon: ReactNode;
   groupIds: string[];
+  direction: 'left' | 'right';
 };
 
-const columns: MatrixColumn[] = [
+/** Rebalanced bands — chip clouds, not equal-height empty columns. */
+const bands: Band[] = [
   {
     id: 'backend',
-    label: 'Backend',
-    icon: <Database className="h-5 w-5" aria-hidden />,
-    groupIds: ['languages', 'backend', 'practices'],
+    label: 'Backend & languages',
+    icon: <Database className="h-4 w-4" aria-hidden />,
+    groupIds: ['languages', 'backend'],
+    direction: 'left',
   },
   {
     id: 'clients',
-    label: 'Frontend & Mobile',
-    icon: <Smartphone className="h-5 w-5" aria-hidden />,
+    label: 'Frontend & mobile',
+    icon: <Smartphone className="h-4 w-4" aria-hidden />,
     groupIds: ['frontend', 'mobile'],
+    direction: 'right',
   },
   {
     id: 'platform',
-    label: 'Data & Infrastructure',
-    icon: <Layers className="h-5 w-5" aria-hidden />,
+    label: 'Data & infrastructure',
+    icon: <Layers className="h-4 w-4" aria-hidden />,
     groupIds: ['data', 'infrastructure'],
+    direction: 'left',
+  },
+  {
+    id: 'practices',
+    label: 'Engineering practices',
+    icon: <Wrench className="h-4 w-4" aria-hidden />,
+    groupIds: ['practices'],
+    direction: 'right',
   },
 ];
 
@@ -67,6 +78,34 @@ function skillsForGroups(groupIds: string[]) {
   return items;
 }
 
+function SkillChip({ name, href }: { name: string; href?: string }) {
+  const icon = ICON_BY_NAME[name];
+  const content = (
+    <span className="inline-flex min-h-9 items-center gap-2 rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface-raised)] px-3 py-1.5 text-[var(--text-sm)] text-[var(--color-text)] transition-colors duration-[var(--duration-micro)]">
+      {icon ? (
+        <Image src={icon} alt="" width={14} height={14} className="opacity-85" />
+      ) : (
+        <Code2 className="h-3.5 w-3.5 text-[var(--color-text-subtle)]" aria-hidden />
+      )}
+      {name}
+    </span>
+  );
+
+  if (href) {
+    return (
+      <Link
+        href={href}
+        className="rounded-[var(--radius-md)] hover:[&>span]:border-[var(--color-brand)] hover:[&>span]:text-[var(--color-brand)] focus-visible:outline-none"
+        data-magnetic
+      >
+        {content}
+      </Link>
+    );
+  }
+
+  return content;
+}
+
 export function SkillsSection() {
   return (
     <Section
@@ -75,56 +114,37 @@ export function SkillsSection() {
       title="Core technology matrix"
       description="How I ship — grouped by surface area, not vanity percentages."
     >
-      <Stagger className="grid gap-4 md:grid-cols-3 md:gap-5" stagger={0.06}>
-        {columns.map((column) => {
-          const skills = skillsForGroups(column.groupIds);
+      <div className="space-y-8 md:space-y-10">
+        {bands.map((band) => {
+          const skills = skillsForGroups(band.groupIds);
           return (
-            <StaggerItem key={column.id} className="h-full">
-              <TiltCard className="h-full">
-                <div className="flex h-full min-h-[22rem] flex-col rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface-raised)]/90 p-5 shadow-[var(--shadow-sm)] backdrop-blur-sm md:p-6">
-                  <div className="mb-5 flex items-center gap-3 text-[var(--color-brand)]">
-                    {column.icon}
-                    <h3 className="text-[length:var(--text-h3)] text-[var(--color-text)]">
-                      {column.label}
-                    </h3>
-                  </div>
-                  <ul className="flex flex-1 flex-col gap-2.5">
-                    {skills.map((skill) => {
-                      const icon = ICON_BY_NAME[skill.name];
-                      const slug = skill.projectSlugs?.[0];
-                      const row = (
-                        <span className="flex min-h-10 items-center justify-between gap-3 border-b border-[var(--color-border)]/70 py-2 last:border-0">
-                          <span className="inline-flex items-center gap-2 text-[var(--color-text)]">
-                            {icon ? (
-                              <Image src={icon} alt="" width={16} height={16} className="opacity-80" />
-                            ) : null}
-                            {skill.name}
-                          </span>
-                        </span>
-                      );
-                      return (
-                        <li key={skill.name}>
-                          {slug ? (
-                            <Link
-                              href={`/projects?tech=${encodeURIComponent(skill.name)}`}
-                              className="block transition-colors hover:text-[var(--color-brand)]"
-                              data-magnetic
-                            >
-                              {row}
-                            </Link>
-                          ) : (
-                            row
-                          )}
-                        </li>
-                      );
-                    })}
-                  </ul>
+            <Reveal key={band.id} direction={band.direction} distance={36}>
+              <div className="border-t border-[var(--color-border)] pt-6">
+                <div className="mb-4 flex items-center gap-2.5 text-[var(--color-brand)]">
+                  {band.icon}
+                  <h3 className="font-mono-label text-[var(--color-text)]">{band.label}</h3>
                 </div>
-              </TiltCard>
-            </StaggerItem>
+                <Stagger className="flex flex-wrap gap-2" stagger={0.03}>
+                  {skills.map((skill) => {
+                    const href = skill.projectSlugs?.[0]
+                      ? `/projects?tech=${encodeURIComponent(skill.name)}`
+                      : undefined;
+                    return (
+                      <StaggerItem key={skill.name} direction={band.direction} distance={16}>
+                        {href ? (
+                          <SkillChip name={skill.name} href={href} />
+                        ) : (
+                          <SkillChip name={skill.name} />
+                        )}
+                      </StaggerItem>
+                    );
+                  })}
+                </Stagger>
+              </div>
+            </Reveal>
           );
         })}
-      </Stagger>
+      </div>
     </Section>
   );
 }

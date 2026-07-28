@@ -17,7 +17,7 @@ export function AboutSection() {
       description="Client delivery across stacks — with formal Clean Architecture, DDD, and SOLID training."
     >
       <div className="grid items-start gap-10 lg:grid-cols-12 lg:gap-14">
-        <Reveal className="order-2 lg:order-1 lg:col-span-5">
+        <Reveal className="order-2 lg:order-1 lg:col-span-5" direction="left" distance={40}>
           <div className="relative mx-auto w-full max-w-md">
             <div
               className="absolute -inset-3 rounded-[calc(var(--radius-xl)+0.5rem)] bg-gradient-to-br from-[var(--color-brand)]/20 via-transparent to-[var(--color-brand)]/8"
@@ -40,7 +40,7 @@ export function AboutSection() {
           </div>
         </Reveal>
 
-        <Reveal className="order-1 space-y-5 text-[var(--color-text-muted)] lg:order-2 lg:col-span-7" delay={0.06}>
+        <Reveal className="order-1 space-y-5 text-[var(--color-text-muted)] lg:order-2 lg:col-span-7" delay={0.06} direction="right" distance={40}>
           {profile.bio.map((paragraph) => (
             <p key={paragraph.slice(0, 32)} className="prose-width">
               {paragraph}

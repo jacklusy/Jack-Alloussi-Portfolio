@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { Resend } from 'resend';
 import { contactFormSchema } from '@/content/schemas';
 import { env } from '@/lib/env';
 
@@ -36,6 +37,15 @@ function checkRateLimit(ip: string): boolean {
   return true;
 }
 
+function escapeHtml(value: string): string {
+  return value
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+
 export async function POST(request: Request) {
   const ip = getClientIp(request);
 
@@ -63,10 +73,67 @@ export async function POST(request: Request) {
     return NextResponse.json({ data: { ok: true } });
   }
 
-  // Delivery adapter: log in development; plug Resend when RESEND_API_KEY is set
-  if (env.NODE_ENV === 'development' || !env.RESEND_API_KEY) {
+  const { name, email, subject, message } = parsed.data;
+
+  if (!env.RESEND_API_KEY) {
+    if (env.NODE_ENV === 'production') {
+      return NextResponse.json(
+        {
+          error:
+            'Contact form delivery is temporarily unavailable. Please email jackalloussi23@gmail.com directly.',
+        },
+        { status: 503 },
+      );
+    }
+
+    console.info('[contact] Dev mode — email not sent', { name, email, subject, message });
     return NextResponse.json({ data: { ok: true } });
   }
 
-  return NextResponse.json({ data: { ok: true } });
+  if (!env.CONTACT_TO_EMAIL) {
+    return NextResponse.json(
+      {
+        error:
+          'Contact form is misconfigured. Please email jackalloussi23@gmail.com directly.',
+      },
+      { status: 503 },
+    );
+  }
+
+  const resend = new Resend(env.RESEND_API_KEY);
+  const safeSubject = subject.trim() || 'Portfolio contact';
+  const html = `
+    <h2>New portfolio message</h2>
+    <p><strong>From:</strong> ${escapeHtml(name)} &lt;${escapeHtml(email)}&gt;</p>
+    <p><strong>Subject:</strong> ${escapeHtml(safeSubject)}</p>
+    <p><strong>Message:</strong></p>
+    <p>${escapeHtml(message).replaceAll('\n', '<br/>')}</p>
+  `;
+
+  try {
+    const { error } = await resend.emails.send({
+      from: env.CONTACT_FROM_EMAIL,
+      to: [env.CONTACT_TO_EMAIL],
+      replyTo: email,
+      subject: `[Portfolio] ${safeSubject}`,
+      html,
+      text: `From: ${name} <${email}>\nSubject: ${safeSubject}\n\n${message}`,
+    });
+
+    if (error) {
+      console.error('[contact] Resend error', error);
+      return NextResponse.json(
+        { error: 'Could not send your message. Please email me directly.' },
+        { status: 502 },
+      );
+    }
+
+    return NextResponse.json({ data: { ok: true } });
+  } catch (error) {
+    console.error('[contact] Unexpected send failure', error);
+    return NextResponse.json(
+      { error: 'Could not send your message. Please email me directly.' },
+      { status: 502 },
+    );
+  }
 }

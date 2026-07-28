@@ -1,25 +1,23 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRichMotionCapability } from '@/hooks/useRichMotionCapability';
 import { cn } from '@/lib/utils';
 
 /**
  * Soft magnetic cursor for fine pointers only. Hidden on touch devices.
  */
 export function MagneticCursor() {
-  const [enabled, setEnabled] = useState(false);
+  const enabled = useRichMotionCapability();
   const [pos, setPos] = useState({ x: -100, y: -100 });
   const [active, setActive] = useState(false);
   const [hidden, setHidden] = useState(true);
 
   useEffect(() => {
-    const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (!fine || reduce) return;
-    setEnabled(true);
+    if (!enabled) return;
 
     let frame = 0;
-    let current = { x: 0, y: 0 };
+    const current = { x: 0, y: 0 };
     let target = { x: 0, y: 0 };
 
     function tick() {
@@ -65,7 +63,7 @@ export function MagneticCursor() {
       document.documentElement.removeEventListener('mouseleave', onLeave);
       document.documentElement.classList.remove('has-magnetic-cursor');
     };
-  }, []);
+  }, [enabled]);
 
   if (!enabled) return null;
 

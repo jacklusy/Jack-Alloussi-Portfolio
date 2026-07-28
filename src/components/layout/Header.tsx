@@ -14,10 +14,16 @@ import { cn } from '@/lib/utils';
 export function Header() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const [menuPath, setMenuPath] = useState(pathname);
   const [isCondensed, setIsCondensed] = useState(false);
   const menuId = useId();
   const closeRef = useRef<HTMLButtonElement>(null);
   const openRef = useRef<HTMLButtonElement>(null);
+
+  if (pathname !== menuPath) {
+    setMenuPath(pathname);
+    setIsOpen(false);
+  }
 
   useEffect(() => {
     function onScroll() {
@@ -27,10 +33,6 @@ export function Header() {
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
-
-  useEffect(() => {
-    setIsOpen(false);
-  }, [pathname]);
 
   useEffect(() => {
     document.body.style.overflow = isOpen ? 'hidden' : '';

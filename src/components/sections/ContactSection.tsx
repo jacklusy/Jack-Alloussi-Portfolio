@@ -13,7 +13,7 @@ export function ContactSection() {
       eyebrow="System.contact_06"
       align="center"
     >
-      <Reveal className="mx-auto max-w-3xl text-center">
+      <Reveal className="mx-auto max-w-3xl text-center" direction="up" distance={28}>
         <h2 className="text-display uppercase tracking-[-0.03em] text-[var(--color-text)]">
           Let&apos;s build what&apos;s next
         </h2>

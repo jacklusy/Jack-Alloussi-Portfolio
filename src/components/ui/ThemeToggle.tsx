@@ -1,32 +1,47 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useSyncExternalStore } from 'react';
 import { Moon, Sun } from 'lucide-react';
 
 type Theme = 'light' | 'dark';
+
+const THEME_EVENT = 'theme-change';
+
+function subscribeTheme(onChange: () => void) {
+  window.addEventListener('storage', onChange);
+  window.addEventListener(THEME_EVENT, onChange);
+  return () => {
+    window.removeEventListener('storage', onChange);
+    window.removeEventListener(THEME_EVENT, onChange);
+  };
+}
+
+function getTheme(): Theme {
+  const stored = window.localStorage.getItem('theme');
+  return stored === 'light' || stored === 'dark' ? stored : 'dark';
+}
+
+function getServerTheme(): Theme {
+  return 'dark';
+}
 
 export type ThemeToggleProps = {
   className?: string;
 };
 
 export function ThemeToggle({ className }: ThemeToggleProps) {
-  const [theme, setTheme] = useState<Theme>('dark');
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    const stored = window.localStorage.getItem('theme') as Theme | null;
-    // Dark-first when unset
-    const initial: Theme = stored === 'light' || stored === 'dark' ? stored : 'dark';
-    setTheme(initial);
-    document.documentElement.setAttribute('data-theme', initial);
-    setMounted(true);
-  }, []);
+  const theme = useSyncExternalStore(subscribeTheme, getTheme, getServerTheme);
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
 
   function handleToggle() {
     const next: Theme = theme === 'dark' ? 'light' : 'dark';
-    setTheme(next);
     document.documentElement.setAttribute('data-theme', next);
     window.localStorage.setItem('theme', next);
+    window.dispatchEvent(new Event(THEME_EVENT));
   }
 
   return (

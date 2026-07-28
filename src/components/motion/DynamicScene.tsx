@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { FluidAmbientGlow } from '@/components/motion/FluidAmbientGlow';
 import { ParallaxTilt } from '@/components/motion/ParallaxTilt';
 import { ParticleMesh } from '@/components/motion/ParticleMesh';
+import { useRichMotionCapability } from '@/hooks/useRichMotionCapability';
 import { cn } from '@/lib/utils';
 
 export type DynamicSceneProps = {
@@ -15,13 +15,7 @@ export type DynamicSceneProps = {
  * Ambient glow always; particles/parallax only on fine pointers (desktop).
  */
 export function DynamicScene({ className, variant = 'hero' }: DynamicSceneProps) {
-  const [richMotion, setRichMotion] = useState(false);
-
-  useEffect(() => {
-    const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    setRichMotion(fine && !reduce);
-  }, []);
+  const richMotion = useRichMotionCapability();
 
   const meshClass =
     variant === 'hero' ? 'bg-hero-mesh' : variant === 'page' ? 'bg-page-mesh' : 'bg-section-mesh';

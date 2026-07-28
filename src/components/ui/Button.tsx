@@ -7,9 +7,8 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        /* Ink CTA — black on light / near-white on dark */
         primary:
-          'bg-[var(--color-cta)] text-[var(--color-cta-fg)] hover:bg-[var(--color-cta-hover)] hover:shadow-[var(--shadow-md)] rounded-[var(--radius-md)] px-5',
+          'btn-cta hover:shadow-[var(--shadow-md)] rounded-[var(--radius-md)] px-5',
         /* Outline — calm secondary */
         secondary:
           'border border-[var(--color-border-strong)] bg-transparent text-[var(--color-text)] hover:border-[var(--color-brand)] hover:bg-[var(--color-brand-subtle)] hover:text-[var(--color-brand)] rounded-[var(--radius-md)] px-5',
