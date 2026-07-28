@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="750" viewBox="0 0 1200 750" role="img">
+  <rect width="1200" height="750" fill="#EEF1F4"/>
+  <rect x="80" y="120" width="320" height="160" rx="16" fill="#D4E8EA" stroke="#0A5C63" stroke-width="3"/>
+  <rect x="440" y="120" width="320" height="160" rx="16" fill="#F7F9FB" stroke="#8B97A8" stroke-width="3"/>
+  <rect x="800" y="120" width="320" height="160" rx="16" fill="#F7F9FB" stroke="#8B97A8" stroke-width="3"/>
+  <rect x="200" y="400" width="800" height="160" rx="16" fill="#E4E9EF" stroke="#C8D0DA" stroke-width="3"/>
+  <text x="240" y="210" font-family="system-ui" font-size="36" fill="#141C27">Clients</text>
+  <text x="560" y="210" font-family="system-ui" font-size="36" fill="#141C27">APIs</text>
+  <text x="920" y="210" font-family="system-ui" font-size="36" fill="#141C27">Data</text>
+  <text x="480" y="490" font-family="system-ui" font-size="36" fill="#141C27">Docker · CI/CD · Cloud</text>
+</svg>

@@ -1,36 +1,44 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Jack Alloussi — Portfolio
 
-## Getting Started
+Personal portfolio for a software engineer based in Amman, Jordan — built as a work sample for EU (especially Germany) and Gulf hiring managers.
 
-First, run the development server:
+## Stack
+
+Next.js (App Router) · TypeScript (strict) · Tailwind CSS v4 · Zod · React Hook Form · Vitest · pnpm
+
+## Quick start
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
+cp .env.example .env.local
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Command | Purpose |
+| --- | --- |
+| `pnpm dev` | Local development |
+| `pnpm build` | Production build |
+| `pnpm typecheck` | `tsc --noEmit` |
+| `pnpm lint` | ESLint |
+| `pnpm test` | Vitest unit tests |
+| `pnpm analyze` | Bundle analyzer |
 
-## Learn More
+## Content
 
-To learn more about Next.js, take a look at the following resources:
+Edit typed modules under `src/content/`. Schemas live in `src/content/schemas.ts`. Gaps use `{{NEEDS_INPUT: …}}` — see `docs/CONTENT-GAPS.md`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**Adding a project:** one entry in `src/content/projects/index.ts` (+ thumbnail). No component changes.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Design
 
-## Deploy on Vercel
+See `docs/DESIGN.md` (Status Rail signature, cool teal palette, Syne + IBM Plex).
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## CV
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Place the final PDF at:
+
+`public/documents/Jack-Alloussi-Software-Engineer-CV.pdf`
