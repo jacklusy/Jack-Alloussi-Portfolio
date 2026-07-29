@@ -25,8 +25,7 @@ const profileData = {
     visaNote:
       'Jordanian national. Eligible for the EU Blue Card under Section 18g of the Residence Act (shortage occupation and recent graduate salary threshold). Requires work authorisation in Germany.',
     graduationDate: 'October 2026',
-    relocationNote:
-      '{{NEEDS_INPUT: available-to-relocate-from date and notice period in weeks}}',
+    relocationNote: 'Available to relocate from October 2026 after graduation.',
   },
   socials: [
     {
@@ -72,7 +71,7 @@ const profileData = {
     { language: 'Arabic', level: 'Native' },
     {
       language: 'English',
-      level: 'Professional working proficiency — IELTS {{NEEDS_INPUT: band and date}}',
+      level: 'Professional working proficiency',
     },
     { language: 'German', level: 'A1, in progress' },
   ],

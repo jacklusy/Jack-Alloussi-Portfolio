@@ -31,7 +31,7 @@ export function EducationSection() {
                     {item.status === 'expected' ? ' (expected)' : ''}
                   </p>
                   <h4 className="mt-2 font-[family-name:var(--font-syne)] text-lg font-semibold">
-                    {item.degree} {item.field}
+                    {[item.degree, item.field].filter(Boolean).join(' ')}
                   </h4>
                   <p className="mt-1 text-[var(--color-text-muted)]">
                     {item.institution} · {item.location}
@@ -64,7 +64,12 @@ export function EducationSection() {
                   </h4>
                   <p className="mt-1 text-[var(--text-sm)] text-[var(--color-text-muted)]">
                     {cert.issuer}
-                    {cert.issueDate ? ` · ${renderContentText(cert.issueDate)}` : null}
+                    {cert.issueDate ? (
+                      <>
+                        {' · '}
+                        {renderContentText(cert.issueDate)}
+                      </>
+                    ) : null}
                   </p>
                 </Card>
               </StaggerItem>

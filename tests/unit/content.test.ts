@@ -4,6 +4,8 @@ import { hasNeedsInput, isUsableHref } from '@/lib/content-text';
 import { profileSchema } from '@/content/schemas';
 import { profile } from '@/content/profile';
 import { experience } from '@/content/experience';
+import { education } from '@/content/education';
+import { certifications } from '@/content/certifications';
 import { projects } from '@/content/projects';
 
 describe('formatMonthYear', () => {
@@ -50,5 +52,12 @@ describe('content validation', () => {
 
   it('exposes project slugs for static generation', () => {
     expect(projects.map((p) => p.slug)).toContain('us-client-platform');
+  });
+
+  it('ships no NEEDS_INPUT tokens in public content', () => {
+    const payloads = [profile, experience, education, certifications, projects];
+    for (const payload of payloads) {
+      expect(JSON.stringify(payload)).not.toMatch(/\{\{NEEDS_INPUT/);
+    }
   });
 });

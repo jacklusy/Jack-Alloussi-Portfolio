@@ -20,7 +20,6 @@ const certificationsData = [
     id: 'sky-backend',
     name: 'Backend Development: .NET, Clean Architecture, DDD, SOLID',
     issuer: 'Sky Software',
-    issueDate: '{{NEEDS_INPUT: Sky Software backend year}}',
     skills: ['.NET', 'Clean Architecture', 'DDD', 'SOLID'],
     status: 'earned' as const,
   },

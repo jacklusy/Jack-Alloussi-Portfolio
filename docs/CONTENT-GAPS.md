@@ -1,17 +1,28 @@
-# Content gaps — running list of `{{NEEDS_INPUT}}` tokens
+# Content gaps — running list of deferred facts
 
 Prioritised by impact on the 90-second recruiter journey.
 
-## Critical (blocks credibility)
+Public site content under `src/content/` must not contain `{{NEEDS_INPUT}}` tokens.
+Unit tests assert this. Fill gaps here first, then update typed content when values are verified.
 
-| Token | Location | Notes |
-| --- | --- | --- |
-| Project 1 name + live/repo URLs | `projects/index.ts` | Multi-tenant API |
-| Project 2 name + store/repo URLs | `projects/index.ts` | Mobile app |
-| Number of client applications | experience + case study | From Jira / team count |
-| Number of production apps | experience + case study | Verifiable ops count |
-| One measured result | experience + case study | Latency, deploy time, etc. |
-| Deploy time before → after | experience + case study | Minutes |
+## Deferred (not on the live site)
+
+| Item | Notes |
+| --- | --- |
+| Number of client applications | Experience + case study — from Jira / team count |
+| Number of production apps | Experience + case study — verifiable ops count |
+| One measured result | Latency, deploy time, etc. |
+| Deploy time before → after | Minutes |
+| Personal project 1 (multi-tenant API) | Name, timeframe, live/repo URLs, coverage % — removed from catalog until ready |
+| Personal project 2 (mobile app) | Name, timeframe, store/repo URLs — removed from catalog until ready |
+| Relocate notice period (weeks) | Site uses graduation-aligned relocate-from date only |
+| Anabin degree recognition status | Needed for Blue Card narrative |
+| IELTS band + date | Spoken language shows proficiency; cert remains in-progress |
+| GPA % | Intentionally omitted (CV/LinkedIn conflict) |
+| Sky Software backend year | Cert listed without issue date until known |
+| Domain / canonical URL | `.env` `NEXT_PUBLIC_SITE_URL` |
+| AWS cert issue date | When earned — currently in-progress |
+| GitHub Foundations credential URL | Optional verification link |
 
 ## Resolved
 
@@ -19,26 +30,10 @@ Prioritised by impact on the 90-second recruiter journey.
 | --- | --- |
 | GitHub | https://github.com/jacklusy |
 | CV PDF | `/public/pdf/CV_Jack_Alloussi.pdf` → `/pdf/CV_Jack_Alloussi.pdf` |
-
-## High (visa / credentials)
-
-| Token | Location | Notes |
-| --- | --- | --- |
-| Relocate-from date + notice period | `profile.ts` | Work authorisation block |
-| Anabin degree recognition status | (not yet on site) | Needed for Blue Card narrative |
-| IELTS band + date | `profile.ts` spoken languages | |
-| GPA % | `education.ts` | Optional but on CV |
-| Sky Software backend year | `certifications.ts` | |
-| Integration test coverage % | multi-tenant case study | |
-| Domain / canonical URL | `.env` `NEXT_PUBLIC_SITE_URL` | |
-
-## Medium
-
-| Token | Location | Notes |
-| --- | --- | --- |
-| Project timeframes | projects | |
-| AWS cert issue date | when earned | Currently in-progress |
-| GitHub Foundations credential URL | certifications | Optional verification link |
+| Relocate-from framing | Available to relocate from October 2026 after graduation |
+| GPA on site | Removed from education note |
+| Unfinished personal project cards | Removed from live catalog |
+| Sky Software backend `[object Object]` | Fixed issueDate ReactNode coercion; omitted placeholder date |
 
 ## Portrait
 

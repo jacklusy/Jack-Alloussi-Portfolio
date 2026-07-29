@@ -18,7 +18,7 @@ const skillsData = [
     label: 'Backend',
     skills: [
       { name: 'Node.js' },
-      { name: 'NestJS', projectSlugs: ['multi-tenant-api'] },
+      { name: 'NestJS', projectSlugs: ['us-client-platform'] },
       { name: 'Express.js' },
       { name: 'Laravel 9–12' },
       { name: 'REST API design' },
@@ -34,7 +34,7 @@ const skillsData = [
     id: 'mobile',
     label: 'Mobile',
     skills: [
-      { name: 'React Native (CLI & Expo)', projectSlugs: ['cross-platform-mobile'] },
+      { name: 'React Native (CLI & Expo)', projectSlugs: ['us-client-platform'] },
       { name: 'App Store & Play Store release' },
     ],
   },

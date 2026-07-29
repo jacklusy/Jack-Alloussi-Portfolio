@@ -85,7 +85,7 @@ export default function AboutPage() {
                     {formatMonthYear(item.startDate)} — {formatMonthYear(item.endDate)}
                   </p>
                   <h3 className="mt-2 text-[length:var(--text-h3)]">
-                    {item.degree} {item.field}
+                    {[item.degree, item.field].filter(Boolean).join(' ')}
                   </h3>
                   <p className="mt-1 text-[var(--color-text-muted)]">{item.institution}</p>
                   {item.note ? (

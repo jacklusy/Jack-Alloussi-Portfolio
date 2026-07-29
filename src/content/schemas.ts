@@ -98,7 +98,7 @@ export const educationSchema = z.object({
   id: z.string(),
   institution: z.string(),
   degree: z.string(),
-  field: z.string(),
+  field: z.string().optional(),
   location: z.string(),
   startDate: z.string(),
   endDate: z.string(),
