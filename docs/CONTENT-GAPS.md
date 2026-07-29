@@ -20,7 +20,7 @@ Unit tests assert this. Fill gaps here first, then update typed content when val
 | IELTS band + date | Spoken language shows proficiency; cert remains in-progress |
 | GPA % | Intentionally omitted (CV/LinkedIn conflict) |
 | Sky Software backend year | Cert listed without issue date until known |
-| Domain / canonical URL | `.env` `NEXT_PUBLIC_SITE_URL` |
+| Domain / canonical URL | Buy `jackalloussi.dev` (or `.com`); set Vercel custom domain + `NEXT_PUBLIC_SITE_URL`. Code already reads the env in `siteConfig` — no hard-coded Vercel URL in source. Current production env still points at `jack-alloussi-portfolio.vercel.app`. |
 | AWS cert issue date | When earned — currently in-progress |
 | GitHub Foundations credential URL | Optional verification link |
 

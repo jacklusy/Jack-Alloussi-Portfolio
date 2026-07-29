@@ -16,7 +16,7 @@ export function Footer() {
               {profile.name}
             </p>
             <p className="mt-3 max-w-sm text-[var(--color-text-muted)]">
-              {profile.role}. Built with technical precision — Next.js, TypeScript, Tailwind.
+              {profile.role} — Next.js, TypeScript, Tailwind.
             </p>
             <p className="mt-4 font-mono text-[var(--text-xs)] tracking-wide text-[var(--color-text-subtle)] uppercase">
               {profile.availability.status} · EU Blue Card eligible
@@ -88,7 +88,6 @@ export function Footer() {
           <p>
             © {year} {profile.name}
           </p>
-          <p>Specification-grade portfolio · work sample</p>
         </div>
       </Container>
     </footer>
