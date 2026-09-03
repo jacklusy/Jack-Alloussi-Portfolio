@@ -1,14 +1,21 @@
 'use client';
 
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { contactFormSchema, type ContactFormInput } from '@/content/schemas';
+import type { ContactFormInput } from '@/content/schemas';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
 
 type FormStatus = { kind: 'idle' } | { kind: 'success' } | { kind: 'error'; message: string };
+
+// Mirrors contactFormSchema in @/content/schemas. The server route
+// re-validates with the real zod schema — this is only for instant client
+// feedback, and duplicating the rules here (rather than pulling zodResolver
+// into the browser) keeps zod off the client entirely: it was a 287KB chunk
+// that Next's chunk-sharing heuristic loaded on every page, not just this
+// one, since it's linked to from the header, footer, and floating CTA.
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function ContactForm() {
   const [status, setStatus] = useState<FormStatus>({ kind: 'idle' });
@@ -18,7 +25,6 @@ export function ContactForm() {
     reset,
     formState: { errors, isSubmitting },
   } = useForm<ContactFormInput>({
-    resolver: zodResolver(contactFormSchema),
     defaultValues: {
       name: '',
       email: '',
@@ -67,7 +73,11 @@ export function ContactForm() {
         autoComplete="name"
         placeholder="Your name"
         error={errors.name?.message}
-        {...register('name')}
+        {...register('name', {
+          required: 'Name is required',
+          minLength: { value: 2, message: 'Name must be at least 2 characters' },
+          maxLength: { value: 100, message: 'Name must be 100 characters or fewer' },
+        })}
       />
       <Input
         label="Email"
@@ -76,20 +86,31 @@ export function ContactForm() {
         inputMode="email"
         placeholder="you@company.com"
         error={errors.email?.message}
-        {...register('email')}
+        {...register('email', {
+          required: 'Email is required',
+          pattern: { value: EMAIL_PATTERN, message: 'Enter a valid email address' },
+        })}
       />
       <Input
         label="Subject"
         autoComplete="off"
         placeholder="Role, intro call, or question"
         error={errors.subject?.message}
-        {...register('subject')}
+        {...register('subject', {
+          required: 'Subject is required',
+          minLength: { value: 3, message: 'Subject must be at least 3 characters' },
+          maxLength: { value: 120, message: 'Subject must be 120 characters or fewer' },
+        })}
       />
       <Textarea
         label="Message"
         placeholder="A short note about the role or what you’d like to discuss…"
         error={errors.message?.message}
-        {...register('message')}
+        {...register('message', {
+          required: 'Message is required',
+          minLength: { value: 20, message: 'Message must be at least 20 characters' },
+          maxLength: { value: 5000, message: 'Message must be 5000 characters or fewer' },
+        })}
       />
 
       <div className="pointer-events-none absolute left-0 top-0 h-px w-px overflow-hidden opacity-0" aria-hidden="true">

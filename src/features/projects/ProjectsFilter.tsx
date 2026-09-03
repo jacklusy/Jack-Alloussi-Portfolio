@@ -3,16 +3,18 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Search } from 'lucide-react';
-import { getProjectCategories, getTopTechnologies } from '@/content/projects';
 import { Badge } from '@/components/ui/Badge';
 import { cn } from '@/lib/utils';
 
-// Derived from the catalog rather than hardcoded, so the chips stay honest
-// as projects are added.
-const categories = getProjectCategories();
-const topTechs = getTopTechnologies(8);
-
 export type ProjectsFilterProps = {
+  /**
+   * Derived from the catalog server-side and passed down, rather than
+   * imported here — importing `@/content/projects` from a client component
+   * would pull all 13 case studies' full prose, plus the zod schemas that
+   * validate them, into the browser bundle just to read off category names.
+   */
+  categories: string[];
+  topTechs: string[];
   activeTech?: string | undefined;
   activeCategory?: string | undefined;
   resultCount: number;
@@ -20,6 +22,8 @@ export type ProjectsFilterProps = {
 };
 
 export function ProjectsFilter({
+  categories,
+  topTechs,
   activeTech,
   activeCategory,
   resultCount,

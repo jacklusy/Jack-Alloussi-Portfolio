@@ -1,10 +1,21 @@
 import type { Metadata } from 'next';
+import dynamic from 'next/dynamic';
 import { profile } from '@/content/profile';
 import { Container } from '@/components/layout/Container';
-import { ContactForm } from '@/features/contact/ContactForm';
 import { ButtonLink } from '@/components/ui/ButtonLink';
 import { CopyEmailButton } from '@/features/contact/CopyEmailButton';
 import { renderContentText } from '@/lib/content-text';
+
+/**
+ * Every page links to /contact (header CV button, floating hire button,
+ * footer nav), which was enough for the bundler's chunk-sharing heuristic to
+ * hoist ContactForm's dependencies — zod, react-hook-form, the resolvers —
+ * into a ~290KB chunk loaded and executed on every route, not just this one.
+ * A genuine dynamic-import boundary keeps it scoped to /contact.
+ */
+const ContactForm = dynamic(() =>
+  import('@/features/contact/ContactForm').then((mod) => mod.ContactForm),
+);
 
 export const metadata: Metadata = {
   title: 'Contact',

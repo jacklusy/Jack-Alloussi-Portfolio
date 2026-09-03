@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { projects } from '@/content/projects';
+import { projects, getProjectCategories, getTopTechnologies } from '@/content/projects';
 import { Container } from '@/components/layout/Container';
 import { ProjectCard } from '@/components/features/projects/ProjectCard';
 import { ProjectsFilter } from '@/features/projects/ProjectsFilter';
@@ -45,6 +45,8 @@ export default async function ProjectsPage({ searchParams }: ProjectsPageProps) 
 
         <div className="mt-10">
           <ProjectsFilter
+            categories={getProjectCategories()}
+            topTechs={getTopTechnologies(8)}
             activeTech={tech}
             activeCategory={category}
             resultCount={filtered.length}

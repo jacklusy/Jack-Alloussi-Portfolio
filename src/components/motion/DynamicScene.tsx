@@ -30,6 +30,12 @@ export function DynamicScene({ className, variant = 'hero' }: DynamicSceneProps)
 
   const heroOwnsCanvas = pathname === '/';
   const showParticles = richMotion && (variant === 'hero' || !heroOwnsCanvas);
+  // On the homepage, HeroSection mounts its own hero-variant scene directly
+  // over this one's top viewport. Rendering the glow orbs in both doubles
+  // the animated element count for no visible gain — the mesh gradient and
+  // grid stay (cheap, static, and still needed below the fold) but the
+  // orbs are skipped here in favour of the hero's own.
+  const showGlow = variant === 'hero' || !heroOwnsCanvas;
 
   return (
     <div
@@ -40,7 +46,7 @@ export function DynamicScene({ className, variant = 'hero' }: DynamicSceneProps)
       aria-hidden
     >
       <div className={cn('absolute inset-0', meshClass)} />
-      <FluidAmbientGlow />
+      {showGlow ? <FluidAmbientGlow /> : null}
       {richMotion && variant === 'hero' ? <ParallaxTilt /> : null}
       {showParticles ? (
         <div
