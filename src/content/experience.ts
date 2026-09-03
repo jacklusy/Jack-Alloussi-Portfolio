@@ -18,7 +18,7 @@ const experienceData = [
       'Custom software delivery for United States based clients across web, API, and mobile platforms.',
     achievements: [
       'Design, build, and maintain production backend services in TypeScript (NestJS, Express.js) and PHP (Laravel 9–12), backed by PostgreSQL and Redis, across multiple client applications.',
-      'Develop and release cross-platform mobile applications using React Native CLI, including provisioning, signing, and submission to the Apple App Store and Google Play Store.',
+      'Build and release 15+ cross-platform mobile applications using React Native CLI and Expo, owning provisioning, signing, and submission to the Apple App Store and Google Play Store.',
       'Build React and Next.js frontends in TypeScript, integrated with internally developed REST APIs.',
       'Containerise services with Docker and maintain CI/CD pipelines for faster, more consistent releases.',
       'Deploy and operate applications on Google Cloud Platform, DigitalOcean, Vercel, Railway, and Render.',
@@ -34,6 +34,7 @@ const experienceData = [
       'React',
       'Next.js',
       'React Native',
+      'Expo',
       'Docker',
       'GCP',
       'CI/CD',

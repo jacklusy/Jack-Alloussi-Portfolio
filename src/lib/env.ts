@@ -33,3 +33,18 @@ function loadEnv(): Env {
 }
 
 export const env = loadEnv();
+
+/**
+ * `.env` / `.env.local` are gitignored and never reach Vercel, so
+ * `NEXT_PUBLIC_SITE_URL` on a real deploy comes only from the dashboard's
+ * Environment Variables. If it's unset there, the zod default above falls
+ * back to localhost silently — the sitemap, canonical URLs, OG tags, and
+ * JSON-LD would all point at localhost with no build error. Fail loudly
+ * on an actual Vercel production build instead of shipping that quietly.
+ */
+if (process.env.VERCEL_ENV === 'production' && /^https?:\/\/localhost/.test(env.NEXT_PUBLIC_SITE_URL)) {
+  throw new Error(
+    'NEXT_PUBLIC_SITE_URL is unset or points at localhost on a Vercel production build. ' +
+      'Set it to https://jackalloussi.online in Project Settings → Environment Variables (Production).',
+  );
+}

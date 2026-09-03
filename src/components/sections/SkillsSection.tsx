@@ -96,7 +96,6 @@ function SkillChip({ name, href }: { name: string; href?: string }) {
       <Link
         href={href}
         className="rounded-[var(--radius-md)] hover:[&>span]:border-[var(--color-brand)] hover:[&>span]:text-[var(--color-brand)] focus-visible:outline-none"
-        data-magnetic
       >
         {content}
       </Link>

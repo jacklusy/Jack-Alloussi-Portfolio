@@ -3,10 +3,10 @@ import { IBM_Plex_Mono, IBM_Plex_Sans, Syne } from 'next/font/google';
 import { Footer } from '@/components/layout/Footer';
 import { Header } from '@/components/layout/Header';
 import { FloatingHireButton } from '@/components/layout/FloatingHireButton';
-import { MagneticCursor } from '@/components/motion/MagneticCursor';
 import { AmbientBackdrop } from '@/components/layout/AmbientBackdrop';
 import { ScrollDrivenPath } from '@/components/motion/ScrollDrivenPath';
 import { siteConfig } from '@/config/site';
+import { siteJsonLd } from '@/lib/schema';
 import { profile } from '@/content/profile';
 import '@/styles/globals.css';
 
@@ -14,7 +14,7 @@ const syne = Syne({
   subsets: ['latin'],
   variable: '--font-syne',
   display: 'swap',
-  weight: ['600', '700'],
+  weight: ['600', '700', '800'],
 });
 
 const plexSans = IBM_Plex_Sans({
@@ -67,6 +67,9 @@ export const metadata: Metadata = {
     description: siteConfig.description,
     images: [siteConfig.ogImage],
   },
+  verification: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
+    ? { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION }
+    : undefined,
   robots: {
     index: true,
     follow: true,
@@ -94,38 +97,6 @@ const themeInitScript = `
 `;
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const personJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'Person',
-    name: profile.name,
-    jobTitle: profile.role,
-    email: profile.email,
-    telephone: profile.phone,
-    address: {
-      '@type': 'PostalAddress',
-      addressLocality: 'Amman',
-      addressCountry: 'JO',
-    },
-    url: siteConfig.url,
-    image: `${siteConfig.url}${profile.portrait.src}`,
-    alumniOf: {
-      '@type': 'CollegeOrUniversity',
-      name: 'Al-Zaytoonah University of Jordan',
-    },
-    knowsAbout: [
-      'TypeScript',
-      'Node.js',
-      'NestJS',
-      'React',
-      'React Native',
-      'Clean Architecture',
-      'Domain-Driven Design',
-    ],
-    sameAs: profile.socials
-      .filter((s) => s.external && !s.href.includes('NEEDS_INPUT'))
-      .map((s) => s.href),
-  };
-
   return (
     <html lang="en" suppressHydrationWarning className={`${syne.variable} ${plexSans.variable} ${plexMono.variable} h-full`}>
       <head>
@@ -146,10 +117,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         </main>
         <Footer />
         <FloatingHireButton />
-        <MagneticCursor />
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd()) }}
         />
       </body>
     </html>

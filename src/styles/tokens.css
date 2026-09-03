@@ -18,11 +18,19 @@
   --color-brand-subtle: #e8f0fb;
   --color-brand-rgb: 27 91 181;
 
+  /* Accent 2 — warm counterpoint for metrics, statuses, and cover variety.
+     Every accent on the site used to be the same blue, which read monotone. */
+  --color-accent: #b45309;
+  --color-accent-hover: #92400e;
+  --color-accent-subtle: #fdf1e3;
+  --color-accent-rgb: 180 83 9;
+
   /* Surfaces — paper / elevated */
   --color-bg: #ffffff;
   --color-surface: #f8f9fb;
   --color-surface-raised: #ffffff;
   --color-surface-sunken: #eef1f5;
+  --color-surface-elevated: #ffffff;
 
   /* Text — charcoal on paper (AA+) */
   --color-text: #0a0a0a;
@@ -72,6 +80,7 @@
   --text-h1: clamp(2rem, 3vw + 1rem, 3.25rem);
   --text-h2: clamp(1.625rem, 1.8vw + 0.75rem, 2.25rem);
   --text-h3: clamp(1.25rem, 0.5vw + 1rem, 1.5rem);
+  --text-lead: clamp(1.1875rem, 0.6vw + 1rem, 1.5rem);
   --text-body-lg: clamp(1.0625rem, 0.25vw + 1rem, 1.25rem);
   --text-body: 1.0625rem;
   --text-sm: 0.875rem;
@@ -79,7 +88,11 @@
 
   --leading-display: 1.08;
   --leading-heading: 1.25;
-  --leading-body: 1.65;
+  --leading-body: 1.6;
+
+  --tracking-display: -0.035em;
+  --tracking-heading: -0.02em;
+  --tracking-label: 0.14em;
 
   /* Motion */
   --duration-micro: 120ms;
@@ -100,7 +113,8 @@
   /* Z-index */
   --z-header: 40;
   --z-overlay: 50;
-  --z-toast: 60;
+  --z-drawer: 60;
+  --z-toast: 70;
   --z-ambient: 0;
 }
 
@@ -120,11 +134,17 @@
   --color-brand-subtle: #122033;
   --color-brand-rgb: 61 130 230;
 
+  --color-accent: #e8a13c;
+  --color-accent-hover: #f2b45b;
+  --color-accent-subtle: #2a1e0f;
+  --color-accent-rgb: 232 161 60;
+
   /* Surfaces — near-black paper */
   --color-bg: #0b0d10;
   --color-surface: #14181e;
   --color-surface-raised: #1a1f27;
   --color-surface-sunken: #0f1217;
+  --color-surface-elevated: #212832;
 
   /* Text — near-white on dark (AA+) */
   --color-text: #f4f6f8;

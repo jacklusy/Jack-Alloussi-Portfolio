@@ -11,6 +11,8 @@ import { Card } from '@/components/ui/Card';
 import { ButtonLink } from '@/components/ui/ButtonLink';
 import { PhotoMoments } from '@/components/sections/PhotoMoments';
 import { renderContentText } from '@/lib/content-text';
+import { faqJsonLd, profilePageJsonLd } from '@/lib/schema';
+import { projects } from '@/content/projects';
 import { formatMonthYear } from '@/lib/utils';
 
 export const metadata: Metadata = {
@@ -20,14 +22,42 @@ export const metadata: Metadata = {
   alternates: { canonical: '/about' },
 };
 
+const FAQS = [
+  {
+    question: 'Who is Jack Alloussi?',
+    answer:
+      'A software engineer based in Amman, Jordan, working as a Software Engineer at CSC Beyond on custom software delivery for United States clients across web, API, and mobile platforms. Backend-leaning full stack: TypeScript and NestJS, PHP and Laravel, React and Next.js on the web, and React Native on mobile.',
+  },
+  {
+    question: 'What does Jack Alloussi work on?',
+    answer:
+      'Production backend services in TypeScript and PHP backed by PostgreSQL and Redis, React and Next.js frontends, and cross-platform mobile applications — more than fifteen released to the Apple App Store and Google Play using React Native CLI and Expo. Personal work includes a multi-tenant inventory API built around provable concurrency guarantees, an offline-first React Native client, and a browser-native PDF toolkit.',
+  },
+  {
+    question: 'Is Jack Alloussi available for relocation to Germany or the EU?',
+    answer:
+      'Yes. Open to backend or full-stack roles in Germany and the wider EU, available to relocate from October 2026 after graduation, and EU Blue Card eligible.',
+  },
+  {
+    question: 'What technologies does Jack Alloussi specialise in?',
+    answer:
+      'TypeScript, Node.js and NestJS, Laravel, React and Next.js, React Native and Expo, PostgreSQL, Redis, and Docker — applied with Clean Architecture and Domain-Driven Design where the problem justifies the ceremony.',
+  },
+] as const;
+
 export default function AboutPage() {
   return (
     <div className="py-[var(--section-y)]">
       <Container>
         <p className="font-mono-label text-[var(--color-brand)]">System.about</p>
-        <h1 className="mt-3 max-w-[18ch] text-[length:var(--text-h1)] tracking-tight">
-          Building production systems across stacks — with architecture discipline
+        <h1 className="mt-3 max-w-[20ch] text-[length:var(--text-h1)] tracking-[var(--tracking-display)]">
+          Jack Alloussi — building production systems across stacks
         </h1>
+        <p className="mt-5 max-w-[var(--prose-max)] text-[length:var(--text-lead)] leading-relaxed text-[var(--color-text-muted)]">
+          Software engineer in Amman, Jordan. Backend-leaning full stack across TypeScript, NestJS,
+          Laravel, React, and React Native — with {projects.length} documented case studies covering
+          the architecture, the tradeoffs, and the parts that did not work.
+        </p>
         <div className="mt-12 grid gap-12 lg:grid-cols-12">
           <div className="prose-width space-y-5 text-[var(--color-text-muted)] lg:col-span-7">
             {profile.bio.map((p) => (
@@ -109,7 +139,35 @@ export default function AboutPage() {
             ))}
           </ul>
         </section>
+
+        <section id="faq" className="mt-20 scroll-mt-28" aria-labelledby="faq-title">
+          <p className="font-mono-label text-[var(--color-brand)]">System.faq</p>
+          <h2
+            id="faq-title"
+            className="mt-3 text-[length:var(--text-h2)] tracking-[var(--tracking-heading)]"
+          >
+            Frequently asked
+          </h2>
+          <dl className="mt-8 max-w-[var(--prose-max)] divide-y divide-[var(--color-border)] border-y border-[var(--color-border)]">
+            {FAQS.map((faq) => (
+              <div key={faq.question} className="py-6">
+                <dt className="font-[family-name:var(--font-syne)] text-[length:var(--text-h3)] font-semibold text-[var(--color-text)]">
+                  {faq.question}
+                </dt>
+                <dd className="mt-3 leading-relaxed text-[var(--color-text-muted)]">{faq.answer}</dd>
+              </div>
+            ))}
+          </dl>
+        </section>
       </Container>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(profilePageJsonLd()) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd(FAQS)) }}
+      />
     </div>
   );
 }

@@ -21,7 +21,7 @@ export function Card({
       className={cn(
         'rounded-[var(--radius-lg)] transition-[transform,border-color,box-shadow,background-color] duration-[var(--duration-standard)] ease-[var(--ease-out)]',
         variant === 'default' &&
-          'border border-[var(--color-border)] bg-[var(--color-surface-raised)] p-6 shadow-[var(--shadow-sm)]',
+          'card-surface border border-[var(--color-border)] p-6 shadow-[var(--shadow-sm)]',
         variant === 'panel' &&
           'border border-[var(--color-border)] bg-[var(--color-surface)] p-6',
         variant === 'ghost' && 'border border-transparent bg-transparent p-0',

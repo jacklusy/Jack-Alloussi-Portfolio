@@ -17,7 +17,6 @@ export function FloatingHireButton() {
   return (
     <Link
       href="/contact"
-      data-magnetic
       className={cn(
         'fixed bottom-[max(1.25rem,env(safe-area-inset-bottom))] right-[max(1.25rem,env(safe-area-inset-right))] z-[45]',
         'btn-cta inline-flex min-h-12 items-center gap-2 rounded-full px-5 py-3',

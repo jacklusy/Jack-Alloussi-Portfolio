@@ -129,6 +129,13 @@ export const decisionSchema = z.object({
   tradeoff: z.string(),
 });
 
+/** Rich per-category stack breakdown, preserved from the project docs so the
+ *  detail page can show more than a flat tag list. */
+export const stackGroupSchema = z.object({
+  category: z.string(),
+  items: z.array(z.string()),
+});
+
 export const caseStudySchema = z.object({
   context: z.string(),
   problem: z.string(),
@@ -141,6 +148,26 @@ export const caseStudySchema = z.object({
   challenges: z.array(z.string()),
   outcomes: z.array(z.string()),
   retrospective: z.string(),
+  stackDetail: z.array(stackGroupSchema).optional(),
+});
+
+/** Drives the generated SVG cover. `hue` keeps the 13 covers distinguishable
+ *  without inventing a colour token per project. */
+export const projectCoverSchema = z.object({
+  hue: z.number().min(0).max(360),
+  pattern: z.enum(['grid', 'arcs', 'planes', 'glyphs', 'nodes', 'waves']),
+});
+
+/** Projects that are one system across several repos share a group, so the
+ *  grid reads as a handful of systems rather than many look-alike cards. */
+export const projectGroupSchema = z.object({
+  id: z.string(),
+  label: z.string(),
+});
+
+export const projectMetricSchema = z.object({
+  label: z.string(),
+  value: z.string(),
 });
 
 export const projectBaseSchema = z.object({
@@ -153,20 +180,29 @@ export const projectBaseSchema = z.object({
   status: z.enum(['shipped', 'in-progress', 'archived']),
   technologies: z.array(z.string()),
   categories: z.array(z.string()),
-  thumbnail: z.object({
-    src: z.string(),
-    alt: z.string(),
-    width: z.number(),
-    height: z.number(),
-  }),
+  /** Optional real screenshot; the generated cover is used when absent. */
+  thumbnail: z
+    .object({
+      src: z.string(),
+      alt: z.string(),
+      width: z.number(),
+      height: z.number(),
+    })
+    .optional(),
   links: z.object({
     live: z.string().optional(),
     repo: z.string().optional(),
     caseStudy: z.string().optional(),
   }),
   featured: z.boolean(),
-  kind: z.enum(['personal', 'professional']),
+  kind: z.enum(['personal', 'professional', 'client', 'training']),
   confidential: z.boolean(),
+  year: z.number().int(),
+  cover: projectCoverSchema,
+  group: projectGroupSchema.optional(),
+  metrics: z.array(projectMetricSchema).optional(),
+  /** Higher sorts earlier; ties fall back to `year`. */
+  sortWeight: z.number().optional(),
 });
 
 export const projectSchema = z.discriminatedUnion('hasCaseStudy', [

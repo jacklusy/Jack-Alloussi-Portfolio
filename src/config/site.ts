@@ -8,15 +8,22 @@ export const siteConfig = {
   url: env.NEXT_PUBLIC_SITE_URL,
   locale: 'en_GB',
   ogImage: '/opengraph-image',
+  /**
+   * Bumped by hand when page content meaningfully changes. Stamping
+   * `new Date()` on every build makes every URL look freshly modified, which
+   * search engines learn to discount.
+   */
+  lastModified: '2026-09-03',
   keywords: [
     'Jack Alloussi',
-    'Software Engineer',
-    'NestJS',
-    'TypeScript',
-    'React Native',
-    'EU Blue Card',
-    'Amman',
-    'Germany relocation',
+    'Jack Alloussi software engineer',
+    'Jack Alloussi portfolio',
+    'Jack Alloussi developer',
+    'Software Engineer Amman',
+    'NestJS developer',
+    'React Native developer',
+    'TypeScript backend engineer',
+    'EU Blue Card software engineer',
   ],
   author: {
     name: 'Jack Alloussi',
