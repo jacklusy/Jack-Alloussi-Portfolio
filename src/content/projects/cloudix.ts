@@ -30,7 +30,8 @@ export const cloudix = {
     { label: 'Routes', value: '7, fully bilingual' },
   ],
   links: {
-    live: 'https://cloudex.sa/',
+    live: 'https://cloudix.siqva.com',
+    repo: 'https://github.com/jacklusy/Cloudix',
     caseStudy: '/projects/cloudix',
   },
   featured: true,

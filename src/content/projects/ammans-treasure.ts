@@ -28,6 +28,7 @@ export const ammansTreasure = {
     { label: 'Trackers / cookies', value: 'None' },
   ],
   links: {
+    live: 'https://amman-treasure.siqva.com',
     caseStudy: '/projects/ammans-treasure',
   },
   featured: false,
