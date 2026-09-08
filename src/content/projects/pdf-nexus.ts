@@ -1,5 +1,10 @@
 import type { Project } from '@/content/schemas';
 
+import homePage from '@/assets/img/projects/pdfnexus/home_page.png';
+import tools from '@/assets/img/projects/pdfnexus/tools.png';
+import workspace from '@/assets/img/projects/pdfnexus/workspace.png';
+import feedback from '@/assets/img/projects/pdfnexus/feedback.png';
+
 export const pdfNexus = {
   slug: 'pdf-nexus',
   title: 'PDFNexus — browser-native PDF toolkit',
@@ -25,6 +30,8 @@ export const pdfNexus = {
     'IndexedDB',
     'Zod',
     'Turborepo',
+    'Docker',
+    'Caddy',
   ],
   categories: ['Full-stack', 'Frontend', 'Backend'],
   cover: { hue: 158, pattern: 'glyphs' as const },
@@ -33,7 +40,33 @@ export const pdfNexus = {
     { label: 'Processed locally', value: '25 of 27' },
     { label: 'Tests passing', value: '182' },
   ],
+  thumbnail: {
+    image: homePage,
+    alt: 'The PDFNexus home page. The headline reads “Merge & organize PDFs without uploading your drafts”, above cards for merging locally, organising pages and converting to Word.',
+  },
+  gallery: [
+    {
+      image: tools,
+      alt: 'The PDF tools page: four category cards — organise, convert, edit and markup, secure — each showing its tool count, with the Tools menu open over them listing individual tools.',
+      caption:
+        'Tools are grouped into four categories, each tool its own page. The copy states the split plainly rather than burying it: local tools need no account, and the server and OCR features ask for consent first.',
+    },
+    {
+      image: workspace,
+      alt: 'The PDFNexus workspace: a grid of page thumbnails from a four-file, 351-page assembly, each page colour-coded by its source file, beside a sidebar of workspace stats and uploaded files.',
+      caption:
+        'The workspace assembling four files and 351 pages into a single page order, colour-coded by source. The “Local Engine” badge in the header is the processing mode showing itself — the same declared value that decides whether an operation is allowed near the network.',
+    },
+    {
+      image: feedback,
+      alt: 'The PDFNexus feedback form, with fields for category, subject, message and an optional contact email.',
+      caption:
+        'The feedback form keeps the same premise: the contact email is optional, and the form asks outright that confidential document contents stay out of the message.',
+    },
+  ],
   links: {
+    live: 'https://pdfnexus.siqva.com',
+    repo: 'https://github.com/jacklusy/PDFNexus',
     caseStudy: '/projects/pdf-nexus',
   },
   featured: true,
@@ -51,7 +84,7 @@ export const pdfNexus = {
     architecture: {
       diagramId: 'pdf-nexus-hybrid',
       altText:
-        'A Turborepo monorepo: a Next.js 15 web app running PDF operations in module workers over pdf.js, pdf-lib and qpdf WebAssembly with IndexedDB session recovery, alongside a NestJS API handling only the operations that require a server — Office conversion, OCR, direct-to-storage multipart upload, HMAC download links and BullMQ email delivery — with Zod contracts shared between both sides as a workspace package.',
+        'A Turborepo monorepo: a Next.js 15 web app running PDF operations in module workers over pdf.js, pdf-lib and qpdf WebAssembly with IndexedDB session recovery, alongside a NestJS API handling only the operations that require a server — Office conversion, OCR, direct-to-storage multipart upload, HMAC download links and BullMQ email delivery — with Zod contracts shared between both sides as a workspace package, all of it running as seven containers behind Caddy on a single host.',
     },
     decisions: [
       {
@@ -92,15 +125,17 @@ export const pdfNexus = {
       'Getting cancellation right across three races — cancel before post, cancel in flight, cancel after settle — for what looks like a small utility but is used by every tool.',
       'Two CORS and caching incidents whose errors pointed nowhere near their causes: a wildcard origin header is silently incompatible with credentialed requests, and cached responses can cause a stale origin header to be re-applied.',
       'A build-system collision where the framework transform rewrote the PDF worker with unresolvable helper imports, fixed by copying the untransformed file at prebuild.',
+      'Containerising the monorepo surfaced four failures that a working local checkout had been hiding: two wrong COPY paths, an uncopied scripts directory, upload middleware that was never declared as a dependency, and a standalone build that shipped with no node_modules because the file-tracing root was left at the app rather than the workspace.',
     ],
     outcomes: [
       '27 tool routes across organise, convert, edit, and secure categories — 25 of them fully local, with only Office conversion and OCR-assisted extraction declaring a server mode.',
       'A continuous workspace: a virtualised multi-file page organiser, IndexedDB session recovery with a typed quota warning, a batch queue with per-job retry, and cross-tool handoff so one tool’s output becomes the next tool’s input.',
       '182 tests passing across three workspaces, with CI running typecheck, tests, and builds against real Postgres and Redis containers on every pull request.',
       'A delivery path with email verification, resumable 500MB direct-to-storage upload, signed 24-hour download links, and a 7-day file TTL enforced by a cleanup job — plus scoped Drive, Dropbox and OneDrive connectors encrypted at rest.',
+      'Live on a single ARM host: seven containers under Docker Compose behind Caddy, with automatic TLS, HTTP/2 and HTTP/3, and the storage origin deliberately left unproxied so the 500MB upload ceiling is the application’s own rather than a CDN’s.',
     ],
     retrospective:
-      'Making processing mode a typed value was the highest-leverage decision in the codebase, and keeping each limitation as a constant next to the code that has the limitation was the second — marketing copy in a separate file drifts, a constant beside the implementation does not. I also kept a status document with genuinely blank cells for checks that were never executed; publishing blanks is uncomfortable, and far better than publishing a document where the blanks have been filled in optimistically and nobody can tell which cells are real. What did not work: the bundle is heavy and there is no clean fix, because the local-first premise requires all those parsing and generation libraries to reach the browser — lazy loading and a CI budget gate keep it bounded, but bounded is not small, and low-end mobile remains a poor experience. Multipart upload was substantially harder than estimated; the happy path took an afternoon and everything else took much longer, which is the real lesson: for direct-to-storage uploads, budget the failure modes as the primary work. And the scope grew past its own premise — a ten-module admin console now serves an operator rather than the user whose privacy the product is about. It is useful and it works, and it is the clearest instance of scope that grew because it was possible rather than because the premise required it. Four things I would do differently: set the bundle budget on day one instead of retrofitting it after a dependency is load-bearing; build the automated cross-browser matrix before writing 27 tools, since local PDF processing is exactly where engine differences bite; decide the admin console’s boundary explicitly rather than letting it accrete; and write the honest capability copy first and build to it, instead of retrofitting a copy-honesty pass across pages already written.',
+      'Making processing mode a typed value was the highest-leverage decision in the codebase, and keeping each limitation as a constant next to the code that has the limitation was the second — marketing copy in a separate file drifts, a constant beside the implementation does not. I also kept a status document with genuinely blank cells for checks that were never executed; publishing blanks is uncomfortable, and far better than publishing a document where the blanks have been filled in optimistically and nobody can tell which cells are real. What did not work: the bundle is heavy and there is no clean fix, because the local-first premise requires all those parsing and generation libraries to reach the browser — lazy loading and a CI budget gate keep it bounded, but bounded is not small, and low-end mobile remains a poor experience. Production numbers made that concrete rather than theoretical: the workspace route reaches largest-contentful-paint at 5.5 seconds behind a 10 millisecond time-to-first-byte, which is an unambiguous verdict — the server is idle and the bundle is the whole problem, and the fix is deferring the PDF engine until a file is actually opened. Multipart upload was substantially harder than estimated; the happy path took an afternoon and everything else took much longer, which is the real lesson: for direct-to-storage uploads, budget the failure modes as the primary work. And the scope grew past its own premise — a ten-module admin console now serves an operator rather than the user whose privacy the product is about. It is useful and it works, and it is the clearest instance of scope that grew because it was possible rather than because the premise required it. Five things I would do differently: deploy to a clean host in the first week, because every build failure at cutover was a dependency or path that only ever worked on a machine where it had already been installed once; set the bundle budget on day one instead of retrofitting it after a dependency is load-bearing; build the automated cross-browser matrix before writing 27 tools, since local PDF processing is exactly where engine differences bite; decide the admin console’s boundary explicitly rather than letting it accrete; and write the honest capability copy first and build to it, instead of retrofitting a copy-honesty pass across pages already written.',
     stackDetail: [
       {
         category: 'Web app',
@@ -138,6 +173,16 @@ export const pdfNexus = {
           'Gotenberg (Office conversion)',
           'Direct-to-storage multipart upload',
           'HMAC-signed download links',
+        ],
+      },
+      {
+        category: 'Deployment',
+        items: [
+          'Docker Compose — 7 containers on one ARM host',
+          'Caddy (TLS, HTTP/2 + HTTP/3, automatic certificate renewal)',
+          'MinIO (S3-compatible object storage)',
+          'Gotenberg with capped conversion concurrency',
+          'Split app / API / storage origins',
         ],
       },
       {

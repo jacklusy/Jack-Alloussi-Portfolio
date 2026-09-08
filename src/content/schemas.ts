@@ -1,3 +1,4 @@
+import type { StaticImageData } from 'next/image';
 import { z } from 'zod';
 
 export const socialLinkSchema = z.object({
@@ -170,6 +171,32 @@ export const projectMetricSchema = z.object({
   value: z.string(),
 });
 
+/** A statically imported image. Screenshots live under `src/assets/img/projects`,
+ *  so the dimensions and blur placeholder come from the import rather than being
+ *  restated by hand next to a path that can drift away from them.
+ *
+ *  `z.custom` rather than `z.object` on purpose: it passes the import through
+ *  untouched — an object schema would strip the blur fields it did not declare —
+ *  and it types as Next's own `StaticImageData` instead of a lookalike. */
+export const staticImageSchema = z.custom<StaticImageData>(
+  (value) =>
+    typeof value === 'object' &&
+    value !== null &&
+    typeof (value as StaticImageData).src === 'string' &&
+    typeof (value as StaticImageData).width === 'number' &&
+    typeof (value as StaticImageData).height === 'number',
+  { message: 'Expected a statically imported image' },
+);
+
+export const projectImageSchema = z.object({
+  image: staticImageSchema,
+  alt: z.string(),
+  /** Says what the screen is doing, not just what it is. */
+  caption: z.string().optional(),
+});
+
+export type ProjectImage = z.infer<typeof projectImageSchema>;
+
 export const projectBaseSchema = z.object({
   slug: z.string(),
   title: z.string(),
@@ -180,15 +207,11 @@ export const projectBaseSchema = z.object({
   status: z.enum(['shipped', 'in-progress', 'archived']),
   technologies: z.array(z.string()),
   categories: z.array(z.string()),
-  /** Optional real screenshot; the generated cover is used when absent. */
-  thumbnail: z
-    .object({
-      src: z.string(),
-      alt: z.string(),
-      width: z.number(),
-      height: z.number(),
-    })
-    .optional(),
+  /** Optional real screenshot leading the card and the detail hero; the
+   *  generated cover is used when absent. */
+  thumbnail: projectImageSchema.optional(),
+  /** Supporting screenshots, shown as a captioned grid on the detail page. */
+  gallery: z.array(projectImageSchema).optional(),
   links: z.object({
     live: z.string().optional(),
     repo: z.string().optional(),

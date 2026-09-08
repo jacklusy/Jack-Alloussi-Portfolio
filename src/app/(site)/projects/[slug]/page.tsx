@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import Image from 'next/image';
 import Link from 'next/link';
 import { getAllProjectSlugs, getProjectBySlug, projects } from '@/content/projects';
 import { Container } from '@/components/layout/Container';
@@ -53,6 +54,7 @@ const TOC = [
   ['outcomes', '05', 'Outcome'],
   ['retrospective', '06', 'Retrospective'],
   ['stack', '07', 'Stack'],
+  ['interface', '08', 'Interface'],
 ] as const;
 
 function SectionHeading({ index, title, id }: { index: string; title: string; id: string }) {
@@ -146,10 +148,25 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
           </dl>
         ) : null}
 
-        <figure className="mt-10 overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border)]">
-          <div className="aspect-[16/7] w-full">
-            <ProjectCover project={project} />
-          </div>
+        {/* A screenshot keeps its own aspect ratio so nothing is cropped out of
+            the frame; the generated cover is drawn to fill whatever box it is
+            given, so it takes the wider one. */}
+        <figure className="mt-10 overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface-sunken)]">
+          {project.thumbnail ? (
+            <Image
+              src={project.thumbnail.image}
+              alt={project.thumbnail.alt}
+              placeholder="blur"
+              className="h-auto w-full"
+              sizes="(max-width: 1280px) 100vw, 1200px"
+              loading="eager"
+              fetchPriority="high"
+            />
+          ) : (
+            <div className="aspect-[16/7] w-full">
+              <ProjectCover project={project} />
+            </div>
+          )}
         </figure>
 
         <div className="mt-14 grid gap-12 lg:grid-cols-12">
@@ -159,9 +176,11 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
                 <nav aria-label="On this page">
                   <p className="font-mono-label mb-3 text-[var(--color-text-subtle)]">Contents</p>
                   <ul className="space-y-2">
-                    {TOC.filter(
-                      ([id]) => id !== 'stack' || project.caseStudy.stackDetail?.length,
-                    ).map(([id, num, label]) => (
+                    {TOC.filter(([id]) => {
+                      if (id === 'stack') return Boolean(project.caseStudy.stackDetail?.length);
+                      if (id === 'interface') return Boolean(project.gallery?.length);
+                      return true;
+                    }).map(([id, num, label]) => (
                       <li key={id}>
                         <a
                           href={`#${id}`}
@@ -350,6 +369,32 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
                 <p>Summary project — full case study pending publishable detail.</p>
               </Card>
             )}
+
+            {project.gallery?.length ? (
+              <section id="interface" className="scroll-mt-28" aria-labelledby="interface-heading">
+                <SectionHeading id="interface" index="08" title="Interface" />
+                <div className="mt-7 grid gap-6 sm:grid-cols-2">
+                  {project.gallery.map((shot) => (
+                    <figure key={shot.image.src} className="min-w-0">
+                      <div className="overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface-sunken)]">
+                        <Image
+                          src={shot.image}
+                          alt={shot.alt}
+                          placeholder="blur"
+                          className="h-auto w-full"
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        />
+                      </div>
+                      {shot.caption ? (
+                        <figcaption className="mt-3 text-[var(--text-sm)] leading-relaxed">
+                          {shot.caption}
+                        </figcaption>
+                      ) : null}
+                    </figure>
+                  ))}
+                </div>
+              </section>
+            ) : null}
 
             {(project.links.live && isUsableHref(project.links.live)) ||
             (project.links.repo && isUsableHref(project.links.repo)) ? (

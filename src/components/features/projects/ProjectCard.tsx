@@ -48,10 +48,9 @@ export function ProjectCard({ project, className, variant = 'feature' }: Project
           <div className="absolute inset-0 transition-transform duration-[var(--duration-large)] ease-[var(--ease-out)] group-hover:scale-[1.03]">
             {project.thumbnail ? (
               <Image
-                src={project.thumbnail.src}
+                src={project.thumbnail.image}
                 alt={project.thumbnail.alt}
-                width={project.thumbnail.width}
-                height={project.thumbnail.height}
+                placeholder="blur"
                 className="h-full w-full object-cover"
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               />
