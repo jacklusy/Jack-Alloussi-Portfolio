@@ -1,5 +1,8 @@
 import type { Project } from '@/content/schemas';
 
+import auth from '@/assets/img/projects/stockwell/auth.png';
+import apis from '@/assets/img/projects/stockwell/apis.png';
+
 export const stockwell = {
   slug: 'stockwell',
   title: 'Stockwell — multi-tenant inventory & warehouse API',
@@ -22,6 +25,8 @@ export const stockwell = {
     'Testcontainers',
     'Terraform',
     'AWS',
+    'Oracle Cloud Infrastructure',
+    'Caddy',
     'GitHub Actions',
     'Clean Architecture',
   ],
@@ -33,8 +38,23 @@ export const stockwell = {
     { label: 'Test tiers', value: 'Unit · Integration · E2E' },
     { label: 'Architecture decision records', value: '8' },
   ],
+  thumbnail: {
+    image: auth,
+    alt: 'The Stockwell API Swagger page: title, version and OAS badges, auth instructions covering register, login, tenant context and the Idempotency-Key header, and the auth endpoint group below.',
+  },
+  gallery: [
+    {
+      image: apis,
+      alt: 'The Swagger endpoint catalog: health, inventory and products groups expanded, showing routes like /api/v1/inventory/transfer and /api/v1/inventory/reservations with lock icons marking authenticated routes.',
+      caption:
+        'Every route is real and callable from the browser — health probes, the five inventory endpoints the concurrency and locking work is built around, and product and warehouse CRUD, each documented with its request and response shapes.',
+    },
+  ],
   links: {
+    live: 'https://stockwell.siqva.com/api/docs',
     repo: 'https://github.com/jacklusy/stockwell',
+    liveNote:
+      'Live and open — no demo account needed. Register a tenant, log in, click Authorize, and every endpoint above is callable from the browser.',
     caseStudy: '/projects/stockwell',
   },
   featured: true,
@@ -101,15 +121,17 @@ export const stockwell = {
       'Constructing a deterministic race. The test asserting that parallel adjusts conflict was itself racy, occasionally seeing both requests serialise cleanly and both succeed.',
       'Lifecycle hooks firing in contexts they were never designed for — exporting the OpenAPI schema boots the Nest application to walk its decorators, which started a queue worker and tried to connect to Redis during a documentation build.',
       'Rate limiting fighting the test suite: registering many users tripped the throttler and produced flaky 429s unrelated to anything under test.',
+      'Deploying onto a host already running two other unrelated stacks: default service names like postgres and redis would silently collide with theirs on the same Docker network, and the fix was prefixing every service — stockwell-postgres, stockwell-redis — and putting only the API container on the shared routing network, with the database and cache on an isolated network exposing no ports to the host at all.',
     ],
     outcomes: [
       'Fifty concurrent adjusts to the same balance resolve to exactly one winner and forty-nine explicit 409 conflicts, with the final quantity exact and no intermediate state ever negative — captured as a JSON artefact on every CI run.',
       'A three-tier test strategy: unit tests with zero I/O for domain invariants and RBAC boundaries, Testcontainers integration tests for transactions, locks, idempotency and RLS, and end-to-end tests for HTTP contracts and tenant isolation over the wire.',
       'Cross-tenant access returns 404 rather than 403 across every resource, verified end to end, with row-level security asserted under the restricted application role rather than the owner.',
       'A CI pipeline running lint, typecheck, dependency-boundary checks, three test tiers, migrations, OpenAPI export, image build, Terraform validation and a production dependency audit — and a deploy that captures a rollback target before it changes anything.',
+      'Live at a real URL with a public Swagger UI: a separate production Docker Compose file, on an existing Oracle Cloud host shared with two other unrelated projects, each isolated in its own set of containers with the database and cache kept off the shared network entirely. Currently on its own branch, not yet merged to main.',
     ],
     retrospective:
-      'Choosing one hard problem and proving it was the whole value. A version with twice the CRUD surface and no concurrency artefact would say considerably less. Two failures taught me the most. Row-level security passed every test that checked the policies existed and failed the first test that checked they worked — a security control that cannot fail visibly in a test is not a control, and the test is the feature. Separately, the deploy workflow force-restarted tasks against the existing task definition, so every deploy went green while shipping the previous release; the pipeline being green is a claim, not a fact, and you have to verify the deployed artefact rather than the exit code. What I would do differently: ship the read endpoints in the first inventory commit, because building a carefully designed audit log no HTTP client can read is a real design miss that happened because the write path held the interesting problems. Deploy earlier to something cheap, since Terraform that validates but has never been applied carries far less signal than a running URL — and observation would have caught the deploy bug that code reading did not. Build the idempotency-key expiry reaper as part of the idempotency work rather than listing it as a known negative, because a column with no reaper is a slow leak with documentation attached. And measure the conflict rate under sustained realistic contention, which is the number that would actually tell me whether the default locking strategy is right.',
+      'Choosing one hard problem and proving it was the whole value. A version with twice the CRUD surface and no concurrency artefact would say considerably less. Two failures taught me the most. Row-level security passed every test that checked the policies existed and failed the first test that checked they worked — a security control that cannot fail visibly in a test is not a control, and the test is the feature. Separately, the deploy workflow force-restarted tasks against the existing task definition, so every deploy went green while shipping the previous release; the pipeline being green is a claim, not a fact, and you have to verify the deployed artefact rather than the exit code. What I would do differently: ship the read endpoints in the first inventory commit, because building a carefully designed audit log no HTTP client can read is a real design miss that happened because the write path held the interesting problems. Deploy earlier to something cheap, since Terraform that validates but has never been applied carries far less signal than a running URL — and observation would have caught the deploy bug that code reading did not. That lesson got acted on, just not through the path CI validates: it is live now via a plain Docker Compose file on an existing Oracle Cloud box, reachable in an afternoon rather than a cloud account and a Terraform apply. The AWS/ECS topology stays in the repo as validated-but-unapplied infrastructure, which is a more honest description of it than implying it is what actually serves the URL. Build the idempotency-key expiry reaper as part of the idempotency work rather than listing it as a known negative, because a column with no reaper is a slow leak with documentation attached. And measure the conflict rate under sustained realistic contention, which is the number that would actually tell me whether the default locking strategy is right.',
     stackDetail: [
       {
         category: 'Runtime & framework',
@@ -141,9 +163,10 @@ export const stockwell = {
         category: 'Delivery',
         items: [
           'Multi-stage Docker image',
-          'Terraform (ECS/ALB/ECR topology)',
+          'Terraform (ECS/ALB/ECR topology, validated in CI, not applied)',
           'GitHub Actions: migrate before traffic shift, rollback ARN captured first',
           'OpenAPI export + Swagger UI',
+          'Live: production Docker Compose on a shared Oracle Cloud host, behind Caddy',
         ],
       },
     ],

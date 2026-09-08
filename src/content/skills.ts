@@ -38,7 +38,10 @@ const skillsData = [
     id: 'mobile',
     label: 'Mobile',
     skills: [
-      { name: 'React Native (CLI & Expo)', projectSlugs: ['stockwell-mobile', 'usns-student-app', 'us-client-platform'] },
+      {
+        name: 'React Native (CLI & Expo)',
+        projectSlugs: ['stockwell-mobile', 'usns-student-app', 'us-client-platform'],
+      },
       { name: 'App Store & Play Store release', projectSlugs: ['us-client-platform'] },
     ],
   },
@@ -59,8 +62,11 @@ const skillsData = [
       { name: 'CI/CD', projectSlugs: ['stockwell', 'pdf-nexus'] },
       { name: 'GitHub Actions', projectSlugs: ['stockwell', 'pdf-nexus'] },
       { name: 'AWS', projectSlugs: ['stockwell'] },
-      { name: 'Oracle Cloud Infrastructure', projectSlugs: ['usns-backend', 'usns-dashboard', 'pdf-nexus'] },
-      { name: 'Caddy', projectSlugs: ['usns-backend', 'usns-dashboard', 'pdf-nexus'] },
+      {
+        name: 'Oracle Cloud Infrastructure',
+        projectSlugs: ['usns-backend', 'usns-dashboard', 'pdf-nexus', 'stockwell'],
+      },
+      { name: 'Caddy', projectSlugs: ['usns-backend', 'usns-dashboard', 'pdf-nexus', 'stockwell'] },
       { name: 'DigitalOcean' },
       { name: 'Vercel' },
     ],
