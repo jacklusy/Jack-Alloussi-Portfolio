@@ -4,7 +4,7 @@ export const usnsBackend = {
   slug: 'usns-backend',
   title: 'USNS Backend — university notification API',
   summary:
-    'A Laravel 12 API on Cloud Run serving two clients through two contracts: 165 routes across 23 modules, with publishing authority enforced by the hierarchy and audit logging that cannot be skipped.',
+    'A Laravel 12 API serving two clients through two contracts: 165 routes across 23 modules, with publishing authority enforced by the hierarchy and audit logging that cannot be skipped, self-hosted on a single Oracle Cloud instance behind Caddy.',
   description:
     'The backend of the University Student Notification System, built for Al-Zaytoonah University of Jordan. It owns identity, the academic hierarchy, announcement lifecycle, audience resolution, notification fan-out, and audit logging — exposed as two distinct HTTP surfaces consumed by an administration dashboard and a student mobile app.',
   role: 'Backend Engineer',
@@ -19,7 +19,8 @@ export const usnsBackend = {
     'Redis',
     'Queues',
     'Docker',
-    'Google Cloud Run',
+    'Docker Compose',
+    'Caddy',
     'FCM',
   ],
   categories: ['Backend', 'DevOps'],
@@ -31,6 +32,10 @@ export const usnsBackend = {
     { label: 'Typed enums', value: '40' },
   ],
   links: {
+    live: 'https://usns-backend.siqva.com',
+    repo: 'https://github.com/jacklusy/USNS',
+    liveNote:
+      'The live root just confirms the API is up — every real route needs an authenticated token.',
     caseStudy: '/projects/usns-backend',
   },
   featured: true,
@@ -48,7 +53,7 @@ export const usnsBackend = {
     architecture: {
       diagramId: 'usns-backend-layers',
       altText:
-        'A Laravel 12 API on Cloud Run with a controller-to-service-to-repository-to-resource pipeline, exposing a 139-route dashboard surface and a 26-route mobile surface over Sanctum authentication; announcements resolve their audience from the faculty-department-program hierarchy, fan out to recipients through a queued chunked insert, and every request passes through audit-logging middleware into MySQL.',
+        'A Laravel 12 API with a controller-to-service-to-repository-to-resource pipeline, exposing a 139-route dashboard surface and a 26-route mobile surface over Sanctum authentication; announcements resolve their audience from the faculty-department-program hierarchy, fan out to recipients through a queued chunked insert, and every request passes through audit-logging middleware into MySQL — deployed as a Docker container behind the same Caddy reverse proxy already serving another project on the box, with an isolated MariaDB instance of its own.',
     },
     decisions: [
       {
@@ -90,7 +95,7 @@ export const usnsBackend = {
       'Keeping cross-cutting contracts stable across 85 commits of churn, solved with standards tests that iterate the route table and assert envelope shape and permission-matrix consistency globally.',
     ],
     outcomes: [
-      'A production Laravel 12 API on Cloud Run with 165 registered routes across 23 feature modules, serving two clients through two contracts.',
+      'A production Laravel 12 API with 165 registered routes across 23 feature modules, serving two clients through two contracts, live on an Oracle Cloud Ampere instance with a zero-downtime Caddy reload onto a proxy shared with another project.',
       'Complete announcement lifecycle — draft, publish, archive — with hierarchy-derived audience resolution, attachments, and recipient counts.',
       'Audit logs, login history, system events and CSV export, with coverage guaranteed structurally by middleware rather than by discipline.',
       'Forty typed enums covering roles, permissions, statuses and actions, turning value renames into compile-time cascades instead of string-literal hunts.',
@@ -131,9 +136,9 @@ export const usnsBackend = {
       {
         category: 'Delivery & ops',
         items: [
-          'Docker',
-          'Google Cloud Run',
-          'Liveness + readiness probes',
+          'Docker Compose on Oracle Cloud (Ampere A1)',
+          'Caddy reverse proxy, shared with another project on the same host',
+          'Isolated MariaDB 11 per project',
           'Standards tests iterating the route table',
         ],
       },

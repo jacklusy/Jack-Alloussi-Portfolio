@@ -140,18 +140,29 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
           {/* Above the fold on purpose. These were previously the last thing on
               the page, below the whole case study, where nobody found them. */}
           {liveHref || repoHref ? (
-            <div className="mt-7 flex flex-wrap items-center gap-3">
-              {liveHref ? (
-                <ButtonLink href={liveHref} variant="primary" external>
-                  <ExternalLink className="h-4 w-4" aria-hidden />
-                  Visit live site
-                </ButtonLink>
-              ) : null}
-              {repoHref ? (
-                <ButtonLink href={repoHref} variant="secondary" external>
-                  <Code2 className="h-4 w-4" aria-hidden />
-                  View source
-                </ButtonLink>
+            <div className="mt-7">
+              <div className="flex flex-wrap items-center gap-3">
+                {liveHref ? (
+                  <ButtonLink href={liveHref} variant="primary" external>
+                    <ExternalLink className="h-4 w-4" aria-hidden />
+                    Visit live site
+                  </ButtonLink>
+                ) : null}
+                {repoHref ? (
+                  <ButtonLink href={repoHref} variant="secondary" external>
+                    <Code2 className="h-4 w-4" aria-hidden />
+                    View source
+                  </ButtonLink>
+                ) : null}
+              </div>
+              {liveHref && project.links.liveNote ? (
+                <p className="mt-3 text-[var(--text-sm)] text-[var(--color-text-muted)]">
+                  {project.links.liveNote}{' '}
+                  <Link href="/contact" className="text-[var(--color-brand)] hover:underline">
+                    Get in touch
+                  </Link>
+                  .
+                </p>
               ) : null}
             </div>
           ) : null}

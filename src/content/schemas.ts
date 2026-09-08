@@ -216,6 +216,10 @@ export const projectBaseSchema = z.object({
     live: z.string().optional(),
     repo: z.string().optional(),
     caseStudy: z.string().optional(),
+    /** Short caveat rendered beside the live-site button — for a demo that
+     *  needs a login the page can't hand out, or any other "before you click"
+     *  context a bare link can't carry. */
+    liveNote: z.string().optional(),
   }),
   featured: z.boolean(),
   kind: z.enum(['personal', 'professional', 'client', 'training']),

@@ -1,5 +1,10 @@
 import type { Project } from '@/content/schemas';
 
+import dashboard from '@/assets/img/projects/usns/dash.png';
+import users from '@/assets/img/projects/usns/Users.png';
+import faculties from '@/assets/img/projects/usns/Faculties.png';
+import departments from '@/assets/img/projects/usns/Departments.png';
+
 export const usnsDashboard = {
   slug: 'usns-dashboard',
   title: 'USNS Administration Dashboard',
@@ -20,7 +25,7 @@ export const usnsDashboard = {
     'Redux Toolkit',
     'Firebase Cloud Messaging',
     'Docker',
-    'Google Cloud Run',
+    'Caddy',
   ],
   categories: ['Frontend'],
   cover: { hue: 250, pattern: 'grid' as const },
@@ -30,7 +35,34 @@ export const usnsDashboard = {
     { label: 'Feature areas', value: '9' },
     { label: 'Files / commits', value: '789 / 92' },
   ],
+  thumbnail: {
+    image: dashboard,
+    alt: 'The USNS dashboard signed in as the University President: key-metric tiles, an enrolment trend chart, a users-by-role breakdown, and a system-overview panel listing the areas this role can reach.',
+  },
+  gallery: [
+    {
+      image: users,
+      alt: 'The users table, listing dashboard accounts with name, e-mail, role, status and creation date, with search, column and filter controls.',
+      caption:
+        'Account administration across all five roles. The table is one of nine feature areas, each built against mock data first and switched to the live API only once the screen already worked.',
+    },
+    {
+      image: faculties,
+      alt: 'The faculties table, listing nine university faculties with their codes and their department and student counts.',
+      caption:
+        'The academic hierarchy the whole product rests on. An announcement resolves its audience by walking faculty to department to programme, so these rows are not reference data — they are the addressing scheme.',
+    },
+    {
+      image: departments,
+      alt: 'The departments table, showing each department with its code and parent faculty, filterable by faculty.',
+      caption:
+        'Departments hang off faculties, and a Head of Department only ever sees their own. The sidebar and the system-overview panel are generated from the same permission set the API enforces — a menu item that returns 403 on click is not access control, it is a broken app.',
+    },
+  ],
   links: {
+    live: 'https://usns.siqva.com',
+    repo: 'https://github.com/jacklusy/usns-next',
+    liveNote: 'Live, but every screen sits behind a role-gated login with no public signup.',
     caseStudy: '/projects/usns-dashboard',
   },
   featured: false,
@@ -131,7 +163,7 @@ export const usnsDashboard = {
         category: 'Delivery',
         items: [
           'Docker multi-stage build on Next.js standalone output',
-          'Google Cloud Run',
+          'Oracle Cloud (Ampere A1), behind Caddy',
           'Firebase Cloud Messaging web push',
         ],
       },

@@ -30,6 +30,7 @@ export const usnsStudentApp = {
     { label: 'Distribution', value: 'Android via EAS' },
   ],
   links: {
+    repo: 'https://github.com/jacklusy/usnsnative',
     caseStudy: '/projects/usns-student-app',
   },
   featured: false,
