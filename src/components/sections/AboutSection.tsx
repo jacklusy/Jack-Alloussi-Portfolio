@@ -30,7 +30,7 @@ export function AboutSection() {
                 width={profile.portrait.width}
                 height={profile.portrait.height}
                 className="h-full w-full object-cover"
-                sizes="(max-width: 1024px) 100vw, 420px"
+                sizes="(max-width: 1024px) min(100vw, 28rem), 420px"
                 priority
               />
               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[var(--color-bg)]/80 to-transparent p-5">
