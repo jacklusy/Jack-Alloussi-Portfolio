@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Search } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
@@ -17,6 +16,7 @@ export type ProjectsFilterProps = {
   topTechs: string[];
   activeTech?: string | undefined;
   activeCategory?: string | undefined;
+  activeQuery?: string | undefined;
   resultCount: number;
   totalCount: number;
 };
@@ -26,16 +26,33 @@ export function ProjectsFilter({
   topTechs,
   activeTech,
   activeCategory,
+  activeQuery,
   resultCount,
   totalCount,
 }: ProjectsFilterProps) {
   const router = useRouter();
-  const hasFilter = Boolean(activeTech || activeCategory);
+  const hasFilter = Boolean(activeTech || activeCategory || activeQuery);
 
-  function go(next: { tech?: string; category?: string }) {
+  /**
+   * Every param defaults to its current value, so changing one filter never
+   * drops the others — the name search, the discipline (category) filter,
+   * and the stack (tech) filter all compose.
+   */
+  function go(next: {
+    tech?: string | undefined;
+    category?: string | undefined;
+    q?: string | undefined;
+  }) {
+    const merged = {
+      tech: activeTech,
+      category: activeCategory,
+      q: activeQuery,
+      ...next,
+    };
     const params = new URLSearchParams();
-    if (next.tech) params.set('tech', next.tech);
-    if (next.category) params.set('category', next.category);
+    if (merged.tech) params.set('tech', merged.tech);
+    if (merged.category) params.set('category', merged.category);
+    if (merged.q) params.set('q', merged.q);
     const query = params.toString();
     router.push(query ? `/projects?${query}` : '/projects');
   }
@@ -44,20 +61,20 @@ export function ProjectsFilter({
     <div className="space-y-5">
       <div className="flex flex-wrap items-center gap-3">
         <label className="relative block w-full max-w-md">
-          <span className="sr-only">Filter by technology</span>
+          <span className="sr-only">Search projects by name</span>
           <Search
             className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[var(--color-text-subtle)]"
             aria-hidden
           />
           <input
             type="search"
-            placeholder="Filter by tech (NestJS, React Native…)"
-            defaultValue={activeTech ?? ''}
+            placeholder="Search projects by name…"
+            defaultValue={activeQuery ?? ''}
             className="field-control min-h-12 w-full rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-bg)] py-3 pr-4 pl-10 text-[var(--color-text)]"
             onKeyDown={(event) => {
               if (event.key !== 'Enter') return;
               const value = (event.target as HTMLInputElement).value.trim();
-              go(value ? { tech: value } : {});
+              go({ q: value || undefined });
             }}
           />
         </label>
@@ -73,15 +90,18 @@ export function ProjectsFilter({
         <p className="font-mono-label mb-2.5 text-[var(--color-text-subtle)]">Discipline</p>
         <ul className="flex flex-wrap gap-2">
           <li>
-            <Link
-              href="/projects"
+            <button
+              type="button"
               className={cn(
                 'inline-flex min-h-10 items-center rounded-[var(--radius-sm)] transition-transform duration-[var(--duration-micro)] [@media(hover:hover)]:hover:-translate-y-px',
-                !hasFilter && 'ring-2 ring-[var(--color-focus)] ring-offset-2 ring-offset-[var(--color-bg)]',
+                !activeCategory &&
+                  'ring-2 ring-[var(--color-focus)] ring-offset-2 ring-offset-[var(--color-bg)]',
               )}
+              onClick={() => go({ category: undefined })}
+              aria-pressed={!activeCategory}
             >
-              <Badge tone={!hasFilter ? 'brand' : 'mono'}>All</Badge>
-            </Link>
+              <Badge tone={!activeCategory ? 'brand' : 'mono'}>All</Badge>
+            </button>
           </li>
           {categories.map((category) => {
             const isActive = activeCategory?.toLowerCase() === category.toLowerCase();
@@ -91,9 +111,10 @@ export function ProjectsFilter({
                   type="button"
                   className={cn(
                     'inline-flex min-h-10 items-center rounded-[var(--radius-sm)] transition-transform duration-[var(--duration-micro)] [@media(hover:hover)]:hover:-translate-y-px',
-                    isActive && 'ring-2 ring-[var(--color-focus)] ring-offset-2 ring-offset-[var(--color-bg)]',
+                    isActive &&
+                      'ring-2 ring-[var(--color-focus)] ring-offset-2 ring-offset-[var(--color-bg)]',
                   )}
-                  onClick={() => go(isActive ? {} : { category })}
+                  onClick={() => go({ category: isActive ? undefined : category })}
                   aria-pressed={isActive}
                 >
                   <Badge tone={isActive ? 'brand' : 'mono'}>{category}</Badge>
@@ -115,9 +136,10 @@ export function ProjectsFilter({
                   type="button"
                   className={cn(
                     'inline-flex min-h-10 items-center rounded-[var(--radius-sm)] transition-transform duration-[var(--duration-micro)] [@media(hover:hover)]:hover:-translate-y-px',
-                    isActive && 'ring-2 ring-[var(--color-focus)] ring-offset-2 ring-offset-[var(--color-bg)]',
+                    isActive &&
+                      'ring-2 ring-[var(--color-focus)] ring-offset-2 ring-offset-[var(--color-bg)]',
                   )}
-                  onClick={() => go(isActive ? {} : { tech })}
+                  onClick={() => go({ tech: isActive ? undefined : tech })}
                   aria-pressed={isActive}
                 >
                   <Badge tone={isActive ? 'brand' : 'mono'}>{tech}</Badge>

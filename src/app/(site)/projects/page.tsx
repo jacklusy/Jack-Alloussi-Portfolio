@@ -13,13 +13,14 @@ export const metadata: Metadata = {
 };
 
 type ProjectsPageProps = {
-  searchParams: Promise<{ tech?: string; category?: string }>;
+  searchParams: Promise<{ tech?: string; category?: string; q?: string }>;
 };
 
 export default async function ProjectsPage({ searchParams }: ProjectsPageProps) {
   const params = await searchParams;
   const tech = params.tech?.trim();
   const category = params.category?.trim();
+  const query = params.q?.trim();
 
   const filtered = projects.filter((project) => {
     const matchesTech = tech
@@ -28,7 +29,8 @@ export default async function ProjectsPage({ searchParams }: ProjectsPageProps) 
     const matchesCategory = category
       ? project.categories.some((item) => item.toLowerCase() === category.toLowerCase())
       : true;
-    return matchesTech && matchesCategory;
+    const matchesQuery = query ? project.title.toLowerCase().includes(query.toLowerCase()) : true;
+    return matchesTech && matchesCategory && matchesQuery;
   });
 
   return (
@@ -40,7 +42,8 @@ export default async function ProjectsPage({ searchParams }: ProjectsPageProps) 
         </h1>
         <p className="mt-4 max-w-[var(--prose-max)] text-[length:var(--text-lead)] leading-relaxed text-[var(--color-text-muted)]">
           Twelve systems, each argued in problem, architecture, decisions, and outcome — including
-          the parts that did not work. Client identities stay confidential; the engineering does not.
+          the parts that did not work. Client identities stay confidential; the engineering does
+          not.
         </p>
 
         <div className="mt-10">
@@ -49,6 +52,7 @@ export default async function ProjectsPage({ searchParams }: ProjectsPageProps) 
             topTechs={getTopTechnologies(8)}
             activeTech={tech}
             activeCategory={category}
+            activeQuery={query}
             resultCount={filtered.length}
             totalCount={projects.length}
           />
