@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Search } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
@@ -38,11 +39,10 @@ export function ProjectsFilter({
    * drops the others — the name search, the discipline (category) filter,
    * and the stack (tech) filter all compose.
    */
-  function go(next: {
-    tech?: string | undefined;
-    category?: string | undefined;
-    q?: string | undefined;
-  }) {
+  function go(
+    next: { tech?: string | undefined; category?: string | undefined; q?: string | undefined },
+    options?: { replace?: boolean },
+  ) {
     const merged = {
       tech: activeTech,
       category: activeCategory,
@@ -54,7 +54,30 @@ export function ProjectsFilter({
     if (merged.category) params.set('category', merged.category);
     if (merged.q) params.set('q', merged.q);
     const query = params.toString();
-    router.push(query ? `/projects?${query}` : '/projects');
+    const url = query ? `/projects?${query}` : '/projects';
+    if (options?.replace) {
+      router.replace(url, { scroll: false });
+    } else {
+      router.push(url);
+    }
+  }
+
+  // Debounce the name search so it filters as you type instead of needing
+  // Enter/submit — one navigation per pause in typing, not per keystroke.
+  // Uses replace (not push) so typing doesn't fill up browser history.
+  const searchDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => {
+    return () => {
+      if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
+    };
+  }, []);
+
+  function handleSearchChange(value: string) {
+    const trimmed = value.trim();
+    if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
+    searchDebounceRef.current = setTimeout(() => {
+      go({ q: trimmed || undefined }, { replace: true });
+    }, 250);
   }
 
   return (
@@ -71,10 +94,12 @@ export function ProjectsFilter({
             placeholder="Search projects by name…"
             defaultValue={activeQuery ?? ''}
             className="field-control min-h-12 w-full rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-bg)] py-3 pr-4 pl-10 text-[var(--color-text)]"
+            onChange={(event) => handleSearchChange(event.target.value)}
             onKeyDown={(event) => {
               if (event.key !== 'Enter') return;
+              if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
               const value = (event.target as HTMLInputElement).value.trim();
-              go({ q: value || undefined });
+              go({ q: value || undefined }, { replace: true });
             }}
           />
         </label>
