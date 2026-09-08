@@ -62,7 +62,21 @@ export const usnsDashboard = {
   links: {
     live: 'https://usns.siqva.com',
     repo: 'https://github.com/jacklusy/usns-next',
-    liveNote: 'Live, but every screen sits behind a role-gated login with no public signup.',
+    liveNote:
+      'Live and seeded with demo data. Sign in with any account below — each one forces a password change on first use, so if a login stops working, someone got there first.',
+    demoAccounts: [
+      { role: 'President', identifier: 'president@zuj.edu.jo', password: 'ZUJ_SecureStaging2026!' },
+      {
+        role: 'DBA (full permissions)',
+        identifier: 'dba@zuj.edu.jo',
+        password: 'ZUJ_SecureStaging2026!',
+      },
+      {
+        role: 'Dean, Science & IT',
+        identifier: 'dean.fsit@zuj.edu.jo',
+        password: 'ZUJ_SecureStaging2026!',
+      },
+    ],
     caseStudy: '/projects/usns-dashboard',
   },
   featured: false,

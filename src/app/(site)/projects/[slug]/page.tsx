@@ -164,6 +164,30 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
                   .
                 </p>
               ) : null}
+              {liveHref && project.links.demoAccounts?.length ? (
+                <div className="mt-4 overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border)]">
+                  <p className="font-mono-label border-b border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-2.5 text-[var(--color-text-subtle)]">
+                    Demo access
+                  </p>
+                  <ul className="divide-y divide-[var(--color-border)]">
+                    {project.links.demoAccounts.map((account) => (
+                      <li
+                        key={account.identifier}
+                        className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 px-4 py-2.5 text-[var(--text-sm)]"
+                      >
+                        <span className="font-medium text-[var(--color-text)]">
+                          {account.role}
+                        </span>
+                        <span className="flex flex-wrap items-center gap-x-2.5 gap-y-1 font-mono text-[var(--text-xs)] text-[var(--color-text-muted)]">
+                          <span>{account.identifier}</span>
+                          <span aria-hidden>·</span>
+                          <span>{account.password}</span>
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
             </div>
           ) : null}
         </header>

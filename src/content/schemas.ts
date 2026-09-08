@@ -220,6 +220,17 @@ export const projectBaseSchema = z.object({
      *  needs a login the page can't hand out, or any other "before you click"
      *  context a bare link can't carry. */
     liveNote: z.string().optional(),
+    /** Working credentials for a live, auth-gated demo. Only ever a project's
+     *  own seeded staging data — never a real user's account. */
+    demoAccounts: z
+      .array(
+        z.object({
+          role: z.string(),
+          identifier: z.string(),
+          password: z.string(),
+        }),
+      )
+      .optional(),
   }),
   featured: z.boolean(),
   kind: z.enum(['personal', 'professional', 'client', 'training']),
