@@ -137,7 +137,7 @@ export function ProjectCard({ project, className, variant = 'feature' }: Project
               {live && isUsableHref(live) ? (
                 <a
                   href={live}
-                  className="relative z-20 inline-flex min-h-10 min-w-10 items-center justify-center rounded-[var(--radius-md)] text-[var(--color-text-muted)] transition-colors hover:text-[var(--color-brand)]"
+                  className="relative z-20 inline-flex min-h-10 min-w-10 items-center justify-center rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface-sunken)] text-[var(--color-brand)] transition-colors hover:border-[var(--color-brand)] hover:bg-[var(--color-brand-subtle)]"
                   rel="noopener noreferrer"
                   target="_blank"
                   aria-label={`Live site for ${project.title}`}
@@ -148,7 +148,7 @@ export function ProjectCard({ project, className, variant = 'feature' }: Project
               {repo && isUsableHref(repo) ? (
                 <a
                   href={repo}
-                  className="relative z-20 inline-flex min-h-10 min-w-10 items-center justify-center rounded-[var(--radius-md)] text-[var(--color-text-muted)] transition-colors hover:text-[var(--color-brand)]"
+                  className="relative z-20 inline-flex min-h-10 min-w-10 items-center justify-center rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface-sunken)] text-[var(--color-brand)] transition-colors hover:border-[var(--color-brand)] hover:bg-[var(--color-brand-subtle)]"
                   rel="noopener noreferrer"
                   target="_blank"
                   aria-label={`Repository for ${project.title}`}

@@ -154,6 +154,20 @@
     color: var(--color-cta-fg);
   }
 
+  /* Blue emphasis fill. A CSS class for the same reason as .btn-cta: as a
+     utility, `text-[var(--color-on-accent)]` and the size variant's
+     `text-[var(--text-body)]` look like one conflict to tailwind-merge, which
+     keeps the last and silently drops the foreground colour. */
+  .btn-accent {
+    background-color: var(--color-brand);
+    color: var(--color-on-accent);
+  }
+
+  .btn-accent:hover {
+    background-color: var(--color-brand-hover);
+    color: var(--color-on-accent);
+  }
+
   .text-display {
     font-size: var(--text-display);
     line-height: var(--leading-display);

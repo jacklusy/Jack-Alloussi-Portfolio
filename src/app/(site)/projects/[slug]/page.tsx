@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
+import { Code2, ExternalLink } from 'lucide-react';
 import { getAllProjectSlugs, getProjectBySlug, projects } from '@/content/projects';
 import { Container } from '@/components/layout/Container';
 import { Badge } from '@/components/ui/Badge';
@@ -83,6 +84,10 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
   const prev = index > 0 ? projects[index - 1] : undefined;
   const next = index >= 0 && index < projects.length - 1 ? projects[index + 1] : undefined;
   const category = project.categories[0] ?? project.kind;
+  const liveHref =
+    project.links.live && isUsableHref(project.links.live) ? project.links.live : undefined;
+  const repoHref =
+    project.links.repo && isUsableHref(project.links.repo) ? project.links.repo : undefined;
 
   const breadcrumb = breadcrumbJsonLd([
     { name: 'Home', path: '/' },
@@ -131,6 +136,25 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
             <Badge tone="mono">{project.role}</Badge>
             {project.kind === 'training' ? <Badge tone="muted">Training project</Badge> : null}
           </div>
+
+          {/* Above the fold on purpose. These were previously the last thing on
+              the page, below the whole case study, where nobody found them. */}
+          {liveHref || repoHref ? (
+            <div className="mt-7 flex flex-wrap items-center gap-3">
+              {liveHref ? (
+                <ButtonLink href={liveHref} variant="primary" external>
+                  <ExternalLink className="h-4 w-4" aria-hidden />
+                  Visit live site
+                </ButtonLink>
+              ) : null}
+              {repoHref ? (
+                <ButtonLink href={repoHref} variant="secondary" external>
+                  <Code2 className="h-4 w-4" aria-hidden />
+                  View source
+                </ButtonLink>
+              ) : null}
+            </div>
+          ) : null}
         </header>
 
         {project.metrics?.length ? (
@@ -393,31 +417,6 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
                     </figure>
                   ))}
                 </div>
-              </section>
-            ) : null}
-
-            {(project.links.live && isUsableHref(project.links.live)) ||
-            (project.links.repo && isUsableHref(project.links.repo)) ? (
-              <section id="links" className="scroll-mt-28">
-                <h2 className="text-[length:var(--text-h2)] tracking-[var(--tracking-heading)] text-[var(--color-text)]">
-                  Links
-                </h2>
-                <ul className="mt-5 flex flex-wrap gap-3">
-                  {project.links.live && isUsableHref(project.links.live) ? (
-                    <li>
-                      <ButtonLink href={project.links.live} variant="secondary" external>
-                        Live site
-                      </ButtonLink>
-                    </li>
-                  ) : null}
-                  {project.links.repo && isUsableHref(project.links.repo) ? (
-                    <li>
-                      <ButtonLink href={project.links.repo} variant="secondary" external>
-                        Repository
-                      </ButtonLink>
-                    </li>
-                  ) : null}
-                </ul>
               </section>
             ) : null}
           </div>

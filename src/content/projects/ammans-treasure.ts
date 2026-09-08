@@ -1,5 +1,11 @@
 import type { Project } from '@/content/schemas';
 
+import homeScreen from '@/assets/img/projects/amman-treasure/home_screen.png';
+import menu from '@/assets/img/projects/amman-treasure/menu.png';
+import galleryPage from '@/assets/img/projects/amman-treasure/gallery.png';
+import aboutUs from '@/assets/img/projects/amman-treasure/aboutus.png';
+import contactUs from '@/assets/img/projects/amman-treasure/contactus.png';
+
 export const ammansTreasure = {
   slug: 'ammans-treasure',
   title: "Amman's Treasure — bilingual café landing page",
@@ -26,6 +32,36 @@ export const ammansTreasure = {
     { label: 'Source size', value: '1,158 lines' },
     { label: 'Runtime deps', value: '8 packages' },
     { label: 'Trackers / cookies', value: 'None' },
+  ],
+  thumbnail: {
+    image: homeScreen,
+    alt: 'The Amman’s Treasure home page: the serif line “Amman’s Hidden Treasure” over a photograph of the café’s plant-hung terrace, above a gold “View menu” button.',
+  },
+  gallery: [
+    {
+      image: menu,
+      alt: 'The menu page, showing panels for iced coffee, hot drinks, juices and breakfast, each item listed in English and Arabic with its price in dinar.',
+      caption:
+        'Every item carries both languages and its price in dinar. Menus change on the café’s schedule, not a deploy schedule — repricing a latte was never allowed to require an engineer.',
+    },
+    {
+      image: galleryPage,
+      alt: 'The gallery page, “Amman’s Treasure Moments”, a grid of photographs of the terrace, the city view, and plates of food.',
+      caption:
+        'The gallery answers the question social media already answers well — what does it look like — so the rest of the site is free to answer the ones it answers badly: hours, location, whether you can work there.',
+    },
+    {
+      image: aboutUs,
+      alt: 'The about section, “Our Story”, beside a photograph of food, showing a 4.9 average rating and opening hours of 9:00 to 00:00.',
+      caption:
+        'The positioning is the product: this is a space engineered for staying, not a restaurant template that sells food. The rating and the opening hours carry more weight than any hero copy could.',
+    },
+    {
+      image: contactUs,
+      alt: 'The contact page, with phone, WhatsApp, e-mail and address details beside an embedded map of the café’s location in Amman.',
+      caption:
+        'Nobody books a café table through a web form in Amman. The conversion actions are opening WhatsApp, tapping a phone number, or opening Maps for directions, so the page hands off to those channels instead of capturing a lead.',
+    },
   ],
   links: {
     live: 'https://amman-treasure.siqva.com',

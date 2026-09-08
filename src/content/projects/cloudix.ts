@@ -1,5 +1,11 @@
 import type { Project } from '@/content/schemas';
 
+import homeScreen from '@/assets/img/projects/cloudix/home_screen.png';
+import services from '@/assets/img/projects/cloudix/sercives.png';
+import ourProjects from '@/assets/img/projects/cloudix/ourprojects.png';
+import about from '@/assets/img/projects/cloudix/about.png';
+import contactUs from '@/assets/img/projects/cloudix/contactus.png';
+
 export const cloudix = {
   slug: 'cloudix',
   title: 'Cloudix — bilingual corporate & lead-generation site',
@@ -28,6 +34,36 @@ export const cloudix = {
     { label: 'Section components', value: '~45' },
     { label: 'Source size', value: '~7,300 lines' },
     { label: 'Routes', value: '7, fully bilingual' },
+  ],
+  thumbnail: {
+    image: homeScreen,
+    alt: 'The Cloudix home page: a dark navy hero reading “Building Smarter Connected Systems” over an office photograph, with an AR/EN language switch in the header and four capability cards beneath.',
+  },
+  gallery: [
+    {
+      image: services,
+      alt: 'The Cloudix services mega-menu open over the page, showing cards for IT Solutions, Backend Engineering, and Cloud & Deployment.',
+      caption:
+        'The services mega-menu. Navigation depth like this is what makes a small shop read as a larger firm, and it is assembled from the same pool of roughly 45 composable section components as every other page rather than hand-built per route.',
+    },
+    {
+      image: ourProjects,
+      alt: 'The Cloudix projects page, headed “Driving innovation through successful projects”, with a delivery checklist and a photograph overlaid with a 150+ completed-projects figure.',
+      caption:
+        'The projects page leads with the number a prospect actually weighs. The AR/EN switch sitting in the header of every one of these screens flips writing direction and layout, not just strings — Arabic is the default locale here, not a translation bolted onto a Western design.',
+    },
+    {
+      image: about,
+      alt: 'The Cloudix about page hero: a “Smart Solutions” pill above the line “Cloudix delivering intelligent solutions for growth”, over a tinted office photograph.',
+      caption:
+        'Seven routes share one visual language — tinted photographic hero, eyebrow pill, single call to action — so a new page is a composition of existing parts instead of a new design.',
+    },
+    {
+      image: contactUs,
+      alt: 'The Cloudix contact page, with a photographic header and cards for phone, e-mail and location.',
+      caption:
+        'Lead capture with no backend behind it. A company that builds websites for other companies was never going to run a server just to receive a contact form, so submissions reach a real inbox without a database or an email service to operate.',
+    },
   ],
   links: {
     live: 'https://cloudix.siqva.com',

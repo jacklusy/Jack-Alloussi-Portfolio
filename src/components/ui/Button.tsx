@@ -14,7 +14,7 @@ const buttonVariants = cva(
           'border border-[var(--color-border-strong)] bg-transparent text-[var(--color-text)] hover:border-[var(--color-brand)] hover:bg-[var(--color-brand-subtle)] hover:text-[var(--color-brand)] rounded-[var(--radius-md)] px-5',
         /* Accent fill — blue for emphasis actions */
         accent:
-          'bg-[var(--color-brand)] text-[var(--color-on-accent)] hover:bg-[var(--color-brand-hover)] hover:shadow-[var(--shadow-glow)] rounded-[var(--radius-md)] px-5',
+          'btn-accent hover:shadow-[var(--shadow-glow)] rounded-[var(--radius-md)] px-5',
         ghost:
           'text-[var(--color-text)] hover:bg-[var(--color-surface-sunken)] rounded-[var(--radius-md)] px-4',
       },
