@@ -1,0 +1,107 @@
+{
+  "title": "Angular SKY — Portal für Urlaubsanträge von Mitarbeitenden",
+  "summary": "Ein serverseitig gerendertes internes Angular-17-Portal: Mitarbeiterverzeichnis, Profil und Urlaubsantragsübersicht mit ~20 Standalone-Komponenten, in drei Wochen gegen eine Mock-API gebaut.",
+  "description": "Ein Frontend-Ausbildungsprojekt der Sky Academy. Drei geroutete Seiten — Dashboard, Profil und Antragsübersicht — aus rund zwanzig Standalone-Komponenten von Angular 17, serverseitig über Angular Universal gerendert. Ohne echtes HR-Backend gebaut, mit einer öffentlichen Mock-API als Ersatzdatenquelle; die folgende Dokumentation benennt offen, wo dieser Ersatz sichtbar wird.",
+  "role": "Frontend-Entwicklung",
+  "timeframe": "September – Oktober 2024",
+  "metrics": [
+    {
+      "label": "Standalone-Komponenten",
+      "value": "~20"
+    },
+    {
+      "label": "Bauzeit",
+      "value": "3 Wochen"
+    },
+    {
+      "label": "Rendering",
+      "value": "SSR + Hydration"
+    }
+  ],
+  "group": {
+    "label": "Sky Academy"
+  },
+  "caseStudy": {
+    "context": "Mitarbeitende brauchen ein Self-Service-Portal: das eigene Profil und die Urlaubskontingente einsehen, ein durchsuchbares Verzeichnis der Kolleginnen und Kollegen durchstöbern und Urlaubs- und Abwesenheitsanträge verfolgen. Es ist das klassische interne HR-Self-Service-Problem — mehrere eigenständige Ansichten mit viel gemeinsamer visueller Sprache, getragen von einem Interaktionsmuster aus Suchen, Filtern, Auswählen und Paginieren, das auf mehr als einem Bildschirm wiederkehrt.",
+    "problem": "Für die Urlaubsantragsdaten gab es kein echtes Backend, gegen das sich bauen ließ. Die Übung musste ein vollständiges, komponentenbasiertes Angular-Frontend zeigen — Routing, Standalone-Komponenten, HTTP-Datenabruf, clientseitige Suche und Paginierung, SSR —, während die eigentlichen Daten der Urlaubsantragsdomäne keine Quelle hatten.",
+    "approach": "Erst Layout, dann Daten, dann Feinschliff. Angular 17 mit Bootstrap und FontAwesome aufsetzen; drei statische Seiten bauen, bevor irgendein Service-Code entsteht; in eine Aufteilung pages/ (geroutet) und components/ (wiederverwendbar) umstrukturieren, sobald die Form der App klar war; Routing und eine gemeinsame Navigationsleiste verdrahten; HTTP-Services zuletzt einführen, gestützt auf eine öffentliche Mock-API; die letzten Commits dann für robustere Ladezustände und visuelle Details nutzen, statt Funktionen hinzuzufügen.",
+    "architecture": {
+      "altText": "Drei geroutete Seiten (Home, Profile, Request), jeweils aus Standalone-Komponenten zusammengesetzt, die ihre Daten über die gemeinsamen Services UserService, PostService und PhotoService per HttpClient mit withFetch() beziehen; serverseitig gerendert von einem Express-Host mit der Angular-Universal-CommonEngine und clientseitig hydriert."
+    },
+    "decisions": [
+      {
+        "decision": "Durchgehend Standalone-Komponenten von Angular 17, keine NgModules",
+        "alternatives": "Klassische Feature-Module auf Basis von NgModule",
+        "reasoning": "Der damals idiomatische Angular-Ansatz, der für eine App dieser Größe das NgModule-Boilerplate erspart.",
+        "tradeoff": "Jede Komponente wiederholt ihr eigenes imports-Array — CommonModule, FormsModule und FontAwesomeModule sind sichtbar über viele Dateien dupliziert."
+      },
+      {
+        "decision": "Die Navigationslinks aus der Routentabelle ableiten, statt sie fest zu codieren",
+        "alternatives": "Ein von Hand gepflegtes Array von Navigationseinträgen in der Navbar-Komponente",
+        "reasoning": "Die Routen direkt aus app.routes.ts zu lesen verhindert, dass Navigation und Routing auseinanderlaufen, wenn Seiten hinzukommen.",
+        "tradeoff": "Reihenfolge und Beschriftung der Navigation sind an die Reihenfolge der Routendeklarationen gekoppelt, sodass rein darstellungsbezogene Änderungen in der Router-Konfiguration erfolgen müssen."
+      },
+      {
+        "decision": "Eine öffentliche Mock-REST-API als einzige Datenquelle",
+        "alternatives": "Handgeschriebene lokale Fixtures hinter fachlich benannten Services",
+        "reasoning": "Sie lieferte kostenlos realistisch geformte, per ID adressierbare, paginierte REST-Daten und erlaubte es, die echten Frontend-Muster — Abrufen, Suchen, Paginieren, Auswählen — durchgängig zu bauen und vorzuführen, ohne dass ein Backend existiert.",
+        "tradeoff": "Das Datenmodell der App passt nicht zu ihrer Fachlichkeit. Generische User-, Post- und Photo-Datensätze stehen für Mitarbeitende, Antragshistorie und Avatare, und die eigentlichen Fachfelder sind daneben im Komponentenzustand fest codiert, statt modelliert zu sein."
+      },
+      {
+        "decision": "Clientseitiges Suchen, Filtern und Paginieren statt serverseitiger Abfragen",
+        "alternatives": "Serverseitiges Filtern, gesteuert über Query-Parameter",
+        "reasoning": "Die Mock-API unterstützte keine beliebige Teilstringsuche nach Namen, also musste das Filtern nach dem Abruf stattfinden.",
+        "tradeoff": "Jede Filteroperation durchläuft das gesamte Array im Speicher erneut. Bei zehn Datensätzen unproblematisch; in einem echten Mitarbeiterverzeichnis würde es nicht überleben."
+      }
+    ],
+    "challenges": [
+      "Rund zwanzig Komponenten zu drei Seiten zusammenzufügen, ohne eine flache, unübersichtliche Ordnerstruktur zu bekommen — gelöst durch frühes Umstrukturieren in pages/ und components/, nachdem die drei statischen Seiten standen, aber bevor die Datenabruflogik den Umbau teuer gemacht hätte.",
+      "HttpClient unter serverseitigem Rendering korrekt zum Laufen zu bringen, was den fetch-basierten Client statt des XHR-Standards erforderte.",
+      "Die Datenzugriffsschicht schlank zu halten: Vier Komponenten brauchten Benutzer- und Fotodaten, und hätte jede sie eigenständig abgerufen, wäre die HTTP-Logik viermal dupliziert worden."
+    ],
+    "outcomes": [
+      "Drei geroutete, serverseitig gerenderte Seiten: ein Dashboard mit Übersichtskacheln und Foto-Karussell, eine Profilseite mit Historie und Bereichen für ausstehende Anträge sowie eine durchsuchbare, paginierte Antragsliste mit Mehrfachauswahl.",
+      "Rund zwanzig Standalone-Komponenten in einer klaren Hierarchie aus gerouteten und wiederverwendbaren Komponenten, mit gemeinsamen Services, die von vier Verbrauchern genutzt werden, statt HTTP-Logik zu duplizieren.",
+      "Ein SSR-Produktions-Build, der sowohl Browser- als auch Server-Bundles erzeugt, ausgeliefert von einem Express-Host mit Client-Hydration.",
+      "Eine Navigationsleiste, die automatisch mit dem Router synchron bleibt, weil sie die Routentabelle liest statt einer parallelen Liste."
+    ],
+    "retrospective": "Die ehrliche Lücke ist, dass das Domänenmodell nie gebaut wurde. Die Oberfläche zeigt Urlaubskontingente, Antragsstatus und einen Genehmigungsworkflow, doch tatsächlich abgerufen werden generische Mock-Daten, und die fachlichen Zahlen stehen fest codiert in Komponentenklassen, statt als VacationRequest-Interface und Service modelliert zu sein. Ein lokaler Mock-Service mit fachlich geformten Daten hätte die Absicht im Code lesbar gemacht, nicht nur in den Beschriftungen der Oberfläche. Außerdem gibt es keinen Ablauf zum Einreichen von Anträgen, obwohl die App um Anträge herum gerahmt ist, keine Authentifizierung (die Profilseite rendert immer dieselbe fest codierte Benutzer-ID), und jede der rund einundzwanzig Spec-Dateien ist unverändertes CLI-Scaffolding — der standardmäßige „should create“-Smoke-Test ohne Aussagen zu Suche, Auswahl oder Paginierung. Die allgemeinere Lehre: Eine öffentliche Mock-API eignet sich hervorragend, um HTTP und asynchrones Rendering zu üben, lässt aber unbemerkt die Form der verfügbaren Daten zur Form der App werden, statt dass die Domäne bestimmt, was abgerufen wird. Und ein gescaffoldeter, bestehender Test lässt sich leicht unangetastet lassen, weil nichts dazu zwingt zu bemerken, dass „Tests existieren“ und „Tests testen etwas“ zwei verschiedene Aussagen sind.",
+    "stackDetail": [
+      {
+        "category": "Sprache & Framework",
+        "items": [
+          "TypeScript 5.4",
+          "Angular 17.3 (Standalone-Komponenten)",
+          "RxJS 7.8",
+          "zone.js"
+        ]
+      },
+      {
+        "category": "Serverseitiges Rendering",
+        "items": [
+          "@angular/platform-server",
+          "@angular/ssr (Angular Universal)",
+          "Express-4.18-SSR-Host",
+          "provideClientHydration()",
+          "HttpClient mit withFetch()"
+        ]
+      },
+      {
+        "category": "UI & Styling",
+        "items": [
+          "Bootstrap 5.3",
+          "@ng-bootstrap/ng-bootstrap",
+          "Bootstrap Icons",
+          "FontAwesome"
+        ]
+      },
+      {
+        "category": "Tooling",
+        "items": [
+          "Angular CLI 17.3",
+          "Karma + Jasmine (konfiguriert, nicht genutzt)"
+        ]
+      }
+    ]
+  }
+}

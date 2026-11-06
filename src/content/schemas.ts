@@ -50,6 +50,8 @@ export const profileSchema = z.object({
   }),
   spokenLanguages: z.array(
     z.object({
+      /** ISO 639-1 code (JSON-LD `knowsLanguage`); language-neutral. */
+      code: z.string(),
       language: z.string(),
       level: z.string(),
     }),
@@ -65,7 +67,10 @@ export const profileSchema = z.object({
 export type Profile = z.infer<typeof profileSchema>;
 
 export const skillSchema = z.object({
+  /** Stable key; also the `?tech=` filter value. */
   name: z.string(),
+  /** Display text in the current language (falls back to `name`). */
+  label: z.string().optional(),
   projectSlugs: z.array(z.string()).optional(),
 });
 
@@ -254,6 +259,154 @@ export const projectSchema = z.discriminatedUnion('hasCaseStudy', [
 ]);
 
 export type Project = z.infer<typeof projectSchema>;
+
+/* -------------------------------------------------------------------------- *
+ * Structure / text split
+ *
+ * A project (and every other content entity) is stored in two halves:
+ *
+ *  - STRUCTURE — language-neutral facts that live in `src/content/**.ts`:
+ *    slug, year, technologies, URLs, imported images, cover art, flags.
+ *  - TEXT — everything a visitor reads, one JSON file per language in
+ *    `src/i18n/content/<locale>/…`.
+ *
+ * `src/content/index.ts` merges the two for a locale and re-parses the result
+ * with the schemas above, so a missing or mistyped translation fails the build
+ * instead of rendering a hole in the page.
+ * -------------------------------------------------------------------------- */
+
+export const projectStructureSchema = z.object({
+  slug: z.string(),
+  status: z.enum(['shipped', 'in-progress', 'archived']),
+  technologies: z.array(z.string()),
+  /** Stable English keys: used in `?category=` URLs and translated for display
+   *  through the `categories` messages. */
+  categories: z.array(z.string()),
+  thumbnail: z.object({ image: staticImageSchema }).optional(),
+  gallery: z.array(z.object({ image: staticImageSchema })).optional(),
+  links: z.object({
+    live: z.string().optional(),
+    repo: z.string().optional(),
+    caseStudy: z.string().optional(),
+    demoAccounts: z.array(z.object({ identifier: z.string(), password: z.string() })).optional(),
+  }),
+  featured: z.boolean(),
+  kind: z.enum(['personal', 'professional', 'client', 'training']),
+  confidential: z.boolean(),
+  year: z.number().int(),
+  cover: projectCoverSchema,
+  group: z.object({ id: z.string() }).optional(),
+  sortWeight: z.number().optional(),
+  diagramId: z.string(),
+});
+
+export type ProjectStructure = z.infer<typeof projectStructureSchema>;
+
+export const projectTextSchema = z.object({
+  title: z.string().min(1),
+  summary: z.string().min(1),
+  description: z.string().min(1),
+  role: z.string().min(1),
+  timeframe: z.string().min(1),
+  metrics: z.array(projectMetricSchema).optional(),
+  thumbnail: z.object({ alt: z.string().min(1) }).optional(),
+  gallery: z.array(z.object({ alt: z.string().min(1), caption: z.string().optional() })).optional(),
+  group: z.object({ label: z.string().min(1) }).optional(),
+  links: z
+    .object({
+      liveNote: z.string().optional(),
+      demoAccounts: z.array(z.object({ role: z.string().min(1) })).optional(),
+    })
+    .optional(),
+  caseStudy: z.object({
+    context: z.string().min(1),
+    problem: z.string().min(1),
+    approach: z.string().min(1),
+    architecture: z.object({ altText: z.string().min(1) }),
+    decisions: z.array(decisionSchema),
+    challenges: z.array(z.string().min(1)),
+    outcomes: z.array(z.string().min(1)),
+    retrospective: z.string().min(1),
+    stackDetail: z.array(stackGroupSchema).optional(),
+  }),
+});
+
+export type ProjectText = z.infer<typeof projectTextSchema>;
+
+export const profileStructureSchema = z.object({
+  name: z.string(),
+  email: z.string().email(),
+  phone: z.string(),
+  timezone: z.string(),
+  portrait: z.object({ src: z.string(), width: z.number(), height: z.number() }),
+  socials: z.array(
+    z.object({ id: z.string(), href: z.string().min(1), external: z.boolean().default(true) }),
+  ),
+  cv: z.object({ href: z.string(), filename: z.string() }),
+  spokenLanguageCodes: z.array(z.string()),
+  ctas: z.array(
+    z.object({
+      id: z.string(),
+      href: z.string(),
+      variant: z.enum(['primary', 'secondary', 'ghost']),
+      external: z.boolean().optional(),
+      download: z.boolean().optional(),
+    }),
+  ),
+});
+
+export type ProfileStructure = z.infer<typeof profileStructureSchema>;
+
+export const profileTextSchema = z.object({
+  role: z.string().min(1),
+  tagline: z.string().min(1),
+  location: z.string().min(1),
+  bio: z.array(z.string().min(1)).min(1),
+  portraitAlt: z.string().min(1),
+  availability: availabilitySchema,
+  socials: z.array(z.object({ id: z.string(), label: z.string().min(1) })),
+  ctas: z.array(z.object({ id: z.string(), label: z.string().min(1) })),
+  cvLabel: z.string().min(1),
+  spokenLanguages: z.array(z.object({ language: z.string().min(1), level: z.string().min(1) })),
+  highlights: z.array(z.object({ label: z.string().min(1), value: z.string().min(1) })),
+});
+
+export type ProfileText = z.infer<typeof profileTextSchema>;
+
+export const roleTextSchema = z.object({
+  title: z.string().min(1),
+  employmentType: z.string().min(1),
+  location: z.string().min(1),
+  summary: z.string().min(1),
+  achievements: z.array(z.string().min(1)),
+  confidentialityNote: z.string().optional(),
+});
+
+export const experienceTextSchema = z.object({ roles: z.record(z.string(), roleTextSchema) });
+
+export const educationTextSchema = z.object({
+  entries: z.record(
+    z.string(),
+    z.object({
+      degree: z.string().min(1),
+      field: z.string().optional(),
+      location: z.string().min(1),
+      note: z.string().optional(),
+    }),
+  ),
+});
+
+export const certificationsTextSchema = z.object({
+  entries: z.record(z.string(), z.object({ name: z.string().min(1) })),
+});
+
+export const skillsTextSchema = z.object({
+  groups: z.record(z.string(), z.object({ label: z.string().min(1) })),
+  /** Display names for skills that are practices rather than product names
+   *  ("Code review"). Product/language names are never listed here and are
+   *  shown as-is in every language. */
+  skills: z.record(z.string(), z.string().min(1)),
+});
 
 export const contactFormSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters').max(100),

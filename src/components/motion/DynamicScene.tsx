@@ -1,6 +1,6 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
+import { usePathname } from '@/i18n/navigation';
 import { FluidAmbientGlow } from '@/components/motion/FluidAmbientGlow';
 import { ParallaxTilt } from '@/components/motion/ParallaxTilt';
 import { ParticleMesh } from '@/components/motion/ParticleMesh';

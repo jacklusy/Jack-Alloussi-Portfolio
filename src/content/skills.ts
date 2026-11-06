@@ -1,10 +1,14 @@
-import { skillGroupSchema, type SkillGroup } from '@/content/schemas';
-import { z } from 'zod';
+import type { SkillGroup } from '@/content/schemas';
 
-const skillsData = [
+/**
+ * Skill names are product/language names and are shown as-is in every language
+ * (the few that are practices get a display name in the locale JSON). Group
+ * labels live in `src/i18n/content/<locale>/skills.json`, keyed by group `id`.
+ */
+
+export const skillGroupsStructure = [
   {
     id: 'languages',
-    label: 'Languages',
     skills: [
       { name: 'TypeScript', projectSlugs: ['stockwell', 'pdf-nexus', 'stockwell-mobile'] },
       { name: 'JavaScript' },
@@ -15,7 +19,6 @@ const skillsData = [
   },
   {
     id: 'backend',
-    label: 'Backend',
     skills: [
       { name: 'Node.js', projectSlugs: ['stockwell', 'pdf-nexus'] },
       { name: 'NestJS', projectSlugs: ['stockwell', 'pdf-nexus', 'us-client-platform'] },
@@ -27,7 +30,6 @@ const skillsData = [
   },
   {
     id: 'frontend',
-    label: 'Frontend',
     skills: [
       { name: 'React', projectSlugs: ['cloudix', 'ammans-treasure'] },
       { name: 'Next.js', projectSlugs: ['pdf-nexus', 'usns-dashboard'] },
@@ -36,7 +38,6 @@ const skillsData = [
   },
   {
     id: 'mobile',
-    label: 'Mobile',
     skills: [
       {
         name: 'React Native (CLI & Expo)',
@@ -47,7 +48,6 @@ const skillsData = [
   },
   {
     id: 'data',
-    label: 'Data',
     skills: [
       { name: 'PostgreSQL', projectSlugs: ['stockwell', 'pdf-nexus'] },
       { name: 'MySQL', projectSlugs: ['usns-backend', 'master-laravel'] },
@@ -56,7 +56,6 @@ const skillsData = [
   },
   {
     id: 'infrastructure',
-    label: 'Infrastructure',
     skills: [
       { name: 'Docker', projectSlugs: ['stockwell', 'usns-backend'] },
       { name: 'CI/CD', projectSlugs: ['stockwell', 'pdf-nexus'] },
@@ -73,7 +72,6 @@ const skillsData = [
   },
   {
     id: 'practices',
-    label: 'Practices',
     skills: [
       { name: 'Clean Architecture', projectSlugs: ['stockwell', 'bidding-management-system'] },
       { name: 'Domain-Driven Design', projectSlugs: ['bidding-management-system', 'stockwell'] },
@@ -85,6 +83,4 @@ const skillsData = [
       { name: 'Code review' },
     ],
   },
-] satisfies SkillGroup[];
-
-export const skillGroups = z.array(skillGroupSchema).parse(skillsData);
+] satisfies Omit<SkillGroup, 'label'>[];

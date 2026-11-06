@@ -1,0 +1,38 @@
+{
+  "role": "Ingénieur logiciel",
+  "tagline": "TypeScript · Node.js · NestJS · React · React Native — conception d’applications web, d’API et d’applications mobiles pour des clients américains, depuis Amman, en Jordanie.",
+  "location": "Amman, Jordanie",
+  "bio": [
+    "Je suis ingénieur logiciel et j’ai deux ans d’expérience professionnelle à temps plein dans la livraison d’applications web, d’API et d’applications mobiles pour des clients américains. Mon quotidien porte surtout sur le développement backend en TypeScript et Node.js — en particulier NestJS — ainsi qu’en PHP et Laravel, avec PostgreSQL, Redis, Docker et des pipelines CI/CD.",
+    "Ce qui distingue mon parcours, c’est de travailler selon le cahier des charges du client, sur de nombreuses stacks. Cette polyvalence me permet de prendre rapidement en main des bases de code inconnues et de livrer dans le cadre existant plutôt que de tout réécrire par confort. J’ai suivi une formation approfondie en Clean Architecture, en Domain-Driven Design et aux principes SOLID, et je prépare actuellement l’examen AWS Certified Developer – Associate.",
+    "J’obtiendrai ma licence en génie logiciel (BSc) en octobre 2026 et je recherche un poste backend ou full stack en Allemagne. Je remplis les conditions de la carte bleue européenne et je peux déménager."
+  ],
+  "portraitAlt": "Jack Alloussi, ingénieur logiciel, bras croisés dans un cadre formel",
+  "availability": {
+    "status": "À l’écoute d’opportunités",
+    "visaNote": "Nationalité jordanienne. Droit à la carte bleue européenne selon le § 18g de la loi allemande sur le séjour (profession en pénurie et seuil de salaire pour jeunes diplômés). Une autorisation de travail en Allemagne est nécessaire.",
+    "graduationDate": "Octobre 2026",
+    "relocationNote": "Possibilité de déménager à partir d’octobre 2026, après l’obtention du diplôme."
+  },
+  "socials": [
+    { "id": "github", "label": "GitHub" },
+    { "id": "linkedin", "label": "LinkedIn" },
+    { "id": "email", "label": "E-mail" }
+  ],
+  "ctas": [
+    { "id": "projects", "label": "Voir les projets" },
+    { "id": "cv", "label": "Télécharger le CV (PDF, EN)" }
+  ],
+  "cvLabel": "Télécharger le CV (PDF, EN)",
+  "spokenLanguages": [
+    { "language": "Arabe", "level": "Langue maternelle" },
+    { "language": "Anglais", "level": "Maîtrise professionnelle" },
+    { "language": "Allemand", "level": "A1, en cours d’apprentissage" }
+  ],
+  "highlights": [
+    { "label": "Expérience en production", "value": "2 ans à temps plein" },
+    { "label": "Diplôme", "value": "Octobre 2026" },
+    { "label": "Autorisation de travail", "value": "Éligible à la carte bleue européenne" },
+    { "label": "Spécialité", "value": "Backend et full stack" }
+  ]
+}

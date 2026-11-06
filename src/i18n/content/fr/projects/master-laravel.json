@@ -1,0 +1,104 @@
+{
+  "title": "Master Laravel — plateforme e-commerce et d’administration multi-rôles",
+  "summary": "Une boutique Laravel 10 auto-hébergée avec un back-office complet et un niveau super-admin au-dessus : catalogue, panier, paiement, commandes, coupons, avis modérés et factures PDF, construite en solo en sept mois.",
+  "description": "Une application combinant boutique en ligne et back-office pour un détaillant unique. Les clients parcourent et achètent, le personnel gère le catalogue et le traitement des commandes via un panneau d’administration, et un rôle super-admin gère les comptes administrateurs eux-mêmes. Conçue sans boutique SaaS ni frais de plateforme par transaction — non pas un simple panier d’achat, mais un petit outil d’exploitation interne livré avec la boutique.",
+  "role": "Développement full stack",
+  "timeframe": "février – septembre 2023",
+  "metrics": [
+    {
+      "label": "Modules d’administration",
+      "value": "14+"
+    },
+    {
+      "label": "Durée de développement",
+      "value": "7 mois en solo"
+    },
+    {
+      "label": "Rôles",
+      "value": "Client · Admin · Vendeur"
+    }
+  ],
+  "caseStudy": {
+    "context": "Un petit commerce avait besoin d’une boutique en ligne auto-hébergée couvrant tout le cycle de vie d’une commande, sans boutique SaaS ni frais de plateforme par transaction. Cela supposait : un catalogue public avec catégories, marques, recherche, galeries et avis ; un parcours panier, paiement et commande avec frais de livraison par région et coupons ; deux modes de paiement, car tous les clients du marché cible n’ont pas de carte bancaire ou ne lui font pas confiance ; un panneau d’administration pour l’équipe couvrant le catalogue, le merchandising, l’exécution des commandes et la modération des avis ; et un niveau administratif au-dessus des admins pour créer et désactiver des comptes du personnel sans accès direct à la base de données.",
+    "problem": "Livrer les deux moitiés — une boutique tournée vers les clients et un véritable outil d’exploitation interne — dans une seule application maintenable, construite et maintenue par un seul développeur sur un périmètre figé.",
+    "approach": "Partir du kit de démarrage Laravel Breeze plutôt que d’un package e-commerce prêt à l’emploi, afin que l’authentification, la gestion des mots de passe et du profil soient corrects dès le premier jour et que le budget temps aille aux fonctionnalités commerciales. Contrôler l’accès par rôle sur une seule table users avec un petit middleware sur mesure, plutôt que d’intégrer un package de permissions pour trois rôles fixes. Rendre la boutique et l’administration en vues Blade au-dessus de thèmes Bootstrap intégrés, plutôt que de construire un design system maison. Itérer strictement module par module — d’abord les primitives du catalogue, puis le merchandising, puis le parcours transactionnel, puis les fonctionnalités annexes, puis la seconde interface d’administration — afin que l’application reste déployable presque à chaque étape de son historique.",
+    "architecture": {
+      "altText": "Un monolithe Laravel 10 : vues Blade de la boutique et de l’administration au-dessus de contrôleurs qui écrivent via Eloquent dans MySQL, avec une seule table users dont l’accès est réparti par un middleware sur mesure entre les interfaces client, admin et vendeur, ainsi que la génération de factures PDF avec DomPDF et une couche de thèmes Bootstrap intégrés."
+    },
+    "decisions": [
+      {
+        "decision": "Une seule table users avec une colonne de rôle, contrôlée par un middleware écrit à la main",
+        "alternatives": "Un package de permissions avec des droits granulaires, ou des guards d’authentification séparés par type d’acteur",
+        "reasoning": "Avec trois rôles fixes, un système d’ACL complet aurait été de la sur-ingénierie pour ce périmètre, et le middleware se lit de bout en bout en une dizaine de secondes.",
+        "tradeoff": "Pas de permissions granulaires — un admin qui peut modifier des produits mais pas supprimer des commandes n’est pas exprimable — et ajouter un quatrième rôle plus tard impose de reprendre à la main chaque groupe de routes."
+      },
+      {
+        "decision": "Blade et thèmes HTML intégrés, bien que le kit de démarrage React/Inertia ait été généré",
+        "alternatives": "S’engager sur Inertia et React, ou construire à la main un système de composants",
+        "reasoning": "Les thèmes fournissaient des tableaux, des graphiques, des widgets de formulaire et une boutique responsive prêts à l’emploi, ce qui comptait davantage que l’originalité du design pour un outil de petite entreprise avec le budget d’un seul développeur.",
+        "tradeoff": "Deux stacks frontend parallèles cohabitent désormais dans le dépôt. Les pages React et Inertia sont en pratique du code mort, gonflent la liste des dépendances et déroutent toute personne qui découvre le projet."
+      },
+      {
+        "decision": "Deux parcours de finalisation de commande partageant les mêmes écritures de commande",
+        "alternatives": "Un paiement exclusivement par carte, ou une intégration complète d’une passerelle de paiement d’emblée",
+        "reasoning": "Le marché cible mêle des clients à l’aise avec la carte et d’autres qui préfèrent le paiement à la livraison ; les deux devaient donc pouvoir finaliser une commande.",
+        "tradeoff": "Le parcours en ligne enregistre la commande comme si le paiement avait réussi — le nommage promet une intégration de passerelle que le code ne contient pas, ce que toute personne qui le maintient doit savoir."
+      },
+      {
+        "decision": "Des avis modérés derrière un indicateur de statut plutôt qu’une publication immédiate",
+        "alternatives": "Publier les avis dès leur envoi et supprimer les mauvais après coup",
+        "reasoning": "Cela évite que des avis non modérés ou du spam apparaissent à côté des produits, dans un petit catalogue où chacun est très visible.",
+        "tradeoff": "Cela crée une file d’attente côté admin qu’il faut traiter activement, faute de quoi les avis légitimes n’apparaissent jamais."
+      }
+    ],
+    "challenges": [
+      "Garder déployable pendant tout le développement un projet solo de sept mois, en se limitant strictement à un module vertical par itération plutôt qu’en construisant des couches horizontales.",
+      "Servir deux interfaces très différentes — une boutique soignée côté merchandising et un back-office dense en tableaux de données — depuis une seule application Laravel, sans que l’une pénalise l’autre.",
+      "Modéliser les frais de livraison selon une hiérarchie d’adresses division-district avec un sélecteur en cascade, sans intégrer un package complet de données géographiques."
+    ],
+    "outcomes": [
+      "Une boutique fonctionnelle : sliders et bannières, navigation par catégories et par marques, recherche de produits, pages de détail avec aperçu rapide en AJAX et avis par produit.",
+      "Un pipeline complet de panier, paiement et commande, qui écrit de façon transactionnelle les enregistrements de commande et de lignes de commande, avec coupons, frais de livraison par région et deux parcours de finalisation.",
+      "Un back-office couvrant plus de quatorze modules CRUD, une file de commandes avec transitions de « en attente » à « livrée », une boîte de réception des contacts avec réponses visibles par les clients, et une file de modération des avis.",
+      "Des factures PDF par commande téléchargeables par le personnel comme par les clients, ainsi qu’une interface super-admin pour gérer les comptes administrateurs."
+    ],
+    "retrospective": "Le projet a atteint son véritable objectif — une boutique auto-hébergée fonctionnelle et un vrai outil d’administration interne, livrés en solo en environ sept mois — et partir de Breeze est la décision qui a rendu ce calendrier possible. La rédaction de cette documentation a fait ressortir des problèmes qu’il vaut mieux énoncer franchement. Le plus grave : le parcours de création de comptes du super-admin insère les nouveaux enregistrements administrateur par un appel au query builder qui contourne les mutators d’Eloquent et ne hache jamais le mot de passe, de sorte que les identifiants administrateur sont stockés en clair. C’est une véritable faille de sécurité et le correctif prioritaire avant que ce code ne s’approche d’un environnement public. Au-delà : l’arborescence des vues d’administration a été dupliquée en bloc pour créer la seconde interface par rôle, au lieu d’être refactorisée en composants partagés, si bien que chaque future modification d’interface doit être faite deux fois, sous peine de dérive silencieuse ; les colonnes de montants et de quantités ont été typées en chaînes lors des premières itérations du schéma et jamais revues, ce qui supprime une couche de protection que la base de données offrirait autrement ; un parcours d’ajout au panier lit un identifiant utilisateur qui n’est affecté qu’à l’intérieur d’un contrôle d’authentification, et lève donc une erreur au lieu de rediriger vers la connexion ; et il n’existe aucune couverture de tests sur la logique du panier, du paiement, des coupons ou du statut des commandes — précisément les parcours où transite l’argent et où une régression coûte le plus cher. Une poignée de tests fonctionnels allant de l’ajout au panier à la création de la commande aurait détecté ce dernier bug gratuitement. Rien de tout cela n’exige une réécriture, mais l’ordre de ce qui a été sacrifié sous la pression des délais est instructif : les tests et le renforcement ont sauté en premier, et les défauts sont apparus précisément là.",
+    "stackDetail": [
+      {
+        "category": "Backend",
+        "items": [
+          "PHP 8.1",
+          "Laravel 10",
+          "Laravel Breeze (échafaudage d’authentification)",
+          "Eloquent ORM",
+          "barryvdh/laravel-dompdf (factures PDF)",
+          "intervention/image (galeries et miniatures)"
+        ]
+      },
+      {
+        "category": "Base de données",
+        "items": [
+          "MySQL",
+          "Migrations pour users, products, categories, brands, carts, coupons, shipping states, orders, order items, contacts, reviews, sliders, banners"
+        ]
+      },
+      {
+        "category": "Frontend",
+        "items": [
+          "Templates Blade (boutique, admin, super-admin)",
+          "Thème d’administration Bootstrap intégré (DataTables, ApexCharts, Select2)",
+          "Thème de boutique séparé avec son propre Sass/JS",
+          "Bundling des assets avec Vite"
+        ]
+      },
+      {
+        "category": "Outillage",
+        "items": [
+          "Pest & PHPUnit (configuration Breeze par défaut uniquement)",
+          "Laravel Pint",
+          "Laravel Sail"
+        ]
+      }
+    ]
+  }
+}

@@ -1,54 +1,50 @@
 import Image, { type StaticImageData } from 'next/image';
+import { getTranslations } from 'next-intl/server';
 import orangeTeam from '@/assets/img/portfolio-professional/orange-acadimy/orange-team.jpeg';
 import orange1 from '@/assets/img/portfolio-professional/orange-acadimy/1694704888550.jpeg';
 import orange2 from '@/assets/img/portfolio-professional/orange-acadimy/1701198673634.jpeg';
 import orange3 from '@/assets/img/portfolio-professional/orange-acadimy/1694611907194.jpeg';
-import { Reveal, Stagger, StaggerItem } from '@/components/motion/Reveal';
+import { Reveal } from '@/components/motion/Reveal';
+import { ClipReveal } from '@/components/motion/ClipReveal';
+import { ScrollParallax } from '@/components/motion/ScrollParallax';
 
-type Shot = {
-  src: StaticImageData;
-  alt: string;
-};
+const SHOTS: StaticImageData[] = [orangeTeam, orange1, orange2, orange3];
+/** Per-tile parallax travel (px); alternating sign gives the collage depth. */
+const DRIFT = [26, -22, 18, -30];
 
-const shots: Shot[] = [
-  {
-    src: orangeTeam,
-    alt: 'Jack Alloussi with the Orange Coding Academy cohort',
-  },
-  {
-    src: orange1,
-    alt: 'Orange Coding Academy programme moment',
-  },
-  {
-    src: orange2,
-    alt: 'Jack Alloussi during the Orange Coding Academy',
-  },
-  {
-    src: orange3,
-    alt: 'Orange Coding Academy workshop session',
-  },
-];
+export async function PhotoMoments() {
+  const t = await getTranslations('about.moments');
+  const alts = t.raw('alts') as string[];
 
-export function PhotoMoments() {
   return (
     <Reveal className="mt-12">
-      <p className="font-mono-label mb-4 text-[var(--color-brand)]">Moments</p>
-      <p className="mb-5 max-w-[var(--prose-max)] text-[var(--color-text-muted)]">
-        Orange Coding Academy — the intensive year that shaped how I ship under real delivery pressure.
-      </p>
-      <Stagger className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4" stagger={0.05}>
-        {shots.map((shot) => (
-          <StaggerItem key={shot.alt} className="group relative aspect-[4/5] overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface-sunken)]">
-            <Image
-              src={shot.src}
-              alt={shot.alt}
-              fill
-              sizes="(max-width: 768px) 50vw, 20vw"
-              className="object-cover transition-transform duration-[var(--duration-large)] ease-[var(--ease-out)] group-hover:scale-[1.04]"
-            />
-          </StaggerItem>
+      <p className="font-mono-label mb-4 text-[var(--color-brand)]">{t('label')}</p>
+      <p className="mb-5 max-w-[var(--prose-max)] text-[var(--color-text-muted)]">{t('intro')}</p>
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
+        {SHOTS.map((src, index) => (
+          // Alternate columns sit lower and drift at different speeds, so the
+          // row reads as a loose collage instead of a flat grid.
+          <ScrollParallax
+            key={src.src}
+            distance={DRIFT[index] ?? 0}
+            className={index % 2 === 1 ? 'md:mt-10' : ''}
+          >
+            <ClipReveal
+              className="group relative aspect-[4/5] overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface-sunken)]"
+              inset={10}
+              radius="18px"
+            >
+              <Image
+                src={src}
+                alt={alts[index] ?? ''}
+                fill
+                sizes="(max-width: 768px) 50vw, 20vw"
+                className="object-cover transition-transform duration-[var(--duration-large)] ease-[var(--ease-out)] group-hover:scale-[1.04]"
+              />
+            </ClipReveal>
+          </ScrollParallax>
         ))}
-      </Stagger>
+      </div>
     </Reveal>
   );
 }

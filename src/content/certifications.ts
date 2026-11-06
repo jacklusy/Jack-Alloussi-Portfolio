@@ -1,43 +1,36 @@
-import { certificationSchema, type Certification } from '@/content/schemas';
-import { z } from 'zod';
+import type { Certification } from '@/content/schemas';
 
-const certificationsData = [
+/** Certification names live in `src/i18n/content/<locale>/certifications.json`, keyed by `id`. */
+export const certificationsStructure = [
   {
     id: 'aws-dva',
-    name: 'AWS Certified Developer – Associate (DVA-C02)',
     issuer: 'Amazon Web Services',
     skills: ['AWS', 'Cloud development'],
-    status: 'in-progress' as const,
+    status: 'in-progress',
   },
   {
     id: 'ielts',
-    name: 'IELTS General Training',
     issuer: 'British Council / IDP',
     skills: ['English'],
-    status: 'in-progress' as const,
+    status: 'in-progress',
   },
   {
     id: 'sky-backend',
-    name: 'Backend Development: .NET, Clean Architecture, DDD, SOLID',
     issuer: 'Sky Software',
     skills: ['.NET', 'Clean Architecture', 'DDD', 'SOLID'],
-    status: 'earned' as const,
+    status: 'earned',
   },
   {
     id: 'sky-frontend',
-    name: 'Front-End Development: Angular and TypeScript',
     issuer: 'Sky Software',
     issueDate: '2024-08',
     skills: ['Angular', 'TypeScript'],
-    status: 'earned' as const,
+    status: 'earned',
   },
   {
     id: 'github-foundations',
-    name: 'GitHub Foundations',
     issuer: 'GitHub',
     skills: ['Git', 'GitHub'],
-    status: 'earned' as const,
+    status: 'earned',
   },
-] satisfies Certification[];
-
-export const certifications = z.array(certificationSchema).parse(certificationsData);
+] satisfies Omit<Certification, 'name'>[];

@@ -61,3 +61,20 @@ Theme defaults to **dark** when no `localStorage` preference exists. Manual togg
 ### Atmosphere
 
 Ambient glow + subtle grid; parallax / particle mesh only on fine pointers. All non-essential motion respects `prefers-reduced-motion`.
+
+## Home page scroll system
+
+The home page is one connected sequence rather than stacked static sections:
+
+- `ScrollProgress` — hairline progress bar fixed to the top edge.
+- `SectionRail` — sticky section index (desktop only, `xl:` and up), highlights the section currently in view via `IntersectionObserver`.
+- `HeroVisual` — two product screenshots and two "proof" chips drift at different parallax speeds behind the status panel.
+- `ClipReveal` — portrait and photo-gallery images open from a masked inset as they scroll in, with a slight inner zoom settling to 1.
+- `TechRibbon` — oversized outlined tech names drifting sideways, bridging Hero/About into Skills.
+- `StackedCards` / `FeaturedProjectPanel` — featured projects pin and stack as the visitor scrolls through Projects, each card scaling down slightly under the next.
+- `ExperienceTimeline`'s rail now draws itself with scroll progress (`scaleY` bound to `scrollYProgress`).
+- `WordReveal` — the closing statement rises in word by word (never letter by letter, so Arabic joining survives).
+
+All of the above animate `transform`/`opacity`/`clip-path` only, run through `useRichMotionCapability()` (fine pointer + hover + reduced-motion off + spare CPU cores) where the effect is more than a one-shot reveal, and degrade to the plain, fully-visible content under `prefers-reduced-motion` — the server-rendered markup never differs from the reduced-motion client render, only inline styles are conditionally applied, to avoid hydration mismatches.
+
+RTL (`dir="rtl"`, Arabic): parallax, ribbon drift and the progress bar's transform-origin all flip via `rtl:` variants or the `useInlineSign()` hook, rather than per-language branching in each component.

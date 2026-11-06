@@ -1,0 +1,60 @@
+{
+  "title": "Multi-Stack-Delivery-Plattform für Kunden",
+  "summary": "Produktive Web-, API- und Mobile-Auslieferung für Kunden in den USA — NestJS, Laravel, React Native und CI/CD über mehrere Cloud-Ziele, darunter 15+ in den App Stores veröffentlichte Mobile-Apps.",
+  "description": "Laufende Vollzeitarbeit an Entwurf und Betrieb von Backend-Diensten, React- und Next.js-Frontends sowie React-Native-Apps für Kunden mit Sitz in den USA. Kundenidentitäten und proprietäre Details sind vertraulich; diese Fallstudie beschreibt Architektur, Entscheidungen und meinen eigenen Beitrag in verallgemeinerter Form.",
+  "role": "Software Engineer",
+  "timeframe": "2024 – heute",
+  "metrics": [
+    {
+      "label": "Veröffentlichte Mobile-Apps",
+      "value": "15+"
+    },
+    {
+      "label": "Cloud-Ziele",
+      "value": "5"
+    },
+    {
+      "label": "Lieferrhythmus",
+      "value": "Agile, 2 Wochen"
+    }
+  ],
+  "caseStudy": {
+    "context": "Ein Produktentwicklungsbetrieb für Kunden in den Vereinigten Staaten brauchte kontinuierliche Lieferung von Web-APIs, Admin- und kundenseitigen Frontends sowie plattformübergreifenden Mobile-Apps. Die Arbeit läuft in zweiwöchigen agilen Zyklen mit direkter englischsprachiger Kommunikation mit den Stakeholdern. Kundennamen und Produktmarken sind vertraulich.",
+    "problem": "Verlässlich Features über heterogene Stacks hinweg ausliefern (Backends in TypeScript/NestJS und PHP/Laravel, Web mit React/Next.js, Mobile mit React Native), ohne produktive Systeme zu destabilisieren, die bereits von echten Nutzern verwendet werden — und dabei das Deployment über mehrere Cloud-Anbieter hinweg wiederholbar zu halten.",
+    "approach": "Vertikale Slices bei Bedarf von Anfang bis Ende verantworten: REST-APIs entwerfen, mit PostgreSQL und Redis persistieren, mit Docker containerisieren und CI/CD pflegen. Mobile-Releases umfassen Provisioning, Signierung und Store-Einreichung sowohl im React-Native-CLI- als auch im Expo-Workflow. Inkrementelle Änderungen innerhalb bestehender Architekturen haben Vorrang vor spekulativen Neuentwicklungen.",
+    "architecture": {
+      "altText": "Dreischichtiges Diagramm: Clients (Web und Mobile) rufen REST-APIs auf, hinter denen NestJS- oder Laravel-Dienste stehen; darunter PostgreSQL und Redis, verpackt in Docker und per CI/CD auf Cloud-Hosts ausgeliefert."
+    },
+    "decisions": [
+      {
+        "decision": "Kunden auf ihrem Stack begegnen, statt alles auf ein Framework zu vereinheitlichen",
+        "alternatives": "Alle Dienste auf einer einzigen NestJS-Plattform neu schreiben",
+        "reasoning": "Die Codebasen der Kunden und die Vertrautheit der Teams waren bereits vorhanden; ein erzwungener Neubau würde die Lieferung verzögern und das Risiko für Live-Systeme erhöhen.",
+        "tradeoff": "Höhere Kosten durch Kontextwechsel und eine breitere Skill-Basis, dafür schnelleres Onboarding und sicherere inkrementelle Lieferung."
+      },
+      {
+        "decision": "Dienste, die häufig ausgeliefert werden, früh containerisieren und CI/CD automatisieren",
+        "alternatives": "Manuelle SSH-Deployments oder Ad-hoc-Skripte je Umgebung",
+        "reasoning": "Mehrere Apps auf GCP, DigitalOcean, Vercel, Railway und Render machten manuelle Abläufe fehleranfällig und langsam.",
+        "tradeoff": "Anfangsinvestition in die Pipeline, dafür danach schnellere und konsistentere Releases."
+      },
+      {
+        "decision": "Sowohl React Native CLI als auch Expo nutzen, statt sich auf einen Workflow festzulegen",
+        "alternatives": "Jedes Mobile-Projekt auf eine einzige Toolchain standardisieren",
+        "reasoning": "Projekte mit eigenen nativen Modulen rechtfertigen die CLI; Projekte ohne solche Anforderungen sind mit Expo, verwalteten Builds und Over-the-Air-Updates schneller ausgeliefert.",
+        "tradeoff": "Zwei Mobile-Release-Pipelines, die aktuell gehalten werden müssen, und eine projektbezogene Entscheidung, die bewusst getroffen werden muss statt per Standard."
+      }
+    ],
+    "challenges": [
+      "Die Release-Anforderungen von App Store und Play Store (Signierung, Provisioning, Review) mit API-Änderungen abstimmen.",
+      "Dieselben Engineering-Praktiken über NestJS- und Laravel-Codebasen hinweg betreiben, ohne die Qualitätsstandards für Reviews und Tests aufzuweichen.",
+      "Das Produktionsverhalten vorhersehbar halten, wenn Anforderungen mitten im Sprint direkt von englischsprachigen Stakeholdern kommen."
+    ],
+    "outcomes": [
+      "Backend-Dienste und Frontends für Kunden in den Vereinigten Staaten über mehrere Anwendungen hinweg im Produktivbetrieb gepflegt.",
+      "Mehr als fünfzehn plattformübergreifende Mobile-Apps mit React Native CLI und Expo gebaut und veröffentlicht, einschließlich Provisioning, Signierung und Store-Einreichung.",
+      "Anwendungen laufen auf GCP, DigitalOcean, Vercel, Railway und Render mit wiederholbarem CI/CD."
+    ],
+    "retrospective": "Ich würde früher in gemeinsame Observability-Konventionen investieren (strukturierte Logs, Correlation-IDs und Health-Probes) über jeden Stack hinweg, den wir anfassen, damit Betriebserfahrungen schneller zwischen NestJS- und Laravel-Diensten übertragbar werden. Außerdem würde ich stärker auf ein einziges dokumentiertes Deployment-Playbook pro Umgebungsklasse drängen, statt Sonderfälle je Host immer wieder neu zu entdecken."
+  }
+}

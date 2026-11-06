@@ -1,0 +1,15 @@
+{
+  "entries": {
+    "bsc-se": {
+      "degree": "Licence (BSc)",
+      "field": "Génie logiciel",
+      "location": "Amman, Jordanie",
+      "note": "Études interrompues en 2022–2023 pour suivre le programme full stack de l’Orange Coding Academy."
+    },
+    "orange-academy": {
+      "degree": "Programme de développement full stack",
+      "location": "Amman, Jordanie",
+      "note": "Programme intensif de sept mois en JavaScript, PHP, Laravel, React et Redux, suivi d’un stage d’un mois en entreprise."
+    }
+  }
+}

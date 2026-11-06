@@ -1,0 +1,130 @@
+{
+  "title": "Amman's Treasure — zweisprachige Café-Landingpage",
+  "summary": "Eine vollständig zweisprachige Single-Page-Website (Englisch/Arabisch) für ein Café in Amman, mit echtem RTL-Design statt eines gespiegelten LTR-Layouts — sieben Sektionen, acht Runtime-Abhängigkeiten, keine Datei über 210 Zeilen.",
+  "description": "Eine Single-Page-Marketingseite für ein Boutique-Café mit Lounge in Amman. Zweisprachig mit vollständiger Unterstützung für Rechts-nach-links-Schrift, inhaltsgetrieben und als statische React-SPA umgesetzt. Die folgende Fallstudie ist ungewöhnlich offen: Sie enthält das Design-Review, das drei stillschweigend defekte Styles aufdeckte, und ordnet die Korrekturen nach Wirkung im Verhältnis zum Aufwand.",
+  "role": "Frontend Developer",
+  "timeframe": "2025",
+  "metrics": [
+    {
+      "label": "Code-Umfang",
+      "value": "1.158 Zeilen"
+    },
+    {
+      "label": "Runtime-Abhängigkeiten",
+      "value": "8 Pakete"
+    },
+    {
+      "label": "Tracker / Cookies",
+      "value": "Keine"
+    }
+  ],
+  "thumbnail": {
+    "alt": "Die Startseite von Amman’s Treasure: die Serifenzeile „Amman’s Hidden Treasure“ über einem Foto der pflanzenbehangenen Café-Terrasse, darunter ein goldener Button „View menu“."
+  },
+  "gallery": [
+    {
+      "alt": "Die Menüseite mit Bereichen für Eiskaffee, Heißgetränke, Säfte und Frühstück; jeder Eintrag ist auf Englisch und Arabisch aufgeführt, mit seinem Preis in Dinar.",
+      "caption": "Jeder Eintrag trägt beide Sprachen und seinen Preis in Dinar. Menüs ändern sich nach dem Rhythmus des Cafés, nicht nach einem Deploy-Zeitplan — für das Umpreisen eines Lattes sollte nie ein Entwickler nötig sein."
+    },
+    {
+      "alt": "Die Galerieseite „Amman’s Treasure Moments“, ein Raster aus Fotos der Terrasse, der Aussicht auf die Stadt und von Tellern mit Essen.",
+      "caption": "Die Galerie beantwortet die Frage, die soziale Medien ohnehin gut beantworten — wie sieht es aus —, damit der Rest der Seite die Fragen beantworten kann, bei denen sie schlecht sind: Öffnungszeiten, Lage, ob man dort arbeiten kann."
+    },
+    {
+      "alt": "Der Abschnitt „Our Story“ neben einem Foto von Essen, mit einer Durchschnittsbewertung von 4,9 und Öffnungszeiten von 9:00 bis 00:00 Uhr.",
+      "caption": "Die Positionierung ist das Produkt: ein Raum, der zum Bleiben gebaut ist, keine Restaurantvorlage, die Essen verkauft. Bewertung und Öffnungszeiten wiegen schwerer als jeder Hero-Text."
+    },
+    {
+      "alt": "Die Kontaktseite mit Telefon, WhatsApp, E-Mail und Adresse neben einer eingebetteten Karte mit dem Standort des Cafés in Amman.",
+      "caption": "Niemand reserviert in Amman einen Café-Tisch über ein Webformular. Die Conversion-Aktionen sind: WhatsApp öffnen, eine Telefonnummer antippen oder Maps für die Wegbeschreibung öffnen. Deshalb übergibt die Seite an diese Kanäle, statt Leads zu erfassen."
+    }
+  ],
+  "caseStudy": {
+    "context": "Ein drei Monate altes Café in Amman hatte Instagram, Facebook und einen Google-Maps-Eintrag mit 4,9 Sternen, aber keinen eigenen Webauftritt. Social-Media-Profile eignen sich gut für Fotos und schlecht für praktische Fragen: Öffnungszeiten, genauer Standort, ob es WLAN gibt, ob man dort drei Stunden arbeiten kann. Nichts davon lässt sich in einem Social Feed auf den ersten Blick beantworten.",
+    "problem": "Drei Rahmenbedingungen prägten den Aufbau. Das zweisprachige Publikum ist nicht ein Publikum — Ammans Café-Markt teilt sich in arabischsprachige Einheimische und ein englischaffines Segment aus Studierenden, Remote-Arbeitenden und Besuchenden, und beide lesen in entgegengesetzter Richtung. Arabisch als Übersetzungsschicht über ein LTR-Design zu legen, führt daher zu einer gespiegelten, aber kaputten Erfahrung. Die Positionierung ist das Produkt: Das Alleinstellungsmerkmal ist nicht der Kaffee, sondern ein Raum, der zum Verweilen gebaut ist; eine generische Restaurantvorlage, die Essen verkauft, hatte also die falsche Form. Und die Speisekarte pflegt das Café-Personal, nicht Entwickler — jede Lösung, die ein Code-Deployment erfordert, um einen Latte neu zu bepreisen, wäre binnen eines Monats verwaist.",
+    "approach": "Die Architektur an der tatsächlichen Conversion des Geschäfts ausrichten. In Amman bucht niemand einen Café-Tisch über ein Webformular; die Conversion-Aktionen sind WhatsApp öffnen, eine Telefonnummer antippen oder Maps für die Wegbeschreibung öffnen. Die Seite übergibt deshalb so schnell wie möglich an diese Kanäle, statt Leads zu erfassen. Das Internationalisierungsmodell bewusst aufteilen: Menüeinträge, Hero-Slides und Rezensionen liegen als gepaarte zweisprachige Datensätze vor, sodass ein neues Getränk ein Objektliteral in einer Datei ist, während wiederverwendete Oberflächentexte über i18next laufen, wo ein fehlender Schlüssel sofort auffällt. RTL als Designziel statt als Transformation bauen — richtungsabhängige Schriftfamilien, gespiegelte Einblendanimationen, Schriftüberschreibungen pro Überschrift für die Glyphenabdeckung im Arabischen.",
+    "architecture": {
+      "altText": "Eine clientseitig gerenderte Single-Page-App mit Vite und React 19: sieben Sektionskomponenten unter einer Route, die gepaarte zweisprachige Inhaltsdatensätze aus typisierten Datenmodulen lesen, während Oberflächentexte über i18next aufgelöst werden; gestylt mit den CSS-first-Tokens von Tailwind v4 und richtungsabhängiger Typografie, gebaut zu einem statischen dist/-Bundle."
+    },
+    "decisions": [
+      {
+        "decision": "Gepaarte zweisprachige Inhaltsfelder, i18next nur für Oberflächentexte",
+        "alternatives": "Jeden String über vollständige i18next-Ressourcenbündel leiten",
+        "reasoning": "Bei Menüeinträgen und Rezensionen bedeuten gepaarte Felder: eine Änderung in einer Datei, beide Sprachen nebeneinander — und eine fehlende Übersetzung fällt beim Schreiben als leeres Feld auf, statt still auf Englisch zurückzufallen.",
+        "tradeoff": "Lazy Loading pro Locale ist für diese Inhalte nicht mehr möglich, und es gibt weder Tooling zur Schlüsselextraktion noch CI-Prüfungen. Die Oberflächentexte, bei denen derselbe String an sechs Stellen wiederverwendet wird, bleiben aus genau diesen Gründen bei i18next."
+      },
+      {
+        "decision": "Speisekarte als Fotos der gedruckten Karte statt als strukturierte Liste",
+        "alternatives": "Die bereits gebaute strukturierte, zweisprachige Karte pro Eintrag",
+        "reasoning": "Das Schlimmste für eine Speisekarte ist ein falscher Preis, und Screenshots kann das Personal ohne Deployment aktualisieren. Die strukturierte Ansicht — vierzehn Einträge, zweisprachig, mit Preisen und Kategorie-Tabs — existiert im Code, ist aber abgeschaltet.",
+        "tradeoff": "Dadurch wird die wichtigste Inhaltsfläche nicht indexierbar und nicht barrierefrei. Beide Bedenken sind berechtigt; der Fehler war, den Konflikt still mit einer hartcodierten Konstante zu lösen, statt den Zielkonflikt festzuhalten und einen Ausweg zu wählen."
+      },
+      {
+        "decision": "Eine clientseitig gerenderte SPA statt statischer Generierung",
+        "alternatives": "Statische Generierung mit Astro oder Next.js, oder reines HTML",
+        "reasoning": "Das Framework stammte aus dem Scaffold, mit dem das Projekt begann, und die Seite ist voller scroll- und viewportgesteuerter Animationen, die unter SSR ohnehin zu Client-Komponenten würden — der Gewinn beschränkt sich damit auf das First Paint einer ohnehin kleinen Seite.",
+        "tradeoff": "Die Seite liefert ein leeres Root-Element aus, sodass alle Inhalte von der JavaScript-Ausführung abhängen — und für eine Website, deren gesamter Zweck lokale Auffindbarkeit ist, ist das die größte strategische Lücke im Projekt."
+      },
+      {
+        "decision": "Keine Analytics, kein Tag Manager, keine Tracking-Pixel, keine Cookie-Wall",
+        "alternatives": "Ein üblicher Analytics- und Remarketing-Stack",
+        "reasoning": "Zurückhaltung, passend dazu, wie dieser Markt ein Café tatsächlich kontaktiert: ein WhatsApp-Button und vier antippbare Kanäle. Da nichts ein Cookie setzt, ist auch kein Einwilligungsbanner nötig.",
+        "tradeoff": "Keine First-Party-Daten dazu, wie Besuchende die Seite nutzen; künftige Änderungen müssen daher begründet statt gemessen werden."
+      }
+    ],
+    "challenges": [
+      "Arabisch als gestaltete statt abgeleitete Erfahrung aufbauen — richtungsabhängige Schriften, gespiegelte Animationen und lokalisierte Inhaltsauswahl an jeder Aufrufstelle, statt nur ein Richtungsattribut zu setzen und auf das Beste zu hoffen.",
+      "Die gesamte Codebasis im Kopf einer einzelnen Person halten: kein Router, keine State-Bibliothek, kein Backend, kein CMS, die größte Datei hat 209 Zeilen.",
+      "Eine Speisekarte, die das Personal ändern können muss, mit einer Speisekarte vereinbaren, die Suchmaschinen und Screenreader lesen können müssen — ein echter Konflikt ohne kostenlose Lösung."
+    ],
+    "outcomes": [
+      "Eine zweisprachige Website mit sieben Sektionen — Hero-Karussell, Geschichte, Ausstattung, Speisekarte, Rezensions-Marquee, Masonry-Galerie und Kontakt — mit Sprachumschalter per Fingertipp und vollständiger RTL-Umsetzung.",
+      "Acht Runtime-Abhängigkeiten, 1.158 Zeilen in fünfzehn Dateien und keinerlei Tracking durch Dritte.",
+      "Sechs echte, überprüfbare Fünf-Sterne-Rezensionen von Google, zweisprachig dargestellt und mit dem Live-Eintrag verlinkt — keine erfundenen Testimonials.",
+      "Conversion über die Kanäle geleitet, die dieser Markt tatsächlich nutzt: WhatsApp, Telefon, E-Mail und Maps-Wegbeschreibung."
+    ],
+    "retrospective": "Die Disziplin beim Umfang und das geteilte i18n-Modell waren die richtigen Entscheidungen, und die arabische Erfahrung ist gestaltet statt abgeleitet. Das Review, aus dem dieses Dokument entstand, hat aber auch echte Mängel gefunden. Eine parallele JavaScript-Farbtabelle spiegelte die CSS-first-Tokens von Tailwind und lief aus dem Takt, sodass drei Komponenten Utility-Klassen referenzieren, die nie generiert wurden — Menü- und Rezensionssektion verlieren ihren vorgesehenen warmgrauen Untergrund, und der primäre Call-to-Action im Hero hat gar keinen Hover-Zustand. Dieser Fehler ist auf jeder Ebene unsichtbar: TypeScript sieht Strings, Tailwind ignoriert unbekannte Utilities, der Build bleibt grün, und die Seite sieht einfach leicht falsch aus. Die Lehre gilt allgemein: eine einzige Quelle der Wahrheit, sonst ist die zweite falsch. Zwei weitere Punkte verdienen Erwähnung — eine Konstante, die wie ein Feature-Flag heißt und nie true war, ist kein Flag, sondern unfertige Arbeit mit zusätzlichen Schritten, und ein Kommentar, der auflistet, was fehlt, hätte den tatsächlichen Stand besser vermittelt; und ein übernommenes Scaffold braucht einen expliziten Aufräumdurchgang, denn vier ungenutzte Abhängigkeiten und ein API-Key ohne Leser kosten die nächste Person echte Zeit bei der Frage, ob davon etwas tragend ist. Die strategische Lücke ist dasselbe Problem zweimal: Weil die Seite clientseitig gerendert wird, gab es nie ein Dokument-Head zum Befüllen, und die Metadaten wurden nie geschrieben. Die einzelne Route vorzurendern und strukturierte Daten für lokale Unternehmen (Local Business) zu ergänzen, ist eine Arbeit von wenigen Stunden und der wertvollste offene Punkt.",
+    "stackDetail": [
+      {
+        "category": "Sprache & Framework",
+        "items": [
+          "TypeScript 5.8",
+          "React 19",
+          "React DOM 19"
+        ]
+      },
+      {
+        "category": "Build & Tooling",
+        "items": [
+          "Vite 6",
+          "@vitejs/plugin-react",
+          "@tailwindcss/vite",
+          "tsc --noEmit"
+        ]
+      },
+      {
+        "category": "Styling",
+        "items": [
+          "Tailwind CSS v4 (CSS-first-@theme-Konfiguration)",
+          "clsx + tailwind-merge",
+          "Bodoni Moda, Inter, Readex Pro über Google Fonts"
+        ]
+      },
+      {
+        "category": "Internationalisierung",
+        "items": [
+          "i18next + react-i18next für Oberflächentexte",
+          "Gepaarte zweisprachige Datensätze für Inhalte",
+          "Richtungsabhängige Typografie und gespiegelte Animationen"
+        ]
+      },
+      {
+        "category": "Animation & Icons",
+        "items": [
+          "Motion (respektiert die Einstellung für reduzierte Bewegung)",
+          "lucide-react"
+        ]
+      }
+    ]
+  }
+}

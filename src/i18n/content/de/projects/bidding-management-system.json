@@ -1,0 +1,115 @@
+{
+  "title": "Bidding Management System — Workflow-API für Ausschreibungen",
+  "summary": "Eine .NET-8-API für Ausschreibungen und Angebote auf Basis von Clean Architecture, DDD und CQRS: ~40 Endpunkte über zwei abgesicherte Aggregat-Lebenszyklen, umgesetzt in einem dreitägigen Sprint.",
+  "description": "Das Backend einer Beschaffungsplattform, auf der Mitarbeitende Ausschreibungen veröffentlichen, Anbieter Angebote abgeben und Bewertende diese beurteilen und vergeben — mit Geschäftsregeln, die das Domänenmodell selbst durchsetzt, statt sie in Ad-hoc-Prüfungen in den Controllern zu verstreuen. Entstanden für den Backend-Track der Sky Academy als bewusste Übung, Enterprise-.NET-Muster durchgängig auf eine anspruchsvolle Domäne anzuwenden.",
+  "role": "Backend Developer",
+  "timeframe": "April 2025",
+  "metrics": [
+    {
+      "label": "REST-Endpunkte",
+      "value": "~40"
+    },
+    {
+      "label": "Architekturschichten",
+      "value": "4 Projekte"
+    },
+    {
+      "label": "Sprint-Dauer",
+      "value": "3 Tage"
+    }
+  ],
+  "group": {
+    "label": "Sky Academy"
+  },
+  "caseStudy": {
+    "context": "Beschaffung ist im Kern ein Workflow mit strikten Zustandsübergängen und mehreren Akteuren mit unterschiedlichen Berechtigungen. Auf eine Ausschreibung darf man weder vor ihrer Veröffentlichung noch nach ihrem Abschluss bieten. Ein Angebot darf nicht vor der Einreichung bewertet und nicht vor der Bewertung angenommen werden. Die Einkaufsverantwortlichen, die eine Ausschreibung anlegen, sind nicht dieselben wie die Bewertenden, die Angebote beurteilen — und beide sind nicht der Anbieter, der ein Angebot abgibt.",
+    "problem": "Solche Regeln lassen sich leicht über Controller verstreuen und sind danach schwer konsistent zu halten. Dasselbe gilt für die Daten: Geldbeträge mit Währung, Kontakt-E-Mails, Eignungskriterien und Zahlungsbedingungen, die sich zu hundert Prozent summieren müssen. Ziel war ein Backend, in dem illegale Zustände im Domänenmodell gar nicht darstellbar sind, statt erst am Rand abgewiesen zu werden.",
+    "approach": "Von der Domäne nach außen in vier Schichten bauen. Die Kernkonzepte als Aggregate mit eigenen Invarianten und Zustandsautomaten modellieren, dazu Value Objects, die ungültige Werte gar nicht erst konstruierbar machen. Jeden Anwendungsfall als CQRS-Command oder -Query kapseln und über MediatR dispatchen, statt Logik in Controllern zu schreiben. Validierung und Logging in eine MediatR-Pipeline verlagern, statt Guard Clauses zu wiederholen. EF Core, SQL Server, JWT und Dateispeicher hinter Interfaces halten, die in den inneren Schichten definiert sind. Features entstanden als vertikale Schnitte durch Domain, Application und API und nicht Schicht für Schicht horizontal.",
+    "architecture": {
+      "altText": "Clean Architecture mit vier Projekten: eine ASP.NET-Core-API-Schicht, die HTTP in MediatR-Commands und -Queries übersetzt; eine Application-Schicht mit Handlern und einem FluentValidation-Pipeline-Behavior; eine abhängigkeitsfreie Domain-Schicht mit den Aggregaten Tender, Bid und User samt Value Objects und Zustandsautomaten; und eine Infrastructure-Schicht, die Persistenz über EF Core gegen SQL Server sowie JWT-Token-Erzeugung und Dateispeicher hinter Interfaces implementiert."
+    },
+    "decisions": [
+      {
+        "decision": "Reichhaltige, verhaltenstragende Aggregate statt eines anämischen Modells mit Logik in Services",
+        "alternatives": "Reine Datenentitäten, deren Regeln in Application Services liegen",
+        "reasoning": "Zustandsübergänge werden an genau einer Stelle abgesichert — im Aggregat —, sodass es unmöglich ist, eine Ausschreibung zu vergeben, die nicht in Bewertung ist, egal welcher Codepfad sie aufruft.",
+        "tradeoff": "Aggregate brauchen private Setter und Konstruktoren sowie eine explizite EF-Core-Konfiguration, um ohne öffentlichen veränderbaren Zustand auf relationale Tabellen abgebildet zu werden — bei den privaten Collections über Backing-Field-Mapping gelöst."
+      },
+      {
+        "decision": "CQRS über MediatR für jeden Anwendungsfall, auch für einfache Lesezugriffe",
+        "alternatives": "Klassische Service-Klassen, die in Controller injiziert werden",
+        "reasoning": "Eine einheitliche Pipeline liefert Validierung und Logging für alle Operationen gratis und beschränkt Controller darauf, HTTP in einen Command oder eine Query zu übersetzen.",
+        "tradeoff": "Viele kleine Klassen — allein für Ausschreibungen neun einzelne Command-Klassen —, also mehr Dateien zum Navigieren, als ein Service-Klassen-Ansatz bräuchte."
+      },
+      {
+        "decision": "FluentValidation in einem MediatR-Pipeline-Behavior statt Data-Annotation-Attributen",
+        "alternatives": "DTO-Attribute plus ModelState-Prüfungen in jeder Action",
+        "reasoning": "Die eigentlichen Regeln sind feldübergreifend und bedingt — Stückpreis mal Menge muss centgenau dem Gesamtpreis entsprechen, und die Währung jeder Angebotsposition muss zum Angebot passen —, was mit Attributen sperrig und mit einem Fluent-Rule-Builder natürlich ist.",
+        "tradeoff": "Die Validatoren liegen in der Application-Schicht neben den Konstruktor-Prüfungen des Aggregats. Das ist Defense in Depth, aber auch zwei Stellen, die synchron bleiben müssen."
+      },
+      {
+        "decision": "Dateispeicher auf lokaler Festplatte hinter einem IFileStorageService-Interface",
+        "alternatives": "Cloud-Blob-Storage direkt in die Handler einbauen",
+        "reasoning": "Um den Dokument-Upload innerhalb eines dreitägigen Sprints zu demonstrieren, durfte es keine externe Abhängigkeit geben.",
+        "tradeoff": "Für ein Deployment mit mehreren Instanzen nicht tragfähig. Das Interface existiert gerade deshalb, damit sich die Implementierung austauschen lässt, ohne Code der Application-Schicht anzufassen."
+      }
+    ],
+    "challenges": [
+      "Aggregate mit privaten Settern und privaten Collections auf relationale Tabellen abzubilden, ohne veränderbaren öffentlichen Zustand preiszugeben — gelöst mit Fluent-API-Konfigurationen auf Basis der Backing-Field-Unterstützung von EF Core.",
+      "Zwei vollständige Lebenszyklen mit echten Vorbedingungen durchzusetzen: bei Ausschreibungen Draft → Published → UnderEvaluation → Awarded → Closed, mit Cancel aus jedem nicht-terminalen Zustand, bei Angeboten Draft → Submitted → UnderEvaluation → Accepted oder Rejected.",
+      "Rund zehn Domain- und Application-Exception-Typen auf stimmige HTTP-Statuscodes mit einheitlicher JSON-Fehlerstruktur abzubilden, zentral in einer Middleware statt verstreut über die Controller."
+    ],
+    "outcomes": [
+      "Rund vierzig REST-Endpunkte in fünf Controllern für Authentifizierung, Ausschreibungs-Lebenszyklus, Angebots-Lebenszyklus, Nutzerverwaltung und Dokument-Upload.",
+      "Beide Aggregat-Lebenszyklen werden im Domänenmodell durchgesetzt, wobei Übergänge gegen echte Vorbedingungen geprüft werden, statt im Controller zu prüfen.",
+      "JWT-Authentifizierung mit 24-Stunden-Access-Tokens, persistierten 7-Tage-Refresh-Tokens, vier durchgesetzten Rollen und einem Passwortwechsel-Flow.",
+      "Regeln zur Duplikatvermeidung, die als saubere 409-Antworten ausgegeben werden, sowie zentrales Fehlerhandling, das rund zehn Exception-Typen auf passende Statuscodes abbildet."
+    ],
+    "retrospective": "Die domänengetriebenen Zustandsautomaten haben ihren Aufwand gerechtfertigt — sie haben ungültige Zustände tatsächlich verhindert, mehr noch als die Validatoren. Was eine Frist von drei Tagen nicht zusätzlich leisten konnte, zeigt sich genau dort, wo man es erwartet. Es gibt überhaupt keine automatisierten Tests, was bei einem Projekt, das CQRS und DDD demonstrieren soll, die größte einzelne Lücke ist: Die Guard Clauses der Aggregate sind genau die Art Logik, für die Unit-Tests da sind. Beim Schreiben dieser Dokumentation fiel ein echter Autorisierungsfehler auf — der Endpunkt zum Anlegen von Ausschreibungen prüft auf einen Rollen-String, der nicht dem Enum-Wert entspricht, der in derselben Datei überall sonst korrekt verwendet wird, sodass die eine Rolle, deren Zweck das Anlegen von Ausschreibungen ist, ihn derzeit nicht aufrufen kann. Eine LoggingBehavior-Klasse wurde geschrieben, aber nie in der Pipeline registriert, sodass das darin implementierte Timing pro Request nie lief; dass die Handler manuell loggen, ist der Grund, warum es niemand bemerkte. CORS und Swagger wurden bedingungslos weit offen gelassen, in einem Code-Kommentar als später einzuschränken markiert und nie wieder angefasst. Meine Lehre daraus: Eine Querschnittsfunktion als Klasse zu verdrahten heißt nicht, dass sie aktiv ist, und ein Smoke-Test, der prüft, ob die Pipeline ihre Behaviors tatsächlich enthält, hätte sowohl das als auch den Rollen-Tippfehler entdeckt.",
+    "stackDetail": [
+      {
+        "category": "Sprache & Runtime",
+        "items": [
+          "C# 12",
+          ".NET 8",
+          "ASP.NET Core 8 Web API"
+        ]
+      },
+      {
+        "category": "Architektur & Muster",
+        "items": [
+          "Clean Architecture (Domain / Application / Infrastructure / API)",
+          "Domain-Driven Design — Aggregate, Value Objects, Domain Events",
+          "CQRS über MediatR 12",
+          "Repository + Unit of Work",
+          "MediatR-Pipeline-Behaviors"
+        ]
+      },
+      {
+        "category": "Datenzugriff",
+        "items": [
+          "Entity Framework Core 8 (Code-First)",
+          "SQL Server",
+          "Fluent-API-Entitätskonfigurationen",
+          "Zwei eingecheckte Migrationen"
+        ]
+      },
+      {
+        "category": "Validierung & Mapping",
+        "items": [
+          "FluentValidation 11",
+          "AutoMapper 12"
+        ]
+      },
+      {
+        "category": "Auth & Doku",
+        "items": [
+          "JWT Bearer (Access- + Refresh-Tokens)",
+          "Passwort-Hashing mit ASP.NET Core Identity",
+          "Rollenbasierte Autorisierung",
+          "Swagger / OpenAPI über Swashbuckle"
+        ]
+      }
+    ]
+  }
+}

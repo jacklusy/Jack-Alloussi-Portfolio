@@ -1,7 +1,10 @@
 import type { ReactNode } from 'react';
-import Link from 'next/link';
+import { ArrowRight } from 'lucide-react';
+import { Link } from '@/i18n/navigation';
+import { DirIcon } from '@/components/ui/DirIcon';
 import { Container } from '@/components/layout/Container';
 import { Reveal } from '@/components/motion/Reveal';
+import { ScrollLine } from '@/components/motion/ScrollLine';
 import { cn } from '@/lib/utils';
 
 export type SectionProps = {
@@ -41,6 +44,7 @@ export function Section({
     >
       {backdrop}
       <Container className={cn('relative z-10', containerClassName)}>
+        <ScrollLine className="mb-10 md:mb-14" />
         {(eyebrow || title || description || headerAction) && (
           <Reveal
             className={cn(
@@ -75,9 +79,10 @@ export function Section({
               {headerAction ? (
                 <Link
                   href={headerAction.href}
-                  className="inline-flex min-h-11 shrink-0 items-center text-[var(--text-sm)] font-medium text-[var(--color-brand)] transition-colors hover:underline"
+                  className="inline-flex min-h-11 shrink-0 items-center gap-1.5 text-[var(--text-sm)] font-medium text-[var(--color-brand)] transition-colors hover:underline"
                 >
                   {headerAction.label}
+                  <DirIcon icon={ArrowRight} className="h-4 w-4" />
                 </Link>
               ) : null}
             </header>

@@ -1,0 +1,145 @@
+{
+  "title": "USNS Administration Dashboard",
+  "summary": "Console d’administration Next.js 16 pour la direction de l’université : 44 routes authentifiées dans neuf domaines fonctionnels, développée en mock-first derrière une frontière imposée par le lint, puis basculée vers l’API réelle module par module.",
+  "description": "L’outil qu’utilisent concrètement le Président, les doyens, les chefs de département et le DBA pour piloter au quotidien la communication de l’université. Il reproduit exactement les autorisations du backend — car un élément de menu qui renvoie une 403 au clic n’est pas un contrôle d’accès, c’est une application cassée — et dès ses tout premiers commits, il constituait un produit complet et fonctionnel sur données simulées.",
+  "role": "Ingénierie frontend",
+  "timeframe": "2026",
+  "metrics": [
+    {
+      "label": "Routes authentifiées",
+      "value": "44"
+    },
+    {
+      "label": "Domaines fonctionnels",
+      "value": "9"
+    },
+    {
+      "label": "Fichiers / commits",
+      "value": "789 / 92"
+    }
+  ],
+  "thumbnail": {
+    "alt": "Le tableau de bord USNS connecté en tant que Président de l’université : tuiles d’indicateurs clés, courbe d’évolution des inscriptions, répartition des utilisateurs par rôle et panneau de vue d’ensemble du système listant les domaines accessibles à ce rôle."
+  },
+  "gallery": [
+    {
+      "alt": "Le tableau des utilisateurs, listant les comptes du tableau de bord avec nom, e-mail, rôle, statut et date de création, avec recherche, colonnes et filtres.",
+      "caption": "L’administration des comptes pour les cinq rôles. Ce tableau est l’un des neuf domaines fonctionnels, chacun développé d’abord sur données simulées, puis basculé vers l’API réelle seulement une fois l’écran déjà fonctionnel."
+    },
+    {
+      "alt": "Le tableau des facultés, listant les neuf facultés de l’université avec leur code, leur nombre de départements et leur nombre d’étudiants.",
+      "caption": "La hiérarchie académique sur laquelle repose tout le produit. Une annonce détermine son public en parcourant faculté, département puis programme : ces lignes ne sont donc pas des données de référence, elles forment le schéma d’adressage."
+    },
+    {
+      "alt": "Le tableau des départements, affichant chaque département avec son code et sa faculté de rattachement, filtrable par faculté.",
+      "caption": "Les départements dépendent des facultés, et un chef de département ne voit jamais que le sien. La barre latérale et le panneau de vue d’ensemble sont générés à partir du même jeu de permissions que celui appliqué par l’API — un élément de menu qui renvoie une 403 au clic n’est pas un contrôle d’accès, c’est une application cassée."
+    }
+  ],
+  "group": {
+    "label": "Plateforme USNS"
+  },
+  "links": {
+    "liveNote": "En ligne et alimenté par des données de démonstration. Connectez-vous avec l’un des comptes ci-dessous — chacun impose un changement de mot de passe à la première utilisation ; si une connexion cesse de fonctionner, c’est que quelqu’un est passé avant vous.",
+    "demoAccounts": [
+      {
+        "role": "Président"
+      },
+      {
+        "role": "DBA (tous les droits)"
+      },
+      {
+        "role": "Doyen, Sciences et informatique"
+      }
+    ]
+  },
+  "caseStudy": {
+    "context": "Le backend définit qui peut publier quoi à destination de qui, et l’application étudiante place les annonces sur l’appareil que les étudiants ont toujours sur eux. Entre les deux subsiste un besoin que ni l’un ni l’autre ne couvre : la direction de l’université a besoin d’un outil qu’elle utilisera réellement. Un doyen qui rédige une annonce pour toute sa faculté, un DBA qui verrouille un compte compromis, un président qui consulte la piste d’audit avant un conseil d’administration — aucun d’eux ne débogue une API.",
+    "problem": "Quatre contraintes que les deux autres dépôts ne connaissent pas. L’interface est la surface principale des non-développeurs dans un système aux conséquences institutionnelles réelles : elle exige donc des états vides corrects, des états d’erreur corrects, une confirmation avant toute action destructive, et aucun écran où une erreur passerait silencieusement. Elle doit refléter exactement les autorisations du backend, faute de quoi un élément de menu masqué devient un ticket de support. Neuf domaines fonctionnels aux formes de données et aux interactions très différentes — un éditeur de matrice de permissions n’a rien à voir avec un journal d’audit exportable en CSV — devaient former un produit cohérent plutôt que neuf applications agrafées ensemble. Enfin, il fallait pouvoir la construire face à un contrat de backend qui n’existait pas encore, tout en restant démontrable en permanence pour la recette utilisateur (UAT) et la soutenance de fin d’études.",
+    "approach": "Développer en mock-first avec une frontière de premier plan imposée par des règles de lint plutôt que par convention, de sorte que chaque domaine fonctionnel puisse être entièrement construit, stylisé et interactif avant l’intégration, et que le passage aux données réelles se résume à remplacer un fichier de service par module. Rédiger les standards d’architecture et de design system avant l’essentiel du travail fonctionnel, pour que des règles comme « pas de fetch direct dans les composants » et « couleurs issues des tokens uniquement » tiennent sur 789 fichiers. Appliquer l’obligation de changer de mot de passe à la fois au niveau des routes et au niveau du réseau, car les gardes de route protègent la navigation, mais pas une requête déjà en vol.",
+    "architecture": {
+      "altText": "Un tableau de bord Next.js 16 App Router : des groupes de routes derrière une chaîne de gardes à trois niveaux (authentification, contrôle des rôles et des permissions, changement de mot de passe obligatoire) ; les modules fonctionnels appellent une couche de services qui bascule, derrière une frontière imposée par le lint, entre des implémentations simulées et l’API Laravel réelle, un unique intercepteur gérant les nouvelles tentatives, le renouvellement des jetons et le dépaquetage de l’enveloppe."
+    },
+    "decisions": [
+      {
+        "decision": "Développement mock-first derrière une frontière imposée par le lint",
+        "alternatives": "Attendre les endpoints du backend, ou simuler au niveau réseau",
+        "reasoning": "Trois dépôts étaient développés en parallèle. Simuler à la frontière des services a permis de construire et de démontrer les neuf domaines fonctionnels avant l’intégration, et la règle de lint a évité que cette frontière ne se dégrade en fardeau de maintenance.",
+        "tradeoff": "Une implémentation parallèle de chaque service à maintenir fidèle, et un écart qui ne se révèle qu’à l’intégration si la simulation et le contrat réel divergent."
+      },
+      {
+        "decision": "RBAC dupliqué côté frontend plutôt que récupéré à l’exécution",
+        "alternatives": "Récupérer la matrice de permissions auprès du backend à la connexion",
+        "reasoning": "La navigation et les gardes de route ont besoin de l’ensemble des permissions avant qu’une requête n’aboutisse, et une récupération à l’exécution ajoute un mode de défaillance à ce qui décide de ce qu’un utilisateur peut voir.",
+        "tradeoff": "Les mêmes règles sont codées à la main dans deux langages et deux dépôts, sans que rien ne vérifie leur concordance — la seule décision ici que je changerais."
+      },
+      {
+        "decision": "Une obligation de changement de mot de passe appliquée au niveau des routes et du réseau",
+        "alternatives": "Une garde de route seule",
+        "reasoning": "Les gardes de route protègent la navigation ; elles n’arrêtent pas une requête déjà en vol émise par un composant qui n’est pas encore démonté. Rejeter au niveau du client d’API a comblé cette faille et reflétait la logique de défense en couches du backend.",
+        "tradeoff": "Une liste d’URL exemptées à maintenir, et un intercepteur qui doit connaître une problématique d’authentification."
+      },
+      {
+        "decision": "Dépaquetage sélectif de l’enveloppe, avec les endpoints d’authentification désignés comme exception",
+        "alternatives": "Une règle de dépaquetage générale appliquée à chaque réponse",
+        "reasoning": "Une règle générale aurait cassé silencieusement le flux de changement de mot de passe obligatoire dès sa première exécution contre le backend réel. Nommer l’exception dans un prédicat a rendu la raison lisible au lieu de l’enfouir dans le code.",
+        "tradeoff": "Un concept de plus dans l’intercepteur, et une règle dont un contributeur doit connaître l’existence."
+      }
+    ],
+    "challenges": [
+      "Maintenir la cohérence interne de 789 fichiers répartis sur neuf domaines fonctionnels dissemblables, en rédigeant tôt et précisément les règles d’architecture et de design system plutôt qu’en comptant sur la revue de code.",
+      "Rendre l’accès par rôle vérifiable plutôt que simplement affirmé — résolu par une matrice documentée de comptes simulés, qui transforme le contrôle du RBAC en une vérification manuelle de cinq minutes plutôt qu’en séance de débogage.",
+      "Atteindre un niveau de qualité professionnel plutôt qu’un niveau de prototype : squelettes de chargement plutôt que spinners, error boundaries plutôt qu’écrans blancs, gestion du mode hors ligne et de l’expiration de session, et visite guidée au premier lancement."
+    ],
+    "outcomes": [
+      "44 routes authentifiées et un flux d’authentification complet, couvrant chaque domaine fonctionnel exposé par le backend, exploités en mock-first dès les premiers commits puis basculés vers l’API réelle pour la production.",
+      "Une chaîne de protection des routes à trois niveaux — authentification, puis rôle et permission, puis changement de mot de passe obligatoire —, ce dernier étant appliqué de manière redondante au niveau du réseau.",
+      "Des modules couvrant le CRUD des utilisateurs avec actions groupées optimistes et rollback, un éditeur de matrice de permissions, la structure académique avec détection des cycles de prérequis, l’audit et la supervision avec export CSV, et des analyses de rapports asynchrones.",
+      "Un kit de primitives d’interface réutilisable avec une vitrine vivante, un changement de thème en direct et des graphiques chargés à la demande (lazy loading)."
+    ],
+    "retrospective": "Le mock-first a passé à l’échelle de toute l’application plutôt que d’une seule portion, et c’est parce que les règles d’architecture ont été écrites avant le travail fonctionnel qu’une base de code de cette taille est restée cohérente sans schéma pour l’imposer. La garde de mot de passe à deux niveaux a détecté une vraie faille qu’une version à un seul niveau aurait manquée. Ce que je changerais commence par le RBAC : la table de permissions du frontend et la matrice du backend encodent les mêmes règles indépendamment, à la main, dans deux langages. Elles concordaient au moment où j’ai rédigé cette étude, mais rien n’impose qu’elles continuent de le faire — une permission ajoutée d’un côté et oubliée de l’autre produit exactement la défaillance que cette architecture est censée éviter. C’est la même catégorie de risque que le document de contrat rédigé en prose entre le backend et l’application mobile, et le remède est le même : générer l’un à partir de l’autre, ou les deux à partir d’un schéma commun, et faire échouer le build en cas de divergence. La suite de tests couvre trois fichiers — de vrais tests, bien écrits, d’une logique de synchronisation réellement subtile, mais qui font figure d’exception plutôt que de règle. Les gardes de route qui protègent chaque page sécurisée n’ont aucune couverture, alors que c’est précisément là qu’une régression silencieuse aurait des conséquences institutionnelles. Une suite qui vérifie « ce rôle voit cette route, cet autre est redirigé » pour chacun des cinq rôles représente quelques heures de travail et protège la propriété que tout le projet existe pour garantir. Deux enseignements plus modestes : supprimer un document et ses liens entrants dans le même commit, car chaque référence laissée derrière est une impasse pour un futur lecteur ; et une règle « pas de commentaires », adoptée pour éviter qu’ils ne deviennent obsolètes, a un coût dans une autre dimension — la justification d’une exception délibérée, découverte à ses dépens, est une information que le nommage ne peut pas restituer, si bien que la clause d’exception doit figurer dans la règle dès le départ.",
+    "stackDetail": [
+      {
+        "category": "Framework",
+        "items": [
+          "TypeScript",
+          "Next.js 16 (App Router)",
+          "React",
+          "Redux Toolkit"
+        ]
+      },
+      {
+        "category": "Interface",
+        "items": [
+          "Tailwind CSS avec règle « couleurs issues des tokens uniquement »",
+          "Kit de primitives réutilisable avec vitrine vivante",
+          "Squelettes de chargement, error boundaries, visite guidée au premier lancement",
+          "Changement de thème en direct"
+        ]
+      },
+      {
+        "category": "Données et validation",
+        "items": [
+          "Schémas Zod colocalisés avec les formulaires",
+          "Intercepteur unique du client d’API (nouvelles tentatives, renouvellement, enveloppe)",
+          "Frontière entre services simulés et réels imposée par le lint"
+        ]
+      },
+      {
+        "category": "Contrôle d’accès",
+        "items": [
+          "Chaîne de gardes à trois niveaux",
+          "Éditeur de matrice de permissions avec export CSV",
+          "Matrice documentée de comptes simulés pour la vérification"
+        ]
+      },
+      {
+        "category": "Livraison",
+        "items": [
+          "Build Docker multi-étapes sur la sortie standalone de Next.js",
+          "Oracle Cloud (Ampere A1), derrière Caddy",
+          "Notifications push web Firebase Cloud Messaging"
+        ]
+      }
+    ]
+  }
+}

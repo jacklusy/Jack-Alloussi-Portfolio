@@ -65,7 +65,7 @@ export function ScrollDrivenPath({ className }: ScrollDrivenPathProps) {
   return (
     <div
       className={cn(
-        'pointer-events-none fixed inset-y-0 right-0 z-[1] hidden w-[min(28vw,20rem)] opacity-60 lg:block',
+        'pointer-events-none fixed inset-y-0 end-0 z-[1] hidden w-[min(28vw,20rem)] opacity-60 lg:block rtl:-scale-x-100',
         className,
       )}
       aria-hidden

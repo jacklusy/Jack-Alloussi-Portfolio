@@ -1,0 +1,153 @@
+{
+  "title": "PDFNexus — boîte à outils PDF native du navigateur",
+  "summary": "27 outils PDF, dont 25 n’envoient jamais votre fichier ailleurs : une promesse de confidentialité structurellement vraie grâce au traitement dans le navigateur, une expurgation qui détruit vraiment le contenu et des textes encadrés par le système de types.",
+  "description": "Tous les outils PDF généralistes du web reposent sur le même marché tacite — téléverser votre document sur un serveur que vous ne contrôlez pas. PDFNexus a été conçu pour supprimer ce marché pour les opérations qui n’ont jamais eu besoin d’un serveur : fusionner, découper, pivoter, ajouter un filigrane, expurger et retoucher les pages sont des manipulations structurelles d’un format de fichier, et elles s’exécutent localement dans un worker.",
+  "role": "Ingénierie full stack",
+  "timeframe": "2025 – 2026",
+  "metrics": [
+    {
+      "label": "Outils livrés",
+      "value": "27"
+    },
+    {
+      "label": "Traités en local",
+      "value": "25 sur 27"
+    },
+    {
+      "label": "Tests réussis",
+      "value": "182"
+    }
+  ],
+  "thumbnail": {
+    "alt": "La page d’accueil de PDFNexus. Le titre indique « Merge & organize PDFs without uploading your drafts », au-dessus de cartes pour fusionner en local, organiser les pages et convertir en Word."
+  },
+  "gallery": [
+    {
+      "alt": "La page des outils PDF : quatre cartes de catégories — organiser, convertir, modifier et annoter, sécuriser — indiquant chacune son nombre d’outils, avec le menu « Tools » ouvert par-dessus et listant les outils individuels.",
+      "caption": "Les outils sont répartis en quatre catégories, chacun disposant de sa propre page. Le texte énonce clairement cette séparation au lieu de la dissimuler : les outils locaux ne demandent aucun compte, et les fonctions serveur et OCR demandent d’abord votre consentement."
+    },
+    {
+      "alt": "L’espace de travail de PDFNexus : une grille de miniatures de pages issues d’un assemblage de quatre fichiers et 351 pages, chaque page codée par couleur selon son fichier source, à côté d’une barre latérale présentant les statistiques de l’espace de travail et les fichiers téléversés.",
+      "caption": "L’espace de travail assemble quatre fichiers et 351 pages en un seul ordre de pages, codé par couleur selon la source. Le badge « Local Engine » dans l’en-tête est le mode de traitement qui s’affiche lui-même — c’est la même valeur déclarée qui décide si une opération a le droit de s’approcher du réseau."
+    },
+    {
+      "alt": "Le formulaire de retour d’expérience de PDFNexus, avec des champs pour la catégorie, l’objet, le message et une adresse e-mail de contact facultative.",
+      "caption": "Le formulaire de retour d’expérience suit la même logique : l’adresse e-mail de contact est facultative, et le formulaire demande explicitement de ne pas inclure dans le message le contenu de documents confidentiels."
+    }
+  ],
+  "caseStudy": {
+    "context": "Téléverser un fichier sur un serveur tiers ne pose pas de problème pour le menu d’un restaurant. Ce n’est pas acceptable pour un contrat signé, un formulaire d’admission médicale, une pièce d’audition ou un modèle financier interne — soit précisément la catégorie de documents qui a le plus besoin d’être fusionnée, expurgée et retouchée page par page. « Fichiers supprimés au bout d’une heure » est une promesse sur l’infrastructure d’autrui, et l’utilisateur n’a aucun moyen de la vérifier.",
+    "problem": "Trois défaillances ont motivé le projet. La promesse de confidentialité est généralement invérifiable et souvent fausse, et le serveur existe parce qu’il était plus facile à construire, non parce que le travail l’exige. L’expurgation est couramment un mensonge — une grande partie des outils grand public dessine un rectangle noir par-dessus un texte qui subsiste en dessous, sélectionnable et copiable, ce qui a provoqué de vraies fuites de documents dans des litiges et des publications gouvernementales. Enfin, les textes décrivant les capacités sont malhonnêtes par défaut : les outils annoncent « Modifier le PDF » et livrent une simple zone de texte en surimpression, annoncent « PDF vers Word » et livrent un fichier Word contenant une image par page, et les utilisateurs ne s’en aperçoivent que lorsque le résultat échoue plus loin dans la chaîne.",
+    "approach": "Rendre la promesse de confidentialité structurelle plutôt que déclarative. Chaque outil déclare son mode de traitement sous la forme d’une valeur typée, et le badge, l’indication de dépôt, la note de confidentialité et la demande de consentement en découlent tous — ajouter un outil oblige donc son auteur à préciser où vont les octets, et l’interface dit automatiquement la vérité. Implémenter l’expurgation en rastérisant la page, car une implémentation au niveau du flux de contenu est soit complète, soit une faille de sécurité. Conserver les limitations sous forme de constantes dans les modules qu’elles concernent, pour que la réserve soit visible de quiconque lit l’implémentation. Ne prévoir aucun compte utilisateur pour la boucle principale, et ne réclamer une identité que pour les fonctions qui en ont réellement besoin.",
+    "architecture": {
+      "altText": "Un monorepo Turborepo : une application web Next.js 15 qui exécute les opérations PDF dans des workers de module via pdf.js, pdf-lib et qpdf en WebAssembly, avec récupération de session dans IndexedDB, aux côtés d’une API NestJS qui ne traite que les opérations nécessitant un serveur — conversion Office, OCR, téléversement multipart direct vers le stockage, liens de téléchargement HMAC et envoi d’e-mails via BullMQ — avec des contrats Zod partagés entre les deux côtés sous forme de paquet de workspace, le tout exécuté dans sept conteneurs derrière Caddy sur un seul hôte."
+    },
+    "decisions": [
+      {
+        "decision": "Mode de traitement sous forme de valeur typée qui pilote toute l’interface",
+        "alternatives": "Documenter en prose le comportement de chaque outil en matière de confidentialité",
+        "reasoning": "Cela a transformé un problème de documentation, qui se dégrade, en problème de typage, qui ne se dégrade pas. Un nouvel outil ne peut pas être livré sans déclarer où vont ses octets.",
+        "tradeoff": "Chaque outil doit entrer dans un ensemble fixe de modes ; une forme de traitement vraiment nouvelle impose donc de modifier l’union plutôt que d’écrire un paragraphe."
+      },
+      {
+        "decision": "Rastériser la page pour l’expurgation plutôt que modifier les flux de contenu",
+        "alternatives": "Retirer chirurgicalement les objets texte du flux de contenu du PDF",
+        "reasoning": "Une implémentation partielle au niveau du flux de contenu est une faille de sécurité déguisée en fonctionnalité. La rastérisation est l’implémentation honnête d’une opération destructrice.",
+        "tradeoff": "Un document expurgé perd partout son texte sélectionnable, gagne en taille et régresse en accessibilité. Ce compromis a été fait en connaissance de cause, et il reste douloureux."
+      },
+      {
+        "decision": "Téléversement multipart direct vers le stockage plutôt que transit par l’API",
+        "alternatives": "Faire passer les gros téléversements en flux par le serveur d’application",
+        "reasoning": "Garde les transferts de 500 Mo complètement hors de l’API, et la présignature à la demande résiste à une connexion lente qui dépasse la durée de vie d’une URL de quinze minutes.",
+        "tradeoff": "Le client doit être traité comme hostile, et le décompte des parties, la reprise, l’expiration des présignatures et le nettoyage des sessions orphelines deviennent tous des problèmes de l’application."
+      },
+      {
+        "decision": "Contrats Zod dans un paquet de workspace partagé",
+        "alternatives": "Des types maintenus indépendamment de chaque côté de la frontière",
+        "reasoning": "Le protocole de téléversement multipart a changé de forme plusieurs fois, et chaque changement s’est manifesté par une erreur de compilation de l’autre côté plutôt que par une défaillance à l’exécution au milieu d’un transfert de 400 Mo inachevé.",
+        "tradeoff": "Une contrainte d’ordre de build entre trois workspaces, gérée avec les dépendances de tâches de Turborepo."
+      }
+    ],
+    "challenges": [
+      "Des workers imbriqués qui échouent silencieusement : pdf.js, exécuté dans un worker de module, tente de lancer son propre worker, échoue et se dégrade différemment selon le navigateur — le diagnostic a nécessité de reproduire un comportement incohérent entre moteurs pour un correctif de six lignes.",
+      "Gérer correctement l’annulation face à trois courses critiques — annulation avant l’envoi, en cours d’exécution et après le règlement — pour ce qui ressemble à un petit utilitaire mais que chaque outil utilise.",
+      "Deux incidents de CORS et de cache dont les erreurs ne pointaient pas du tout vers leurs causes : un en-tête d’origine générique est silencieusement incompatible avec les requêtes avec identifiants, et des réponses mises en cache peuvent provoquer la réapplication d’un en-tête d’origine périmé.",
+      "Une collision dans le système de build où la transformation du framework réécrivait le worker PDF avec des imports d’utilitaires introuvables, résolue en copiant le fichier non transformé lors du prebuild.",
+      "La conteneurisation du monorepo a révélé quatre défaillances qu’un checkout local fonctionnel masquait : deux chemins COPY erronés, un répertoire de scripts non copié, un middleware de téléversement jamais déclaré comme dépendance, et un build standalone livré sans node_modules parce que la racine du file tracing était restée sur l’application plutôt que sur le workspace."
+    ],
+    "outcomes": [
+      "27 routes d’outils réparties entre les catégories organiser, convertir, modifier et sécuriser — dont 25 entièrement locales ; seules la conversion Office et l’extraction assistée par OCR déclarent un mode serveur.",
+      "Un espace de travail continu : un organisateur de pages multi-fichiers virtualisé, une récupération de session dans IndexedDB avec avertissement de quota typé, une file de traitement par lots avec nouvelle tentative par tâche, et un passage de relais entre outils pour que la sortie de l’un devienne l’entrée du suivant.",
+      "182 tests réussis sur trois workspaces, avec une CI qui exécute vérification des types, tests et builds face à de vrais conteneurs Postgres et Redis à chaque pull request.",
+      "Un circuit de livraison avec vérification par e-mail, téléversement direct vers le stockage reprenable jusqu’à 500 Mo, liens de téléchargement signés valables 24 heures et une durée de conservation des fichiers de 7 jours appliquée par une tâche de nettoyage — ainsi que des connecteurs Drive, Dropbox et OneDrive à portée limitée, chiffrés au repos.",
+      "En production sur un seul hôte ARM : sept conteneurs sous Docker Compose derrière Caddy, avec TLS automatique, HTTP/2 et HTTP/3, l’origine de stockage étant délibérément laissée sans proxy afin que la limite de 500 Mo soit celle de l’application et non celle d’un CDN."
+    ],
+    "retrospective": "Faire du mode de traitement une valeur typée a été la décision la plus rentable de la base de code, et conserver chaque limitation sous forme de constante à côté du code concerné a été la deuxième — un texte marketing dans un fichier séparé dérive, une constante à côté de l’implémentation non. J’ai aussi tenu un document d’état avec des cellules volontairement vides pour les vérifications jamais exécutées ; publier des vides est inconfortable, mais bien préférable à un document où les vides ont été remplis de façon optimiste et où personne ne sait quelles cellules sont réelles. Ce qui n’a pas fonctionné : le bundle est lourd et il n’existe pas de solution propre, car le principe du local d’abord exige que toutes ces bibliothèques d’analyse et de génération parviennent au navigateur — le chargement différé et un contrôle de budget en CI le contiennent, mais contenu ne veut pas dire petit, et l’expérience reste médiocre sur les mobiles d’entrée de gamme. Les chiffres de production l’ont rendu concret plutôt que théorique : la route de l’espace de travail atteint le Largest Contentful Paint à 5,5 secondes derrière un Time to First Byte de 10 millisecondes, ce qui constitue un verdict sans ambiguïté — le serveur est inactif, le bundle est tout le problème, et la solution consiste à différer le moteur PDF jusqu’à l’ouverture effective d’un fichier. Le téléversement multipart s’est révélé nettement plus difficile que prévu ; le cas nominal a pris un après-midi et tout le reste beaucoup plus longtemps, ce qui est la vraie leçon : pour les téléversements directs vers le stockage, il faut budgétiser les modes de défaillance comme le travail principal. Enfin, le périmètre a dépassé sa propre prémisse — une console d’administration de dix modules sert désormais un opérateur plutôt que l’utilisateur dont la confidentialité est l’objet du produit. Elle est utile et elle fonctionne, mais c’est l’exemple le plus net d’un périmètre qui s’est étendu parce que c’était possible, et non parce que la prémisse l’exigeait. Cinq choses que je ferais autrement : déployer sur un hôte vierge dès la première semaine, car chaque échec de build lors de la bascule venait d’une dépendance ou d’un chemin qui n’avait jamais fonctionné que sur une machine où il avait déjà été installé une fois ; fixer le budget de bundle dès le premier jour plutôt que de le rajouter après qu’une dépendance est devenue structurante ; construire la matrice multi-navigateurs automatisée avant d’écrire 27 outils, puisque le traitement local des PDF est précisément le domaine où les différences entre moteurs se font sentir ; décider explicitement des limites de la console d’administration plutôt que de la laisser s’accumuler ; et rédiger d’abord les textes honnêtes sur les capacités, puis construire en conséquence, au lieu de rattraper après coup un passage d’honnêteté sur des pages déjà écrites.",
+    "stackDetail": [
+      {
+        "category": "Application web",
+        "items": [
+          "Next.js 15 (App Router, RSC)",
+          "React 19",
+          "pdfjs-dist (analyse, rendu, couche de texte)",
+          "pdf-lib (écritures structurelles)",
+          "Bindings qpdf.wasm",
+          "@tanstack/react-virtual",
+          "Tailwind CSS v4"
+        ]
+      },
+      {
+        "category": "Génération de documents",
+        "items": [
+          "docx",
+          "xlsx",
+          "pptxgenjs",
+          "jszip",
+          "node-forge (PKCS#12 / PKCS#7)"
+        ]
+      },
+      {
+        "category": "Plateforme navigateur",
+        "items": [
+          "Web Workers de module",
+          "WebAssembly",
+          "Récupération de session dans IndexedDB",
+          "Canvas 2D",
+          "crypto.subtle",
+          "AbortController"
+        ]
+      },
+      {
+        "category": "API et infrastructure",
+        "items": [
+          "NestJS",
+          "PostgreSQL + Prisma",
+          "Redis + BullMQ",
+          "Gotenberg (conversion Office)",
+          "Téléversement multipart direct vers le stockage",
+          "Liens de téléchargement signés par HMAC"
+        ]
+      },
+      {
+        "category": "Déploiement",
+        "items": [
+          "Docker Compose — 7 conteneurs sur un hôte ARM",
+          "Caddy (TLS, HTTP/2 + HTTP/3, renouvellement automatique des certificats)",
+          "MinIO (stockage d’objets compatible S3)",
+          "Gotenberg avec concurrence de conversion plafonnée",
+          "Origines distinctes pour l’application, l’API et le stockage"
+        ]
+      },
+      {
+        "category": "Monorepo et qualité",
+        "items": [
+          "Turborepo (3 workspaces)",
+          "Paquet partagé de contrats Zod",
+          "Vitest — 182 tests",
+          "Artefact CSP généré au build",
+          "Contrôle de budget de taille du bundle en CI"
+        ]
+      }
+    ]
+  }
+}

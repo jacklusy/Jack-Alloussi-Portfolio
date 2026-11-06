@@ -1,0 +1,116 @@
+{
+  "title": "USNS Student App — client Expo bilingue",
+  "summary": "Une application Expo pour étudiants avec une vraie architecture RTL plutôt qu’une couche de traduction : 18 écrans, notifications push, inscription en trois étapes et états de compte gérés par des slugs de problème typés plutôt que par des codes de statut.",
+  "description": "La moitié du University Student Notification System destinée aux étudiants. Le backend sait cibler l’audience parfaite pour une annonce de date limite d’inscription, mais cela ne change rien si la diffusion passe par un portail que les étudiants doivent penser à consulter — cette partie amène donc l’annonce sur l’appareil qu’ils ont en poche, dans la langue qu’ils lisent.",
+  "role": "Ingénieur mobile",
+  "timeframe": "2026",
+  "metrics": [
+    {
+      "label": "Écrans",
+      "value": "18"
+    },
+    {
+      "label": "Langues",
+      "value": "Arabe + anglais, RTL"
+    },
+    {
+      "label": "Distribution",
+      "value": "Android via EAS"
+    }
+  ],
+  "group": {
+    "label": "Plateforme USNS"
+  },
+  "caseStudy": {
+    "context": "Les étudiants ne consultent pas un portail web. Les annonces qui comptent sont urgentes — changements de calendrier d’examens, périodes d’inscription, mises à jour de règlement — et toucher un étudiant passe par une notification push sur l’appareil qu’il a en poche, pas par une ligne en base de données qui attend d’être découverte.",
+    "problem": "Quatre problèmes propres à cette moitié du système. Le public est bilingue et l’une des langues se lit de droite à gauche, ce qui relève d’une décision d’architecture de mise en page et non d’un problème de fichiers de ressources : une interface arabe exige une mise en page inversée, des sens de ligne inversés, des boutons de retour du côté opposé et des polices qui affichent correctement l’écriture. L’inscription doit vérifier un véritable étudiant sans intégration réelle avec le système d’information étudiant, qui n’existait pas pendant la durée du projet. La connectivité est peu fiable et l’état du compte change sous les pieds de l’application — un étudiant l’ouvre sur le Wi-Fi du campus, perd le signal dans un amphithéâtre et reprend une heure plus tard, moment où son statut d’inscription a peut-être changé ou son jeton a expiré. Et le backend était développé en parallèle dans un autre dépôt, de sorte que les écrans ne pouvaient pas attendre les endpoints.",
+    "approach": "S’engager dès le premier écran à faire du bilinguisme une propriété d’architecture : chaque chaîne passe par une fonction de traduction et la direction de mise en page est résolue par un hook, de sorte qu’aucun écran n’a jamais été écrit uniquement pour le LTR. Simuler à la frontière du service plutôt qu’à celle du réseau, afin que les écrans, la navigation, l’état et la localisation soient tous construits et relisibles sur des données réalistes. Faire dépendre l’UI des slugs de problème typés renvoyés par le backend plutôt que des codes de statut HTTP, pour que des états de compte comme suspendu soient traités correctement par conception. Centraliser la désinfection des logs en un seul endroit pour qu’aucun point d’appel n’ait à penser à ne pas journaliser un jeton.",
+    "architecture": {
+      "altText": "Une application Expo Router avec une pile d’authentification et une pile principale à quatre onglets ; les écrans lisent une couche de services qui résout soit vers une implémentation fictive, soit vers l’API mobile réelle, les validateurs Zod sont regroupés dans un seul répertoire, les erreurs sont réduites à deux types en une seule frontière et pilotent l’UI via des slugs de problème typés, et Firebase Cloud Messaging assure la livraison des notifications push tandis qu’une synchronisation à la lecture réconcilie l’état des non-lus à la reprise."
+    },
+    "decisions": [
+      {
+        "decision": "Prise en charge du bilingue et du RTL intégrée dès le premier écran",
+        "alternatives": "Livrer d’abord l’anglais et ajouter l’arabe plus tard",
+        "reasoning": "Greffer le RTL sur dix-huit écrans terminés oblige à auditer chaque direction flex, alignement de texte, marge et orientation d’icône de la base de code. L’intégrer d’emblée a coûté bien moins cher.",
+        "tradeoff": "Chaque écran porte dès son premier commit l’indirection des recherches de traduction et d’un hook de direction, y compris ceux qui n’en auraient peut-être jamais eu besoin."
+      },
+      {
+        "decision": "Les slugs de problème, et non les codes de statut, pilotent le branchement de l’UI",
+        "alternatives": "Se brancher sur le statut HTTP et les messages texte",
+        "reasoning": "Le cas de l’étudiant suspendu — restaurer la session, bloquer le contenu, expliquer pourquoi — est facile à mal traiter, au point de générer un ticket de support. Avec des slugs typés fournis par le backend, le bon comportement a découlé naturellement de la conception et a fonctionné du premier coup.",
+        "tradeoff": "Cela couple le client à un vocabulaire du backend : un nouvel état côté serveur exige une branche correspondante côté client, faute de quoi il retombe sur une erreur générique."
+      },
+      {
+        "decision": "Une API fictive comme implémentation à part entière, et non comme simple stub",
+        "alternatives": "Attendre le backend ou intercepter au niveau réseau",
+        "reasoning": "Pendant les deux premières semaines, la surface mobile existait à peine. Un vrai mock à la frontière du service a fait de l’intégration ultérieure une affaire de basculer un flag et de corriger le mapping des DTO plutôt que de réécrire les écrans.",
+        "tradeoff": "C’est précisément ce qui a rendu invisible l’écart de contrat final — avec les mocks activés, les écrans concernés fonctionnent parfaitement."
+      },
+      {
+        "decision": "Synchronisation à la lecture plutôt que sondage en arrière-plan",
+        "alternatives": "Une tâche en arrière-plan qui interroge périodiquement les nouvelles annonces",
+        "reasoning": "Le push gère l’urgence ; la réconciliation à la reprise garantit l’exactitude sans dépenser de batterie pour une planification que la plateforme n’honorerait peut-être pas de toute façon.",
+        "tradeoff": "Les compteurs de non-lus peuvent être brièvement périmés entre l’arrivée d’un push et l’ouverture de l’application."
+      }
+    ],
+    "challenges": [
+      "Vérifier une inscription réelle sans intégration disponible avec le système d’information étudiant, résolu par un assistant d’inscription en trois étapes dont le point de contrôle de vérification peut être remplacé par un véritable appel sans redessiner les écrans voisins.",
+      "Prendre en charge deux modes de vérification d’e-mail — code à usage unique et lien — dans les mêmes parcours de mot de passe oublié et d’inscription.",
+      "Une dépendance qui nécessitait un correctif embarqué (vendored), appliqué via un mécanisme pris en charge par le gestionnaire de paquets avec un commentaire explicatif, plutôt que par des contournements dispersés ou une ancienne version figée."
+    ],
+    "outcomes": [
+      "Dix-huit écrans couvrant l’authentification, un assistant d’inscription en trois étapes, la consultation des annonces et la gestion du compte, distribués sous forme de build Android via EAS.",
+      "Prise en charge complète de l’arabe et de l’anglais avec mise en page inversée, livrée comme une propriété d’architecture plutôt que comme une passe de traduction.",
+      "Livraison push via Firebase Cloud Messaging, les écrans d’accueil, d’historique et de notifications réconciliant l’état des non-lus à la reprise.",
+      "Désinfection centralisée des logs masquant les clés de forme identifiant secret en un unique point de passage, avec des exclusions volontaires pour ne pas sur-capturer les clés voisines."
+    ],
+    "retrospective": "Intégrer le bilinguisme dès le départ et simuler à la frontière du service plutôt que du réseau sont les deux décisions qui ont permis de tenir le calendrier. La plus grande lacune n’est pas une question de goût : il n’y a aucun test. L’écran de mot de passe oublié fait 627 lignes et gère deux modes de vérification, plusieurs états d’erreur, la logique de renvoi et des minuteurs de compte à rebours ; la deuxième étape d’inscription en fait 508, avec chargement asynchrone de métadonnées, listes déroulantes dépendantes et un appel de vérification. Ni l’un ni l’autre ne comporte la moindre assertion automatisée, et le coût s’est fait sentir pendant le développement — refactoriser le parcours par code à usage unique obligeait à reparcourir l’inscription à la main pour vérifier que rien n’était cassé, et il en a été de même pour chaque modification d’authentification ultérieure. Les validateurs, le module de réduction des erreurs et le désinfecteur de logs sont tous des fonctions pures aux contrats clairs ; des tests y auraient été peu coûteux et très rentables, et le désinfecteur en particulier est un code sensible pour la sécurité sans aucune couverture. Le second échec est l’écart de contrat : l’application est livrée en appelant trois endpoints que le backend n’a jamais implémentés. Un document d’exigences les listait avec des priorités, fondé sur une lecture réelle du code du backend ; c’était un bon artefact qui n’a rien changé — parce qu’un document n’a pas de mode d’échec. Rien ne passe au rouge quand il reste inappliqué. Ce qui a rendu la situation supportable est aussi ce qui l’a rendue invisible : avec les mocks activés, les trois surfaces fonctionnent parfaitement, et l’écart n’apparaît que face au backend réel. Une spécification OpenAPI générée avec un client généré à partir d’elle, ou des tests de contrat exécutés en CI, auraient fait de chacun de ces points un build en échec le jour même où le code a été écrit. Deux écrans sont en outre trop volumineux pour être relus confortablement ; leur extraction dans des hooks d’orchestration est évidente avec le recul et exigée par le propre standard de la base de code — la pression du temps a gagné.",
+    "stackDetail": [
+      {
+        "category": "Plateforme",
+        "items": [
+          "React Native via Expo (workflow managé, development builds)",
+          "TypeScript",
+          "Expo Router",
+          "EAS Build (APK Android)"
+        ]
+      },
+      {
+        "category": "Localisation",
+        "items": [
+          "Catalogues de messages arabe + anglais",
+          "Hook de direction de mise en page appliqué à chaque écran",
+          "Mise en page inversée, lignes inversées, polices adaptées à l’écriture",
+          "Script d’audit de couverture"
+        ]
+      },
+      {
+        "category": "Données et erreurs",
+        "items": [
+          "Validateurs Zod regroupés dans un seul répertoire",
+          "Deux types d’erreur réduits en une seule frontière",
+          "Branchement de l’UI piloté par les slugs de problème",
+          "API fictive à la frontière du service"
+        ]
+      },
+      {
+        "category": "Livraison et état",
+        "items": [
+          "Push via Firebase Cloud Messaging",
+          "Synchronisation à la lecture à la reprise",
+          "Défilement infini avec feuilles de filtres",
+          "Téléchargement et partage de pièces jointes"
+        ]
+      },
+      {
+        "category": "Sécurité",
+        "items": [
+          "Désinfection centralisée des logs avec masquage par motif de clé",
+          "Traitement distinct des comptes inactifs, suspendus et verrouillés",
+          "Correctif de dépendance embarqué avec justification"
+        ]
+      }
+    ]
+  }
+}

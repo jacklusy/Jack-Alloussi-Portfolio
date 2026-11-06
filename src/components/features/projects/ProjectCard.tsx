@@ -1,10 +1,12 @@
 import Image from 'next/image';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
+import { getTranslations } from 'next-intl/server';
 import { ArrowUpRight, Code2, ExternalLink } from 'lucide-react';
 import type { Project } from '@/content/schemas';
 import { Badge } from '@/components/ui/Badge';
 import { Card } from '@/components/ui/Card';
 import { TiltCard } from '@/components/motion/TiltCard';
+import { DirIcon } from '@/components/ui/DirIcon';
 import { ProjectCover } from '@/components/features/projects/ProjectCover';
 import { isUsableHref, renderContentText } from '@/lib/content-text';
 import { cn } from '@/lib/utils';
@@ -19,7 +21,11 @@ export type ProjectCardProps = {
   variant?: 'feature' | 'compact';
 };
 
-export function ProjectCard({ project, className, variant = 'feature' }: ProjectCardProps) {
+export async function ProjectCard({ project, className, variant = 'feature' }: ProjectCardProps) {
+  const [t, tStatus] = await Promise.all([
+    getTranslations('projectCard'),
+    getTranslations('labels.status'),
+  ]);
   const href = `/projects/${project.slug}`;
   const repo = project.links.repo;
   const live = project.links.live;
@@ -60,7 +66,7 @@ export function ProjectCard({ project, className, variant = 'feature' }: Project
           </div>
 
           {project.group ? (
-            <span className="absolute top-3 left-3 z-10 rounded-full border border-[var(--color-border)] bg-[var(--color-bg)]/85 px-2.5 py-1 font-mono text-[10px] tracking-[0.14em] text-[var(--color-text-muted)] uppercase">
+            <span className="absolute top-3 start-3 z-10 rounded-full border border-[var(--color-border)] bg-[var(--color-bg)]/85 px-2.5 py-1 font-mono text-[10px] tracking-[0.14em] text-[var(--color-text-muted)] uppercase">
               {project.group.label}
             </span>
           ) : null}
@@ -84,7 +90,7 @@ export function ProjectCard({ project, className, variant = 'feature' }: Project
               </Link>
             </h3>
             <Badge tone="mono" className="relative z-10 shrink-0">
-              {project.status}
+              {tStatus(project.status)}
             </Badge>
           </div>
 
@@ -127,10 +133,10 @@ export function ProjectCard({ project, className, variant = 'feature' }: Project
 
           <div className="relative z-10 mt-4 flex items-center justify-between gap-3 border-t border-[var(--color-border)] pt-3.5">
             <span className="inline-flex items-center gap-1 text-[var(--text-sm)] font-medium text-[var(--color-brand)]">
-              Case study
-              <ArrowUpRight
-                className="h-3.5 w-3.5 transition-transform duration-[var(--duration-micro)] group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                aria-hidden
+              {t('caseStudy')}
+              <DirIcon
+                icon={ArrowUpRight}
+                className="h-3.5 w-3.5 transition-transform duration-[var(--duration-micro)] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 rtl:group-hover:-translate-x-0.5"
               />
             </span>
             <span className="flex items-center gap-1">
@@ -140,7 +146,7 @@ export function ProjectCard({ project, className, variant = 'feature' }: Project
                   className="relative z-20 inline-flex min-h-10 min-w-10 items-center justify-center rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface-sunken)] text-[var(--color-brand)] transition-colors hover:border-[var(--color-brand)] hover:bg-[var(--color-brand-subtle)]"
                   rel="noopener noreferrer"
                   target="_blank"
-                  aria-label={`Live site for ${project.title}`}
+                  aria-label={t('liveSite', { title: project.title })}
                 >
                   <ExternalLink className="h-4 w-4" aria-hidden />
                 </a>
@@ -151,7 +157,7 @@ export function ProjectCard({ project, className, variant = 'feature' }: Project
                   className="relative z-20 inline-flex min-h-10 min-w-10 items-center justify-center rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface-sunken)] text-[var(--color-brand)] transition-colors hover:border-[var(--color-brand)] hover:bg-[var(--color-brand-subtle)]"
                   rel="noopener noreferrer"
                   target="_blank"
-                  aria-label={`Repository for ${project.title}`}
+                  aria-label={t('repository', { title: project.title })}
                 >
                   <Code2 className="h-4 w-4" aria-hidden />
                 </a>

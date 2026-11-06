@@ -1,19 +1,39 @@
 import { ArrowRight, ChevronDown } from 'lucide-react';
-import { profile } from '@/content/profile';
+import { getTranslations } from 'next-intl/server';
+import { getProfile, getProjects } from '@/content';
+import type { Locale } from '@/i18n/config';
 import { Container } from '@/components/layout/Container';
 import { AmbientBackdrop } from '@/components/layout/AmbientBackdrop';
 import { ButtonLink } from '@/components/ui/ButtonLink';
+import { DirIcon } from '@/components/ui/DirIcon';
 import { HeroMotion, HeroMotionItem } from '@/components/motion/HeroMotion';
+import { CountUp } from '@/components/motion/CountUp';
+import { HeroVisual } from '@/components/sections/HeroVisual';
 import { isUsableHref } from '@/lib/content-text';
 
-const metaItems = [
-  { key: 'Location', value: 'Amman, Jordan' },
-  { key: 'Availability', value: 'Open to relocate' },
-  { key: 'Authorisation', value: 'EU Blue Card eligible' },
-  { key: 'Graduation', value: 'October 2026' },
-] as const;
+import stockwellApis from '@/assets/img/projects/stockwell/apis.png';
+import pdfNexusHome from '@/assets/img/projects/pdfnexus/home_page.png';
 
-export function HeroSection() {
+const META_KEYS = ['location', 'availability', 'authorisation', 'graduation'] as const;
+
+/** Facts that appear in the CV and in the copy ("2 years", "15+ apps"). */
+const PROOF = { yearsInProduction: 2, mobileAppsReleased: 15 } as const;
+
+export async function HeroSection({ locale }: { locale: Locale }) {
+  const [t, profile, projects] = await Promise.all([
+    getTranslations({ locale, namespace: 'hero' }),
+    getProfile(locale),
+    getProjects(locale),
+  ]);
+  const technologyCount = new Set(projects.flatMap((project) => project.technologies)).size;
+
+  const proof = [
+    { value: PROOF.yearsInProduction, suffix: '', label: t('proof.years') },
+    { value: PROOF.mobileAppsReleased, suffix: '+', label: t('proof.apps') },
+    { value: projects.length, suffix: '', label: t('proof.caseStudies') },
+    { value: technologyCount, suffix: '', label: t('proof.technologies') },
+  ];
+
   return (
     <section
       id="hero"
@@ -21,14 +41,14 @@ export function HeroSection() {
       aria-labelledby="hero-heading"
     >
       <AmbientBackdrop variant="hero" />
-      <Container className="relative z-10 py-16 md:py-20 lg:py-28">
+      <Container className="relative z-10 pt-16 pb-10 md:pt-20 lg:pt-24">
         <HeroMotion className="grid items-center gap-10 lg:grid-cols-12 lg:gap-12">
           <div className="lg:col-span-7">
             <HeroMotionItem>
-                <div className="mb-6 inline-flex items-center gap-2.5 rounded-full border border-[var(--color-border)] bg-[var(--color-surface-raised)] px-3.5 py-1.5 shadow-[var(--shadow-sm)]">
+              <div className="mb-6 inline-flex items-center gap-2.5 rounded-full border border-[var(--color-border)] bg-[var(--color-surface-raised)] px-3.5 py-1.5 shadow-[var(--shadow-sm)]">
                 <span className="status-pulse relative inline-flex h-2 w-2 rounded-full bg-[var(--color-brand)]" />
                 <span className="font-mono-label text-[var(--color-text-muted)]">
-                  Available for relocation
+                  {t('available')}
                 </span>
               </div>
             </HeroMotionItem>
@@ -45,16 +65,15 @@ export function HeroSection() {
 
             <HeroMotionItem>
               <p className="mt-6 max-w-[40ch] text-[length:var(--text-body-lg)] text-[var(--color-text-muted)]">
-                Backend-leaning full stack — TypeScript, NestJS, React, and React Native — shipping
-                web, API, and mobile systems for United States clients from Amman.
+                {t('tagline')}
               </p>
             </HeroMotionItem>
 
             <HeroMotionItem>
               <div className="mt-9 flex flex-wrap gap-3">
                 <ButtonLink href="/projects" variant="primary" size="lg">
-                  View projects
-                  <ArrowRight className="h-4 w-4" aria-hidden />
+                  {profile.ctas.find((cta) => cta.id === 'projects')?.label}
+                  <DirIcon icon={ArrowRight} className="h-4 w-4" />
                 </ButtonLink>
                 <ButtonLink
                   href={profile.cv.href}
@@ -62,7 +81,7 @@ export function HeroSection() {
                   size="lg"
                   download={profile.cv.filename}
                 >
-                  Download CV
+                  {profile.cv.label}
                 </ButtonLink>
               </div>
             </HeroMotionItem>
@@ -88,34 +107,53 @@ export function HeroSection() {
           </div>
 
           <HeroMotionItem className="lg:col-span-5">
-            <aside
-              className="rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface-raised)] p-6 shadow-[var(--shadow-md)] md:p-7"
-              aria-label="Availability and work authorisation"
-            >
-              <p className="font-mono-label mb-5 text-[var(--color-text-subtle)]">Status.panel</p>
-              <dl className="space-y-5">
-                {metaItems.map((item) => (
-                  <div
-                    key={item.key}
-                    className="border-b border-[var(--color-border)] pb-4 last:border-0 last:pb-0"
-                  >
-                    <dt className="font-mono text-[10px] tracking-[0.14em] text-[var(--color-text-subtle)] uppercase">
-                      {item.key}
-                    </dt>
-                    <dd className="mt-1.5 text-[var(--color-text)]">{item.value}</dd>
-                  </div>
-                ))}
-              </dl>
-            </aside>
+            <HeroVisual tiles={[stockwellApis, pdfNexusHome]} chips={[t('chips.apps'), t('chips.locks')]}>
+              <aside
+                className="rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface-raised)] p-6 shadow-[var(--shadow-md)] md:p-7"
+                aria-label={t('statusAria')}
+              >
+                <p className="font-mono-label mb-5 text-[var(--color-text-subtle)]">
+                  {t('statusPanel')}
+                </p>
+                <dl className="space-y-5">
+                  {META_KEYS.map((key) => (
+                    <div
+                      key={key}
+                      className="border-b border-[var(--color-border)] pb-4 last:border-0 last:pb-0"
+                    >
+                      <dt className="font-mono text-[10px] tracking-[0.14em] text-[var(--color-text-subtle)] uppercase">
+                        {t(`meta.${key}.label`)}
+                      </dt>
+                      <dd className="mt-1.5 text-[var(--color-text)]">{t(`meta.${key}.value`)}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </aside>
+            </HeroVisual>
           </HeroMotionItem>
         </HeroMotion>
 
+        {/* Proof strip: concrete numbers right under the headline, so the first
+            screen already answers "what has this person shipped?". */}
+        <dl className="mt-14 grid grid-cols-2 gap-px overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-border)] sm:grid-cols-4 lg:mt-16">
+          {proof.map((item) => (
+            <div key={item.label} className="bg-[var(--color-surface)] px-5 py-5">
+              <dd className="font-[family-name:var(--font-syne)] text-3xl font-bold tracking-[var(--tracking-display)] text-[var(--color-text)] tabular-nums md:text-4xl">
+                <CountUp to={item.value} suffix={item.suffix} />
+              </dd>
+              <dt className="mt-1.5 font-mono text-[10px] tracking-[var(--tracking-label)] text-[var(--color-text-subtle)] uppercase">
+                {item.label}
+              </dt>
+            </div>
+          ))}
+        </dl>
+
         <a
           href="#about"
-          className="mt-10 inline-flex w-fit flex-col items-center gap-1 text-[var(--color-text-subtle)] transition-colors hover:text-[var(--color-brand)] lg:mt-14"
-          aria-label="Scroll to about section"
+          className="mt-8 inline-flex w-fit flex-col items-center gap-1 text-[var(--color-text-subtle)] transition-colors hover:text-[var(--color-brand)]"
+          aria-label={t('scrollAria')}
         >
-          <span className="font-mono-label">Scroll</span>
+          <span className="font-mono-label">{t('scroll')}</span>
           <ChevronDown className="scroll-cue-dot h-5 w-5" aria-hidden />
         </a>
       </Container>

@@ -1,0 +1,38 @@
+{
+  "roles": {
+    "csc-beyond-se": {
+      "title": "Software Engineer",
+      "employmentType": "Full-time",
+      "location": "Amman, Jordan",
+      "summary": "Custom software delivery for United States based clients across web, API, and mobile platforms.",
+      "achievements": [
+        "Design, build, and maintain production backend services in TypeScript (NestJS, Express.js) and PHP (Laravel 9–12), backed by PostgreSQL and Redis, across multiple client applications.",
+        "Build and release 15+ cross-platform mobile applications using React Native CLI and Expo, owning provisioning, signing, and submission to the Apple App Store and Google Play Store.",
+        "Build React and Next.js frontends in TypeScript, integrated with internally developed REST APIs.",
+        "Containerise services with Docker and maintain CI/CD pipelines for faster, more consistent releases.",
+        "Deploy and operate applications on Google Cloud Platform, DigitalOcean, Vercel, Railway, and Render.",
+        "Work in a two-week Agile cycle using Jira, participating in sprint planning, code review, and direct requirements discussions with English-speaking client stakeholders."
+      ],
+      "confidentialityNote": "Client work is confidential. Descriptions are generalised: system type, scale, technologies, and personal contribution only — no client names, schemas, or proprietary logic."
+    },
+    "csc-beyond-junior": {
+      "title": "Junior Full Stack Developer",
+      "employmentType": "Full-time",
+      "location": "Amman, Jordan",
+      "summary": "Backend features and internal tooling for client web applications.",
+      "achievements": [
+        "Developed backend features in PHP and Laravel for client web applications.",
+        "Built internal tooling and e-commerce integrations using Retool and Shopify."
+      ]
+    },
+    "aiq-intern": {
+      "title": "Web Development Intern",
+      "employmentType": "Internship",
+      "location": "Amman, Jordan",
+      "summary": "Internship completed as part of the Orange Coding Academy full-stack programme.",
+      "achievements": [
+        "Built and maintained WordPress websites; contributed to UI/UX design workflows using Framer."
+      ]
+    }
+  }
+}

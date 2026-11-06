@@ -1,0 +1,18 @@
+{
+  "groups": {
+    "languages": { "label": "اللغات" },
+    "backend": { "label": "الواجهة الخلفية" },
+    "frontend": { "label": "الواجهة الأمامية" },
+    "mobile": { "label": "الجوال" },
+    "data": { "label": "البيانات" },
+    "infrastructure": { "label": "البنية التحتية" },
+    "practices": { "label": "الممارسات" }
+  },
+  "skills": {
+    "REST API design": "تصميم واجهات REST API",
+    "App Store & Play Store release": "النشر على App Store وPlay Store",
+    "Unit & integration testing": "اختبارات الوحدة والتكامل",
+    "Agile / Scrum": "Agile / Scrum",
+    "Code review": "مراجعة الشيفرة"
+  }
+}

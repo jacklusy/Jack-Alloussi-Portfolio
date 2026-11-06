@@ -46,7 +46,7 @@ export async function POST(request: Request) {
 
   if (!checkRateLimit(ip)) {
     return NextResponse.json(
-      { error: 'Too many requests. Please try again later or email me directly.' },
+      { error: 'rate_limited' },
       { status: 429 },
     );
   }
@@ -55,12 +55,12 @@ export async function POST(request: Request) {
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: 'Invalid JSON body.' }, { status: 400 });
+    return NextResponse.json({ error: 'invalid_json' }, { status: 400 });
   }
 
   const parsed = contactFormSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: 'Validation failed. Check your fields and try again.' }, { status: 400 });
+    return NextResponse.json({ error: 'validation_failed' }, { status: 400 });
   }
 
   // Honeypot tripped — pretend success
@@ -81,10 +81,7 @@ export async function POST(request: Request) {
   if (!env.RESEND_API_KEY) {
     if (env.NODE_ENV === 'production') {
       return NextResponse.json(
-        {
-          error:
-            'Contact form delivery is temporarily unavailable. Please email jackalloussi23@gmail.com directly.',
-        },
+        { error: 'unavailable' },
         { status: 503 },
       );
     }
@@ -95,10 +92,7 @@ export async function POST(request: Request) {
 
   if (!env.CONTACT_TO_EMAIL) {
     return NextResponse.json(
-      {
-        error:
-          'Contact form is misconfigured. Please email jackalloussi23@gmail.com directly.',
-      },
+      { error: 'misconfigured' },
       { status: 503 },
     );
   }
@@ -118,7 +112,7 @@ export async function POST(request: Request) {
     if (error) {
       console.error('[contact] Resend error', error);
       return NextResponse.json(
-        { error: 'Could not send your message. Please email me directly.' },
+        { error: 'send_failed' },
         { status: 502 },
       );
     }
@@ -127,7 +121,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('[contact] Unexpected send failure', error);
     return NextResponse.json(
-      { error: 'Could not send your message. Please email me directly.' },
+      { error: 'send_failed' },
       { status: 502 },
     );
   }

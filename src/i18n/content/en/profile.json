@@ -1,0 +1,38 @@
+{
+  "role": "Software Engineer",
+  "tagline": "TypeScript · Node.js · NestJS · React · React Native — building web, API, and mobile applications for United States clients from Amman, Jordan.",
+  "location": "Amman, Jordan",
+  "bio": [
+    "I am a software engineer with two years of full-time production experience delivering web, API, and mobile applications for United States clients. My day-to-day focus is backend work in TypeScript and Node.js — especially NestJS — alongside PHP and Laravel, with PostgreSQL, Redis, Docker, and CI/CD pipelines.",
+    "What sets my path apart is building to client specification across many stacks. That breadth means I onboard quickly into unfamiliar codebases and ship within existing constraints rather than rewriting for comfort. I have formal training in Clean Architecture, Domain-Driven Design, and SOLID principles, and I am currently preparing for the AWS Certified Developer – Associate exam.",
+    "I graduate with a BSc in Software Engineering in October 2026 and am seeking a backend or full-stack engineering role in Germany. I am eligible for the EU Blue Card and available to relocate."
+  ],
+  "portraitAlt": "Jack Alloussi, software engineer, standing with arms crossed in a formal setting",
+  "availability": {
+    "status": "Open to opportunities",
+    "visaNote": "Jordanian national. Eligible for the EU Blue Card under Section 18g of the Residence Act (shortage occupation and recent graduate salary threshold). Requires work authorisation in Germany.",
+    "graduationDate": "October 2026",
+    "relocationNote": "Available to relocate from October 2026 after graduation."
+  },
+  "socials": [
+    { "id": "github", "label": "GitHub" },
+    { "id": "linkedin", "label": "LinkedIn" },
+    { "id": "email", "label": "Email" }
+  ],
+  "ctas": [
+    { "id": "projects", "label": "View projects" },
+    { "id": "cv", "label": "Download CV (PDF)" }
+  ],
+  "cvLabel": "Download CV (PDF)",
+  "spokenLanguages": [
+    { "language": "Arabic", "level": "Native" },
+    { "language": "English", "level": "Professional working proficiency" },
+    { "language": "German", "level": "A1, in progress" }
+  ],
+  "highlights": [
+    { "label": "Production experience", "value": "2 years full-time" },
+    { "label": "Graduation", "value": "October 2026" },
+    { "label": "Work authorisation", "value": "EU Blue Card eligible" },
+    { "label": "Focus", "value": "Backend & full stack" }
+  ]
+}

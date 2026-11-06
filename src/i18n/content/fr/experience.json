@@ -1,0 +1,38 @@
+{
+  "roles": {
+    "csc-beyond-se": {
+      "title": "Ingénieur logiciel",
+      "employmentType": "Temps plein",
+      "location": "Amman, Jordanie",
+      "summary": "Développement de logiciels sur mesure pour des clients basés aux États-Unis, sur des plateformes web, API et mobiles.",
+      "achievements": [
+        "Conception, développement et maintenance de services backend en production en TypeScript (NestJS, Express.js) et PHP (Laravel 9–12), reposant sur PostgreSQL et Redis, pour plusieurs applications clientes.",
+        "Développement et publication de plus de 15 applications mobiles multiplateformes avec React Native CLI et Expo, de la gestion du provisioning et de la signature jusqu’à la soumission sur l’Apple App Store et le Google Play Store.",
+        "Développement de frontends React et Next.js en TypeScript, intégrés à des API REST conçues en interne.",
+        "Conteneurisation des services avec Docker et maintenance de pipelines CI/CD pour des livraisons plus rapides et plus homogènes.",
+        "Déploiement et exploitation d’applications sur Google Cloud Platform, DigitalOcean, Vercel, Railway et Render.",
+        "Travail en cycles Agile de deux semaines avec Jira : participation à la planification des sprints, aux revues de code et aux échanges directs sur les besoins avec des parties prenantes anglophones côté client."
+      ],
+      "confidentialityNote": "Les travaux réalisés pour les clients sont confidentiels. Les descriptions restent volontairement générales : type de système, échelle, technologies et contribution personnelle uniquement — sans nom de client, schéma ni logique propriétaire."
+    },
+    "csc-beyond-junior": {
+      "title": "Développeur full stack junior",
+      "employmentType": "Temps plein",
+      "location": "Amman, Jordanie",
+      "summary": "Fonctionnalités backend et outils internes pour des applications web clientes.",
+      "achievements": [
+        "Développement de fonctionnalités backend en PHP et Laravel pour des applications web clientes.",
+        "Création d’outils internes et d’intégrations e-commerce avec Retool et Shopify."
+      ]
+    },
+    "aiq-intern": {
+      "title": "Stage en développement web",
+      "employmentType": "Stage",
+      "location": "Amman, Jordanie",
+      "summary": "Stage réalisé dans le cadre du programme full stack de l’Orange Coding Academy.",
+      "achievements": [
+        "Création et maintenance de sites WordPress ; contribution à des workflows de design UI/UX avec Framer."
+      ]
+    }
+  }
+}

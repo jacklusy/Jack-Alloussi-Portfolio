@@ -1,0 +1,18 @@
+{
+  "groups": {
+    "languages": { "label": "Languages" },
+    "backend": { "label": "Backend" },
+    "frontend": { "label": "Frontend" },
+    "mobile": { "label": "Mobile" },
+    "data": { "label": "Data" },
+    "infrastructure": { "label": "Infrastructure" },
+    "practices": { "label": "Practices" }
+  },
+  "skills": {
+    "REST API design": "REST API design",
+    "App Store & Play Store release": "App Store & Play Store release",
+    "Unit & integration testing": "Unit & integration testing",
+    "Agile / Scrum": "Agile / Scrum",
+    "Code review": "Code review"
+  }
+}

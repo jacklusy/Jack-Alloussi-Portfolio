@@ -1,0 +1,116 @@
+{
+  "title": "USNS Student App — zweisprachiger Expo-Client",
+  "summary": "Eine Expo-App für Studierende mit echter RTL-Architektur statt einer Übersetzungsschicht: 18 Screens, Push-Zustellung, ein dreistufiger Registrierungsassistent und Kontostatus-Behandlung über typisierte Problem-Slugs statt Statuscodes.",
+  "description": "Die studierendenseitige Hälfte des University Student Notification System. Das Backend kann für eine Ankündigung zur Anmeldefrist die perfekte Zielgruppe ermitteln — das ändert nichts, wenn die Zustellung über ein Portal läuft, das Studierende erst besuchen müssen. Dieser Teil bringt die Nachricht deshalb auf das Gerät in ihrer Tasche, in der Sprache, die sie lesen.",
+  "role": "Mobile Engineer",
+  "timeframe": "2026",
+  "metrics": [
+    {
+      "label": "Screens",
+      "value": "18"
+    },
+    {
+      "label": "Sprachen",
+      "value": "Arabisch + Englisch, RTL"
+    },
+    {
+      "label": "Verteilung",
+      "value": "Android über EAS"
+    }
+  ],
+  "group": {
+    "label": "USNS-Plattform"
+  },
+  "caseStudy": {
+    "context": "Studierende schauen nicht in ein Web-Portal. Wichtige Ankündigungen sind zeitkritisch — geänderte Prüfungspläne, Anmeldefenster, Richtlinienänderungen —, und Studierende zu erreichen bedeutet eine Push-Benachrichtigung auf dem Gerät in ihrer Tasche, nicht eine Zeile in einer Datenbank, die darauf wartet, entdeckt zu werden.",
+    "problem": "Vier Probleme, die speziell diese Hälfte des Systems betreffen. Das Publikum ist zweisprachig, und eine der Sprachen wird von rechts nach links gelesen — das ist eine Entscheidung der Layout-Architektur und kein Problem von Ressourcendateien: Eine arabische Oberfläche braucht ein gespiegeltes Layout, umgekehrte Zeilenrichtungen, Zurück-Buttons auf der gegenüberliegenden Seite und Schriften, die die arabische Schrift korrekt darstellen. Die Registrierung muss echte Studierende verifizieren, ohne echte Anbindung an ein Studierendeninformationssystem, die im Projektzeitraum nicht existierte. Die Konnektivität ist unzuverlässig, und der Kontostatus ändert sich unter der App weg — jemand öffnet sie im Campus-WLAN, verliert im Hörsaal das Signal und macht eine Stunde später weiter, und inzwischen kann sich der Immatrikulationsstatus geändert haben oder das Token abgelaufen sein. Und das Backend wurde parallel in einem anderen Repository gebaut, sodass Screens nicht auf Endpunkte warten konnten.",
+    "approach": "Bilinguale Unterstützung vom ersten Screen an als Architektureigenschaft festlegen: jeder String über eine Übersetzungsfunktion und die Layoutrichtung über einen Hook aufgelöst, sodass nie ein Screen nur für LTR geschrieben wurde. An der Service-Grenze statt an der Netzwerkgrenze mocken, damit Screens, Navigation, State und Lokalisierung gegen realistische Daten gebaut und geprüft werden konnten. Die UI an den typisierten Problem-Slugs des Backends statt an HTTP-Statuscodes verzweigen, sodass Kontozustände wie „suspendiert“ von Grund auf korrekt aufgelöst werden. Die Log-Bereinigung an einer einzigen Stelle zentralisieren, damit sich keine einzelne Aufrufstelle merken muss, kein Token zu loggen.",
+    "architecture": {
+      "altText": "Eine Expo-Router-Anwendung mit einem Authentifizierungs-Stack und einem Haupt-Stack mit vier Tabs; Screens lesen aus einer Service-Schicht, die entweder auf eine Mock-Implementierung oder die Live-Mobile-API auflöst, Zod-Validatoren liegen in einem Verzeichnis, Fehler werden an einer einzigen Grenze auf zwei Typen eingegrenzt und anhand typisierter Problem-Slugs verzweigt, und Firebase Cloud Messaging liefert Push, während die Synchronisierung beim Lesen den Ungelesen-Status beim Fortsetzen abgleicht."
+    },
+    "decisions": [
+      {
+        "decision": "Bilinguale und RTL-Unterstützung von Anfang an eingebaut",
+        "alternatives": "Zuerst Englisch ausliefern und Arabisch später nachrüsten",
+        "reasoning": "RTL nachträglich in achtzehn fertige Screens einzubauen hieße, jede Flex-Richtung, Textausrichtung, jeden Abstand und jede Icon-Ausrichtung der Codebasis zu prüfen. Es von Anfang an einzubauen, kostete deutlich weniger.",
+        "tradeoff": "Jeder Screen trägt vom ersten Commit an die Indirektion von Übersetzungs-Lookups und einem Richtungs-Hook, auch Screens, die sie vielleicht nie gebraucht hätten."
+      },
+      {
+        "decision": "Problem-Slugs statt Statuscodes steuern die UI-Verzweigung",
+        "alternatives": "Verzweigung nach HTTP-Status und Meldungstexten",
+        "reasoning": "Der Fall eines suspendierten Studierenden — Sitzung wiederherstellen, Inhalte sperren, den Grund erklären — lässt sich leicht so falsch umsetzen, dass ein Support-Ticket entsteht. Mit typisierten Slugs vom Backend ergab sich das korrekte Verhalten aus dem Design und funktionierte auf Anhieb.",
+        "tradeoff": "Der Client wird an ein Vokabular des Backends gekoppelt, sodass ein neuer Zustand auf dem Server einen entsprechenden Zweig im Client braucht, sonst landet er in einer generischen Fehlermeldung."
+      },
+      {
+        "decision": "Eine Mock-API als vollwertige Implementierung, nicht als Stub",
+        "alternatives": "Auf das Backend warten oder auf Netzwerkebene abfangen",
+        "reasoning": "In den ersten zwei Wochen existierte die mobile Oberfläche kaum. Ein echter Mock an der Service-Grenze bedeutete, dass die spätere Integration nur noch das Umlegen eines Flags und das Korrigieren des DTO-Mappings war, statt Screens neu zu schreiben.",
+        "tradeoff": "Genau das machte die spätere Vertragslücke unsichtbar — bei aktivierten Mocks funktionieren die betroffenen Screens einwandfrei."
+      },
+      {
+        "decision": "Synchronisierung beim Lesen statt Hintergrund-Polling",
+        "alternatives": "Ein Hintergrund-Task, der nach Zeitplan auf neue Ankündigungen pollt",
+        "reasoning": "Push deckt die Dringlichkeit ab; der Abgleich beim Fortsetzen sorgt für Korrektheit, ohne Akku für einen Zeitplan zu verbrauchen, den die Plattform ohnehin nicht zwingend einhält.",
+        "tradeoff": "Ungelesen-Zähler können zwischen dem Eintreffen eines Push und dem Öffnen der App kurzzeitig veraltet sein."
+      }
+    ],
+    "challenges": [
+      "Echte Immatrikulation ohne verfügbare Anbindung an ein Studierendeninformationssystem verifizieren, gelöst mit einem dreistufigen Registrierungsassistenten, dessen Verifizierungs-Checkpoint gegen einen echten Aufruf ausgetauscht werden kann, ohne die umgebenden Screens neu zu entwerfen.",
+      "Zwei E-Mail-Verifizierungsverfahren — Einmalcode und Link — über dieselben Abläufe für „Passwort vergessen“ und Registrierung unterstützen.",
+      "Eine Abhängigkeit, die einen mitgelieferten Patch (vendored patch) brauchte, angewendet über einen unterstützten Mechanismus des Paketmanagers mit erklärendem Kommentar statt über verstreute Workarounds oder eine festgenagelte alte Version."
+    ],
+    "outcomes": [
+      "Achtzehn Screens für Authentifizierung, einen dreistufigen Registrierungsassistenten, das Lesen von Ankündigungen und die Kontoverwaltung, als Android-Build über EAS verteilt.",
+      "Vollständige Unterstützung für Arabisch und Englisch mit gespiegeltem Layout, umgesetzt als Architektureigenschaft statt als Übersetzungsdurchgang.",
+      "Push-Zustellung über Firebase Cloud Messaging; Startseite, Verlauf und Benachrichtigungsansichten gleichen den Ungelesen-Status beim Fortsetzen ab.",
+      "Zentralisierte Log-Bereinigung, die zugangsdatenartige Schlüssel an einem einzigen Engpass schwärzt, mit bewussten Ausnahmen, damit benachbarte Schlüssel nicht zu breit erfasst werden."
+    ],
+    "retrospective": "Bilinguale Unterstützung von Anfang an einzubauen und an der Service- statt an der Netzwerkgrenze zu mocken, waren die beiden Entscheidungen, mit denen der Zeitplan aufging. Die größte Lücke ist keine Geschmacksfrage: Es gibt keine Tests. Der „Passwort vergessen“-Screen hat 627 Zeilen und behandelt zwei Verifizierungsverfahren, mehrere Fehlerzustände, Erneut-senden-Logik und Countdown-Timer; der zweite Registrierungsschritt hat 508 Zeilen mit asynchron geladenen Metadaten, abhängigen Dropdowns und einem Verifizierungsaufruf. Keiner von beiden hat auch nur eine automatisierte Assertion, und die Kosten waren schon während der Entwicklung spürbar — das Refactoring des Einmalcode-Ablaufs hieß, die Registrierung manuell erneut durchzugehen, um sicherzugehen, dass nichts kaputtgegangen war, und bei jeder späteren Änderung an der Authentifizierung war es dasselbe. Die Validatoren, das Modul zur Fehlereingrenzung und die Log-Bereinigung sind allesamt reine Funktionen mit klaren Verträgen; Tests dort wären günstig und sehr wertvoll gewesen, und gerade die Log-Bereinigung ist sicherheitsrelevanter Code ohne jede Abdeckung. Das zweite Versäumnis ist die Vertragslücke: Die App wird ausgeliefert und ruft drei Endpunkte auf, die das Backend nie implementiert hat. Ein Anforderungsdokument führte sie mit Prioritäten auf, gestützt auf eine tatsächliche Lektüre des Backend-Codes, und es war ein gutes Artefakt, das nichts änderte — weil ein Dokument keinen Fehlermodus hat. Nichts wird rot, wenn es unerfüllt bleibt. Was die Lücke erträglich machte, machte sie auch unsichtbar: Mit aktivierten Mocks funktionieren alle drei Oberflächen einwandfrei, und die Lücke zeigt sich erst gegen das Live-Backend. Eine generierte OpenAPI-Spezifikation mit daraus generiertem Client oder Vertragstests in der CI hätten jede dieser Lücken am Tag des Schreibens zu einem fehlschlagenden Build gemacht. Zwei Screens sind außerdem zu groß, um sie bequem zu reviewen; die Extraktion in Orchestrierungs-Hooks ist rückblickend offensichtlich und wird vom eigenen Standard der Codebasis verlangt — der Zeitdruck hat gewonnen.",
+    "stackDetail": [
+      {
+        "category": "Plattform",
+        "items": [
+          "React Native über Expo (Managed Workflow, Development Builds)",
+          "TypeScript",
+          "Expo Router",
+          "EAS Build (Android-APK)"
+        ]
+      },
+      {
+        "category": "Lokalisierung",
+        "items": [
+          "Arabische + englische Nachrichtenkataloge",
+          "Hook für die Layoutrichtung auf jedem Screen",
+          "Gespiegeltes Layout, umgekehrte Zeilen, schriftgerechte Fonts",
+          "Skript zur Abdeckungsprüfung"
+        ]
+      },
+      {
+        "category": "Daten & Fehler",
+        "items": [
+          "Zod-Validatoren in einem Verzeichnis",
+          "Zwei Fehlertypen, an einer einzigen Grenze eingegrenzt",
+          "UI-Verzweigung anhand von Problem-Slugs",
+          "Mock-API an der Service-Grenze"
+        ]
+      },
+      {
+        "category": "Zustellung & State",
+        "items": [
+          "Push über Firebase Cloud Messaging",
+          "Synchronisierung beim Lesen nach dem Fortsetzen",
+          "Endloses Scrollen mit Filter-Sheets",
+          "Download und Teilen von Anhängen"
+        ]
+      },
+      {
+        "category": "Sicherheit",
+        "items": [
+          "Zentralisierte Log-Bereinigung mit Schwärzung nach Schlüsselmustern",
+          "Eigene Behandlung für inaktive, suspendierte und gesperrte Konten",
+          "Mitgelieferter Abhängigkeits-Patch mit Begründung"
+        ]
+      }
+    ]
+  }
+}

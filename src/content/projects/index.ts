@@ -1,4 +1,4 @@
-import { projectSchema, type Project } from '@/content/schemas';
+import { projectStructureSchema, type ProjectStructure } from '@/content/schemas';
 
 import { usClientPlatform } from '@/content/projects/us-client-platform';
 import { stockwell } from '@/content/projects/stockwell';
@@ -14,8 +14,12 @@ import { biddingManagementSystem } from '@/content/projects/bidding-management-s
 import { angularSky } from '@/content/projects/angular-sky';
 
 /**
- * One module per project. Ordered by `sortWeight` (descending), then `year`,
- * so the strongest and most recent work leads the catalog.
+ * One module per project, holding only language-neutral facts. Ordered by
+ * `sortWeight` (descending), then `year`, so the strongest and most recent
+ * work leads the catalog.
+ *
+ * The words for each project live in
+ * `src/i18n/content/<locale>/projects/<slug>.json`; `@/content` merges the two.
  */
 const projectsData = [
   usClientPlatform,
@@ -30,35 +34,21 @@ const projectsData = [
   masterLaravel,
   biddingManagementSystem,
   angularSky,
-] satisfies Project[];
+] satisfies ProjectStructure[];
 
-export const projects: Project[] = projectsData
-  .map((project) => projectSchema.parse(project))
+export const projectStructures: ProjectStructure[] = projectsData
+  .map((project) => projectStructureSchema.parse(project))
   .sort((a, b) => (b.sortWeight ?? 0) - (a.sortWeight ?? 0) || b.year - a.year);
 
-export function getProjectBySlug(slug: string): Project | undefined {
-  return projects.find((project) => project.slug === slug);
-}
-
-export function getFeaturedProjects(): Project[] {
-  return projects.filter((project) => project.featured);
-}
-
 export function getAllProjectSlugs(): string[] {
-  return projects.map((project) => project.slug);
+  return projectStructures.map((project) => project.slug);
 }
 
-export function getProjectsByTechnology(tech: string): Project[] {
-  const normalised = tech.toLowerCase();
-  return projects.filter((project) =>
-    project.technologies.some((item) => item.toLowerCase() === normalised),
-  );
-}
-
-/** All categories present in the catalog, most-used first. */
+/** All categories present in the catalog, most-used first. Values are the
+ *  stable English keys (also used in `?category=` URLs). */
 export function getProjectCategories(): string[] {
   const counts = new Map<string, number>();
-  for (const project of projects) {
+  for (const project of projectStructures) {
     for (const category of project.categories) {
       counts.set(category, (counts.get(category) ?? 0) + 1);
     }
@@ -71,7 +61,7 @@ export function getProjectCategories(): string[] {
 /** Technologies ranked by how many projects use them. */
 export function getTopTechnologies(limit = 8): string[] {
   const counts = new Map<string, number>();
-  for (const project of projects) {
+  for (const project of projectStructures) {
     for (const tech of project.technologies) {
       counts.set(tech, (counts.get(tech) ?? 0) + 1);
     }
@@ -80,11 +70,4 @@ export function getTopTechnologies(limit = 8): string[] {
     .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
     .slice(0, limit)
     .map(([tech]) => tech);
-}
-
-export function getProjectsByCategory(category: string): Project[] {
-  const normalised = category.toLowerCase();
-  return projects.filter((project) =>
-    project.categories.some((item) => item.toLowerCase() === normalised),
-  );
 }

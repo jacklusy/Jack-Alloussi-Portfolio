@@ -1,0 +1,138 @@
+{
+  "title": "Stockwell — API multi-tenant de gestion des stocks et des entrepôts",
+  "summary": "Une API de stocks NestJS conçue pour démontrer, et non simplement affirmer, quatre propriétés de justesse sous concurrence : 50 ajustements parallèles donnent un gagnant et 49 réponses 409 explicites, vérifiés à chaque exécution de la CI.",
+  "description": "Les logiciels d’entrepôt échouent en silence — le système répond 200 OK alors que les données sous-jacentes dérivent. Stockwell est une API multi-tenant de gestion des stocks et des entrepôts bâtie sur ce constat : la sûreté en concurrence, les réessais exactly-once, les transferts atomiques et l’isolation des tenants sont traités comme des propriétés démontrables, chacune adossée à un test exécutable plutôt qu’à un paragraphe de prose.",
+  "role": "Backend Engineer",
+  "timeframe": "2026",
+  "metrics": [
+    {
+      "label": "Ajustements parallèles, un seul gagnant",
+      "value": "50 → 1 + 49×409"
+    },
+    {
+      "label": "Niveaux de tests",
+      "value": "Unit · Integration · E2E"
+    },
+    {
+      "label": "Architecture Decision Records",
+      "value": "8"
+    }
+  ],
+  "thumbnail": {
+    "alt": "La page Swagger de l’API Stockwell : titre, badges de version et OAS, instructions d’authentification couvrant l’inscription, la connexion, le contexte de tenant et l’en-tête Idempotency-Key, puis le groupe d’endpoints d’authentification en dessous."
+  },
+  "gallery": [
+    {
+      "alt": "Le catalogue d’endpoints Swagger : groupes health, inventory et products dépliés, avec des routes comme /api/v1/inventory/transfer et /api/v1/inventory/reservations ; des icônes de cadenas signalent les routes authentifiées.",
+      "caption": "Chaque route est réelle et appelable depuis le navigateur — sondes de santé, les cinq endpoints d’inventaire autour desquels le travail sur la concurrence et le verrouillage est construit, et le CRUD des produits et des entrepôts, chacun documenté avec ses formats de requête et de réponse."
+    }
+  ],
+  "group": {
+    "label": "Stockwell"
+  },
+  "links": {
+    "liveNote": "En ligne et ouvert — aucun compte de démo nécessaire. Enregistrez un tenant, connectez-vous, cliquez sur Authorize, et chaque endpoint ci-dessus est appelable depuis le navigateur."
+  },
+  "caseStudy": {
+    "context": "Une quantité en stock n’est pas un champ ordinaire. C’est un nombre que de nombreux acteurs modifient en même temps — la réception d’une palette scannée, un préparateur qui sort des unités, une correction d’écart lors d’un inventaire tournant, une tâche d’arrière-plan qui réserve du stock pour une commande — le tout sur la même ligne produit-emplacement, dans la même seconde. L’implémentation naïve en lecture-modification-écriture perd des mises à jour en silence : aucune erreur, aucune notification, et l’entrepôt physique et la base de données divergent discrètement.",
+    "problem": "Quatre modes de défaillance devaient devenir impossibles, et pas seulement improbables. Des ajustements concurrents doivent produire exactement un gagnant et des conflits explicites pour les perdants, jamais une mise à jour perdue ni une quantité négative. Les mutations rejouées — les scanners mobiles sur des réseaux instables renvoient la requête quand une réponse expire — doivent produire exactement un seul effet. Les transferts modifient deux lignes dans une même opération logique : ils doivent donc être atomiques et ne pas provoquer d’interblocage quand des transferts en sens opposé se font concurrence. Enfin, dans une conception multi-tenant à schéma partagé, un seul prédicat de tenant oublié n’est pas un bug mais une fuite de données entre clients, invisible en développement local où un seul tenant existe.",
+    "approach": "Traiter chaque propriété comme une affirmation qui exige une preuve exécutable. Verrouillage optimiste avec une colonne de version par défaut, verrous de ligne pessimistes avec ordre de verrouillage explicite pour le chemin de transfert sur deux lignes. Clés d’idempotence réclamées dans la même transaction que le mouvement, de sorte que la clé et son effet sont validés ou annulés ensemble. Mouvements stockés en append-only, les soldes n’étant qu’une projection, pour que l’historique ne puisse pas être effacé par modification. Isolation des tenants défendue sur quatre couches, la dernière étant la row-level security de PostgreSQL, avec une réponse 404 plutôt que 403 — car un 403 confirme qu’une ressource existe et permet à un attaquant d’énumérer les identifiants de produits d’un concurrent. Un formalisme appliqué de façon asymétrique : lourd dans le domaine des stocks, volontairement léger ailleurs.",
+    "architecture": {
+      "altText": "Une API NestJS répartie sur quatre bounded contexts au-dessus de PostgreSQL 16 et Redis : les écritures d’inventaire utilisent une vérification de version optimiste pour les ajustements sur une ligne et des verrous de ligne pessimistes ordonnés pour les transferts sur deux lignes, réclament une clé d’idempotence dans la même transaction et ajoutent des enregistrements de mouvement immuables dont les soldes de stock sont projetés — l’isolation des tenants étant appliquée dans la couche applicative et doublée par la row-level security sous un rôle de base de données dédié, sans privilège superutilisateur."
+    },
+    "decisions": [
+      {
+        "decision": "Verrouillage optimiste par défaut, verrouillage pessimiste pour les transferts",
+        "alternatives": "Une stratégie de verrouillage unique appliquée uniformément à toutes les écritures d’inventaire",
+        "reasoning": "Les ajustements sur une seule ligne sont mieux servis par une vérification de version qui échoue bruyamment ; les transferts sur deux lignes exigent des verrous de ligne ordonnés, car des transferts en sens opposé qui acquièrent leurs verrous dans un ordre opposé sont exactement ce qui provoque les interblocages dans PostgreSQL.",
+        "tradeoff": "Deux stratégies de verrouillage dans un même module, et les clients doivent gérer le 409 avec un nouvel essai. À réexaminer si le taux de conflits devient pénible en exploitation ou si une troisième opération multi-lignes apparaît."
+      },
+      {
+        "decision": "Mouvements immuables, soldes en projection de ceux-ci",
+        "alternatives": "Modifier une ligne de solde sur place et tenir un journal d’audit séparé",
+        "reasoning": "Une mise à jour de solde sur place détruit les preuves nécessaires pour déterminer quand la divergence s’est produite. Des mouvements en append-only, avec un trigger de base de données qui rejette UPDATE et DELETE, rendent la piste d’audit structurelle plutôt que facultative.",
+        "tradeoff": "Le stockage croît à chaque mutation, et corriger une erreur consiste à passer un mouvement compensatoire plutôt qu’à modifier une ligne."
+      },
+      {
+        "decision": "Multi-tenance à schéma partagé avec la row-level security en filet de sécurité",
+        "alternatives": "Isolation par schéma ou par base de données pour chaque tenant",
+        "reasoning": "Un seul déploiement reste gérable en exploitation pour une seule personne, et la RLS transforme le mode de défaillance d’un prédicat manquant : de « les lignes d’un autre tenant » à « zéro ligne ».",
+        "tradeoff": "Un prédicat de tenant manquant est une violation de données et non un simple bug, d’où une défense sur quatre couches et un test d’isolation exécuté avec le rôle applicatif restreint."
+      },
+      {
+        "decision": "TypeORM plutôt que Prisma ou Drizzle",
+        "alternatives": "Prisma, pour une inférence de types de bout en bout plus solide",
+        "reasoning": "Un SELECT … FOR UPDATE explicite avec un ordre de verrouillage maîtrisé est le mécanisme porteur du chemin de transfert, et TypeORM le traite comme une fonctionnalité de premier plan.",
+        "tradeoff": "Une inférence de types générée moins solide que celle de Prisma, acceptée parce que la primitive de verrouillage comptait davantage que le confort du typage."
+      },
+      {
+        "decision": "Testcontainers avec de vrais PostgreSQL et Redis, plutôt que des repositories mockés",
+        "alternatives": "Une persistance mockée pour une couverture unitaire rapide des mêmes chemins",
+        "reasoning": "L’ordre de verrouillage, la liaison de la RLS, les clés étrangères différées et les triggers append-only sont des propriétés de PostgreSQL. Un repository mocké ne peut pas échouer comme le vrai Postgres, et ces mécanismes auraient donc été vérifiés par des tests qui ne prouvent rien.",
+        "tradeoff": "Des suites plus lentes, des exécutions de tests sérialisées et Docker requis en local — un coût largement remboursé."
+      }
+    ],
+    "challenges": [
+      "La row-level security n’a été que du théâtre de sécurité pendant ses premiers commits : les politiques étaient écrites et forcées, mais rien ne s’appliquait car l’application se connectait en tant que propriétaire des tables, et PostgreSQL exempte silencieusement les propriétaires — sans erreur ni avertissement.",
+      "Construire une race condition déterministe. Le test censé vérifier que des ajustements parallèles entrent en conflit était lui-même soumis à une race : il arrivait que les deux requêtes se sérialisent proprement et réussissent toutes les deux.",
+      "Des hooks de cycle de vie déclenchés dans des contextes pour lesquels ils n’avaient jamais été prévus — l’export du schéma OpenAPI démarre l’application Nest pour parcourir ses décorateurs, ce qui lançait un worker de file d’attente et tentait de se connecter à Redis pendant un build de documentation.",
+      "Le rate limiting qui se bat contre la suite de tests : l’inscription de nombreux utilisateurs déclenchait le throttler et produisait des 429 instables sans rapport avec ce qui était testé.",
+      "Un déploiement sur un hôte qui exécutait déjà deux autres stacks sans lien : des noms de services par défaut comme postgres et redis entreraient silencieusement en collision avec les leurs sur le même réseau Docker. La solution a consisté à préfixer chaque service — stockwell-postgres, stockwell-redis — et à ne placer que le conteneur de l’API sur le réseau de routage partagé, la base de données et le cache restant sur un réseau isolé qui n’expose aucun port à l’hôte."
+    ],
+    "outcomes": [
+      "Cinquante ajustements concurrents sur le même solde se résolvent en exactement un gagnant et quarante-neuf conflits 409 explicites, avec une quantité finale exacte et aucun état intermédiaire jamais négatif — consigné sous forme d’artefact JSON à chaque exécution de la CI.",
+      "Une stratégie de tests à trois niveaux : tests unitaires sans aucune E/S pour les invariants du domaine et les frontières RBAC, tests d’intégration Testcontainers pour les transactions, les verrous, l’idempotence et la RLS, et tests de bout en bout pour les contrats HTTP et l’isolation des tenants sur le réseau.",
+      "L’accès inter-tenants renvoie 404 plutôt que 403 sur toutes les ressources, vérifié de bout en bout, la row-level security étant testée sous le rôle applicatif restreint et non sous celui du propriétaire.",
+      "Un pipeline CI qui exécute lint, vérification des types, contrôle des frontières de dépendances, trois niveaux de tests, migrations, export OpenAPI, build de l’image, validation Terraform et audit des dépendances de production — avec un déploiement qui capture une cible de retour arrière avant de modifier quoi que ce soit.",
+      "En ligne à une vraie URL avec une interface Swagger publique : un fichier Docker Compose de production distinct, sur un hôte Oracle Cloud existant partagé avec deux autres projets sans lien, chacun isolé dans son propre ensemble de conteneurs, la base de données et le cache étant tenus entièrement à l’écart du réseau partagé. Actuellement sur sa propre branche, pas encore fusionné dans main."
+    ],
+    "retrospective": "Choisir un problème difficile et le démontrer, c’était toute la valeur. Une version avec deux fois plus de CRUD et sans artefact de concurrence en dirait nettement moins. Deux échecs m’ont le plus appris. La row-level security a passé tous les tests qui vérifiaient que les politiques existaient et a échoué au premier test qui vérifiait qu’elles fonctionnaient — un contrôle de sécurité qui ne peut pas échouer de manière visible dans un test n’est pas un contrôle, et le test est la fonctionnalité. Par ailleurs, le workflow de déploiement redémarrait de force les tâches avec la définition de tâche existante : chaque déploiement passait au vert tout en livrant la version précédente ; un pipeline vert est une affirmation, pas un fait, et il faut vérifier l’artefact déployé plutôt que le code de sortie. Ce que je ferais autrement : livrer les endpoints de lecture dès le premier commit d’inventaire, car construire un journal d’audit soigneusement conçu qu’aucun client HTTP ne peut lire est une vraie erreur de conception, née du fait que le chemin d’écriture concentrait les problèmes intéressants. Déployer plus tôt sur quelque chose de peu coûteux, car un Terraform qui valide mais n’a jamais été appliqué apporte bien moins de signal qu’une URL qui tourne — et l’observation aurait détecté le bug de déploiement que la lecture du code n’a pas vu. Cette leçon a été appliquée, mais pas par le chemin que la CI valide : le projet est en ligne via un simple fichier Docker Compose sur un serveur Oracle Cloud existant, accessible en un après-midi plutôt qu’avec un compte cloud et un terraform apply. La topologie AWS/ECS reste dans le dépôt comme infrastructure validée mais non appliquée, ce qui la décrit plus honnêtement que de laisser croire que c’est elle qui sert réellement l’URL. Construire le reaper d’expiration des clés d’idempotence dans le cadre du travail sur l’idempotence plutôt que de le lister comme un point négatif connu, car une colonne sans reaper est une fuite lente avec sa documentation en prime. Et mesurer le taux de conflits sous une contention soutenue et réaliste, qui est le chiffre qui m’indiquerait réellement si la stratégie de verrouillage par défaut est la bonne.",
+    "stackDetail": [
+      {
+        "category": "Runtime et framework",
+        "items": [
+          "TypeScript (strict)",
+          "Node.js ≥ 20",
+          "NestJS",
+          "Clean Architecture, 4 bounded contexts"
+        ]
+      },
+      {
+        "category": "Données",
+        "items": [
+          "PostgreSQL 16",
+          "TypeORM avec 10 migrations écrites à la main",
+          "Row-level security sous un rôle dédié NOSUPERUSER",
+          "Triggers append-only sur les mouvements + contraintes CHECK"
+        ]
+      },
+      {
+        "category": "Asynchrone et cache",
+        "items": [
+          "Redis 7",
+          "BullMQ (alertes de stock bas, réessais durables)",
+          "Compteurs du throttler"
+        ]
+      },
+      {
+        "category": "Tests",
+        "items": [
+          "Jest (unitaires, ~60%)",
+          "Testcontainers avec de vrais Postgres + Redis (~35%)",
+          "supertest E2E (~5%)",
+          "Test de fumée k6 avec seuils"
+        ]
+      },
+      {
+        "category": "Livraison",
+        "items": [
+          "Image Docker multi-étapes",
+          "Terraform (topologie ECS/ALB/ECR, validée en CI, non appliquée)",
+          "GitHub Actions : migration avant la bascule du trafic, ARN de retour arrière capturé en premier",
+          "Export OpenAPI + Swagger UI",
+          "En ligne : Docker Compose de production sur un hôte Oracle Cloud partagé, derrière Caddy"
+        ]
+      }
+    ]
+  }
+}

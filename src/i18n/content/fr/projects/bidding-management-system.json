@@ -1,0 +1,115 @@
+{
+  "title": "Bidding Management System — API de workflow d’appels d’offres",
+  "summary": "Une API .NET 8 d’appels d’offres et de soumissions fondée sur Clean Architecture, DDD et CQRS : ~40 endpoints couvrant deux cycles de vie d’agrégats protégés, livrée en un sprint de trois jours.",
+  "description": "Le backend d’une plateforme d’achats où le personnel publie des appels d’offres, les fournisseurs déposent des soumissions, et les évaluateurs les notent et les attribuent — avec des règles métier appliquées par le modèle de domaine lui-même plutôt que par des vérifications ad hoc dans les contrôleurs. Réalisé pour le parcours backend de la Sky Academy comme exercice délibéré : appliquer de bout en bout les patterns .NET d’entreprise à un domaine non trivial.",
+  "role": "Développement backend",
+  "timeframe": "avril 2025",
+  "metrics": [
+    {
+      "label": "Endpoints REST",
+      "value": "~40"
+    },
+    {
+      "label": "Couches d’architecture",
+      "value": "4 projets"
+    },
+    {
+      "label": "Durée du sprint",
+      "value": "3 jours"
+    }
+  ],
+  "group": {
+    "label": "Sky Academy"
+  },
+  "caseStudy": {
+    "context": "Un processus d’achat est fondamentalement un workflow avec des transitions d’état strictes et plusieurs acteurs aux permissions différentes. On ne doit pas pouvoir soumissionner à un appel d’offres avant sa publication ni après sa clôture. Une soumission ne doit pas être notée avant d’avoir été déposée, ni acceptée avant d’avoir été évaluée. Le responsable des achats qui crée un appel d’offres n’est pas l’évaluateur qui note les soumissions, et ni l’un ni l’autre n’est le fournisseur qui en dépose une.",
+    "problem": "Des règles de ce type se dispersent facilement dans les contrôleurs et deviennent difficiles à garder cohérentes. Il en va de même pour les données : montants avec devises, e-mails de contact, critères d’éligibilité, et conditions de paiement dont la somme doit atteindre cent pour cent. L’objectif était un backend où les états illégaux ne sont pas représentables dans le modèle de domaine, plutôt que simplement rejetés à la périphérie.",
+    "approach": "Construire de l’intérieur vers l’extérieur, à partir du domaine, en quatre couches. Modéliser les concepts centraux comme des agrégats dotés de leurs propres invariants et machines à états, ainsi que des value objects qui rendent impossible la construction de valeurs illégales. Encapsuler chaque cas d’usage dans une commande ou une requête CQRS dispatchée via MediatR, au lieu d’écrire de la logique dans les contrôleurs. Déporter validation et journalisation dans un pipeline MediatR plutôt que de répéter des clauses de garde. Garder EF Core, SQL Server, JWT et le stockage de fichiers derrière des interfaces définies dans les couches internes. Les fonctionnalités ont été livrées en tranches verticales à travers Domain, Application et API, et non couche horizontale après couche horizontale.",
+    "architecture": {
+      "altText": "Clean Architecture en quatre projets : une couche API ASP.NET Core qui traduit le HTTP en commandes et requêtes MediatR ; une couche Application contenant les handlers et un pipeline behavior FluentValidation ; une couche Domain sans dépendance contenant les agrégats Tender, Bid et User avec leurs value objects et machines à états ; et une couche Infrastructure qui implémente la persistance via EF Core sur SQL Server, ainsi que la génération de jetons JWT et le stockage de fichiers, derrière des interfaces."
+    },
+    "decisions": [
+      {
+        "decision": "Des agrégats riches, porteurs de comportement, plutôt qu’un modèle anémique avec la logique dans des services",
+        "alternatives": "Des entités de données simples, avec les règles placées dans des services applicatifs",
+        "reasoning": "Les transitions d’état sont protégées en un seul endroit — l’agrégat —, de sorte qu’il est impossible d’attribuer un appel d’offres qui n’est pas en cours d’évaluation, quel que soit le chemin de code appelant.",
+        "tradeoff": "Les agrégats exigent des setters et des constructeurs privés ainsi qu’une configuration EF Core explicite pour être mappés sur des tables relationnelles sans exposer d’état public modifiable, ce que résout le mapping par champs de support (backing fields) pour les collections privées."
+      },
+      {
+        "decision": "CQRS via MediatR pour chaque cas d’usage, y compris les lectures simples",
+        "alternatives": "Des classes de service classiques injectées dans les contrôleurs",
+        "reasoning": "Un pipeline uniforme apporte validation et journalisation à toutes les opérations sans effort et limite les contrôleurs à traduire le HTTP en commande ou en requête.",
+        "tradeoff": "De nombreuses petites classes — neuf classes de commande distinctes pour les seuls appels d’offres —, soit plus de fichiers à parcourir qu’avec une approche par classes de service."
+      },
+      {
+        "decision": "FluentValidation dans un pipeline behavior MediatR, plutôt que des attributs de type data annotations",
+        "alternatives": "Des attributs sur les DTO et des vérifications ModelState dans chaque action",
+        "reasoning": "Les vraies règles sont multi-champs et conditionnelles — prix unitaire fois quantité doit être égal au prix total au centime près, et la devise de chaque ligne de soumission doit correspondre à celle de la soumission —, ce qui est malcommode avec des attributs et naturel avec un constructeur de règles fluent.",
+        "tradeoff": "Les validateurs se trouvent dans la couche Application, à côté des gardes du constructeur de l’agrégat. C’est de la défense en profondeur, mais cela fait deux endroits à garder synchronisés."
+      },
+      {
+        "decision": "Stockage de fichiers sur disque local derrière une interface IFileStorageService",
+        "alternatives": "Brancher directement un stockage blob cloud dans les handlers",
+        "reasoning": "Il fallait pouvoir démontrer le téléversement de documents sans aucune dépendance externe dans un sprint de trois jours.",
+        "tradeoff": "Non viable pour un déploiement multi-instances. L’interface existe précisément pour pouvoir être remplacée sans toucher au code de la couche Application."
+      }
+    ],
+    "challenges": [
+      "Mapper des agrégats à setters et collections privés sur des tables relationnelles sans exposer d’état public modifiable — résolu par des configurations Fluent API s’appuyant sur la prise en charge des backing fields d’EF Core.",
+      "Faire respecter deux cycles de vie complets avec de vraies préconditions : Draft → Published → UnderEvaluation → Awarded → Closed pour les appels d’offres, avec Cancel depuis tout état non terminal, et Draft → Submitted → UnderEvaluation → Accepted ou Rejected pour les soumissions.",
+      "Faire correspondre une dizaine de types d’exceptions de domaine et d’application à des codes de statut HTTP cohérents, avec un format d’erreur JSON uniforme, centralisé dans un middleware plutôt que dispersé dans les contrôleurs."
+    ],
+    "outcomes": [
+      "Environ quarante endpoints REST répartis sur cinq contrôleurs, couvrant l’authentification, le cycle de vie des appels d’offres, celui des soumissions, l’administration des utilisateurs et le téléversement de documents.",
+      "Les deux cycles de vie d’agrégats sont appliqués au sein du modèle de domaine, les transitions étant validées par rapport à de vraies préconditions plutôt que vérifiées dans le contrôleur.",
+      "Une authentification JWT avec des jetons d’accès de 24 heures, des jetons de rafraîchissement persistés de 7 jours, quatre rôles appliqués et un flux de changement de mot de passe.",
+      "Des règles anti-doublons qui se traduisent par de véritables réponses 409, et une gestion centralisée des erreurs qui fait correspondre une dizaine de types d’exceptions à des codes de statut appropriés."
+    ],
+    "retrospective": "Les machines à états pilotées par le domaine ont mérité leur cérémonial : ce sont elles, plus que les validateurs, qui ont réellement empêché les états invalides. Ce qu’un calendrier de trois jours ne permettait pas de couvrir apparaît exactement où on l’attend. Il n’y a aucun test automatisé, ce qui, pour un projet conçu pour démontrer CQRS et DDD, est la plus grande lacune : les clauses de garde des agrégats sont précisément le type de logique pour lequel les tests unitaires existent. La rédaction de cette documentation a fait ressortir un vrai bug d’autorisation — l’endpoint de création d’appel d’offres vérifie une chaîne de rôle qui ne correspond pas à la valeur d’enum utilisée correctement partout ailleurs dans le même fichier, si bien que le seul rôle dont la raison d’être est de créer des appels d’offres ne peut actuellement pas l’appeler. Une classe LoggingBehavior a été écrite mais jamais enregistrée dans le pipeline, donc la mesure du temps par requête qu’elle implémente n’a jamais tourné ; les handlers journalisant manuellement, personne ne l’a remarqué. CORS et Swagger ont été laissés grands ouverts de façon inconditionnelle, signalés dans un commentaire de code comme à restreindre plus tard, puis jamais revus. La leçon que j’en tire : brancher une préoccupation transverse sous forme de classe ne signifie pas qu’elle est active, et un test de fumée vérifiant que le pipeline contient bien ses behaviors aurait détecté à la fois cela et la faute de frappe sur le rôle.",
+    "stackDetail": [
+      {
+        "category": "Langage et runtime",
+        "items": [
+          "C# 12",
+          ".NET 8",
+          "ASP.NET Core 8 Web API"
+        ]
+      },
+      {
+        "category": "Architecture et patterns",
+        "items": [
+          "Clean Architecture (Domain / Application / Infrastructure / API)",
+          "Domain-Driven Design — agrégats, value objects, événements de domaine",
+          "CQRS via MediatR 12",
+          "Repository + Unit of Work",
+          "Pipeline behaviors MediatR"
+        ]
+      },
+      {
+        "category": "Accès aux données",
+        "items": [
+          "Entity Framework Core 8 (Code-First)",
+          "SQL Server",
+          "Configurations d’entités Fluent API",
+          "Deux migrations versionnées"
+        ]
+      },
+      {
+        "category": "Validation et mapping",
+        "items": [
+          "FluentValidation 11",
+          "AutoMapper 12"
+        ]
+      },
+      {
+        "category": "Authentification et documentation",
+        "items": [
+          "JWT bearer (jetons d’accès + de rafraîchissement)",
+          "Hachage des mots de passe avec ASP.NET Core Identity",
+          "Autorisation fondée sur les rôles",
+          "Swagger / OpenAPI via Swashbuckle"
+        ]
+      }
+    ]
+  }
+}

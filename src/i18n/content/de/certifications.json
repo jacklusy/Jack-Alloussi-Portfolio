@@ -1,0 +1,9 @@
+{
+  "entries": {
+    "aws-dva": { "name": "AWS Certified Developer – Associate (DVA-C02)" },
+    "ielts": { "name": "IELTS General Training" },
+    "sky-backend": { "name": "Backend-Entwicklung: .NET, Clean Architecture, DDD, SOLID" },
+    "sky-frontend": { "name": "Frontend-Entwicklung: Angular und TypeScript" },
+    "github-foundations": { "name": "GitHub Foundations" }
+  }
+}

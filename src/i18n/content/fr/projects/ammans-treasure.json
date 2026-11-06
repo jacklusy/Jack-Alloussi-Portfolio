@@ -1,0 +1,130 @@
+{
+  "title": "Amman's Treasure — page vitrine bilingue pour un café",
+  "summary": "Un site monopage entièrement bilingue anglais/arabe pour un café d’Amman, avec une vraie conception RTL plutôt qu’une mise en page LTR simplement inversée — sept sections, huit dépendances d’exécution, aucun fichier de plus de 210 lignes.",
+  "description": "Un site vitrine monopage pour un café-lounge de charme à Amman. Bilingue avec prise en charge complète de l’écriture de droite à gauche, piloté par le contenu et réalisé comme une SPA React statique. L’étude de cas ci-dessous est d’une franchise inhabituelle : elle inclut la revue de design qui a révélé trois styles défaillants sans aucun signal, et classe les correctifs par impact rapporté à l’effort.",
+  "role": "Développeur frontend",
+  "timeframe": "2025",
+  "metrics": [
+    {
+      "label": "Taille du code source",
+      "value": "1 158 lignes"
+    },
+    {
+      "label": "Dépendances d’exécution",
+      "value": "8 paquets"
+    },
+    {
+      "label": "Traceurs / cookies",
+      "value": "Aucun"
+    }
+  ],
+  "thumbnail": {
+    "alt": "La page d’accueil d’Amman’s Treasure : la ligne en police à empattements « Amman’s Hidden Treasure » sur une photographie de la terrasse du café couverte de plantes suspendues, avec en dessous un bouton doré « View menu »."
+  },
+  "gallery": [
+    {
+      "alt": "La page du menu, avec des panneaux pour les cafés glacés, les boissons chaudes, les jus et le petit-déjeuner, chaque article étant listé en anglais et en arabe avec son prix en dinars.",
+      "caption": "Chaque article porte les deux langues et son prix en dinars. Les menus changent au rythme du café, pas à celui des déploiements — modifier le prix d’un latte ne devait jamais nécessiter un ingénieur."
+    },
+    {
+      "alt": "La page de la galerie, « Amman’s Treasure Moments », une grille de photographies de la terrasse, de la vue sur la ville et d’assiettes de plats.",
+      "caption": "La galerie répond à la question à laquelle les réseaux sociaux répondent déjà bien — à quoi ça ressemble — ce qui laisse au reste du site le soin de répondre à celles qu’ils traitent mal : horaires, adresse, possibilité d’y travailler."
+    },
+    {
+      "alt": "La section à propos, « Our Story », à côté d’une photographie de plats, affichant une note moyenne de 4,9 et des horaires d’ouverture de 9:00 à 00:00.",
+      "caption": "Le positionnement est le produit : un lieu conçu pour qu’on y reste, pas un modèle de restaurant qui vend de la nourriture. La note et les horaires d’ouverture pèsent plus lourd que n’importe quel texte d’accroche."
+    },
+    {
+      "alt": "La page de contact, avec téléphone, WhatsApp, e-mail et adresse à côté d’une carte intégrée montrant l’emplacement du café à Amman.",
+      "caption": "À Amman, personne ne réserve une table de café via un formulaire web. Les actions de conversion sont l’ouverture de WhatsApp, un appui sur un numéro de téléphone ou l’ouverture de Maps pour l’itinéraire ; la page passe donc le relais à ces canaux au lieu de capter des leads."
+    }
+  ],
+  "caseStudy": {
+    "context": "Un café ouvert depuis trois mois à Amman avait Instagram, Facebook et une fiche Google Maps notée 4,9, mais aucune présence web qui lui appartienne. Les profils sociaux sont bons pour les photos et mauvais pour les questions pratiques : horaires d’ouverture, emplacement exact, présence du WiFi, possibilité d’y travailler trois heures. Aucune de ces réponses n’est visible d’emblée dans un fil social.",
+    "problem": "Trois contraintes ont façonné la réalisation. Le public bilingue n’est pas un seul public : le marché des cafés d’Amman se partage entre des habitants arabophones d’abord et un segment à l’aise en anglais composé d’étudiants, de télétravailleurs et de visiteurs, et ils lisent dans des sens opposés ; traiter l’arabe comme une couche de traduction posée sur un design LTR produit donc une expérience inversée mais cassée. Le positionnement est le produit : ce qui distingue le café n’est pas le café lui-même, mais le fait que le lieu est conçu pour qu’on s’y attarde, si bien qu’un modèle de restaurant générique vendant de la nourriture n’avait pas la bonne forme. Enfin, le menu est tenu à jour par le personnel du café, pas par des développeurs — toute solution exigeant un déploiement de code pour modifier le prix d’un latte serait tombée en désuétude en un mois.",
+    "approach": "Aligner l’architecture sur la façon dont l’activité convertit réellement. À Amman, personne ne réserve une table de café via un formulaire web ; les actions de conversion sont l’ouverture de WhatsApp, un appui sur un numéro de téléphone ou l’ouverture de Maps pour l’itinéraire, si bien que le site passe le relais à ces canaux le plus vite possible au lieu de capter des leads. Scinder délibérément le modèle d’internationalisation : les articles du menu, les diapositives du hero et les avis vivent sous forme d’enregistrements bilingues appariés, de sorte qu’ajouter une boisson revient à ajouter un littéral d’objet dans un seul fichier, tandis que les éléments d’interface réutilisés passent par i18next, où une clé manquante se remarque tout de suite. Concevoir le RTL comme une cible de design plutôt que comme une transformation : familles de polices selon la direction, animations d’entrée inversées, polices spécifiques par titre pour couvrir les glyphes arabes.",
+    "architecture": {
+      "altText": "Une application monopage rendue côté client avec Vite et React 19 : sept composants de section composés sous une seule route, lisant des enregistrements de contenu bilingues appariés issus de modules de données typés tandis que les éléments d’interface sont résolus via i18next, stylée avec les tokens CSS-first de Tailwind v4 et une typographie propre à chaque direction, et compilée en un bundle statique dist/."
+    },
+    "decisions": [
+      {
+        "decision": "Champs de contenu bilingues appariés, i18next réservé aux éléments d’interface",
+        "alternatives": "Faire passer chaque chaîne par des bundles de ressources i18next complets",
+        "reasoning": "Pour les articles du menu et les avis, des champs appariés signifient une seule modification dans un seul fichier avec les deux langues côte à côte, et une traduction manquante se voit à l’écriture sous la forme d’un champ vide plutôt que d’un repli silencieux sur l’anglais.",
+        "tradeoff": "Le chargement différé par locale devient impossible pour ce contenu, qui ne bénéficie ni d’outils d’extraction de clés ni de contrôles en CI. Les éléments d’interface, où la même chaîne est réutilisée à six endroits, restent sur i18next précisément pour ces raisons."
+      },
+      {
+        "decision": "Menu présenté sous forme de photographies du menu papier, et non de liste structurée",
+        "alternatives": "Le menu structuré, bilingue et article par article, déjà développé",
+        "reasoning": "Le pire résultat pour un menu est un prix erroné, et le personnel peut mettre à jour des captures d’écran sans déploiement. La vue structurée — quatorze articles, bilingues, avec prix et onglets de catégories — existe dans le code mais est désactivée.",
+        "tradeoff": "Cela rend la principale surface de contenu non indexable et inaccessible. Les deux préoccupations sont légitimes ; l’erreur a été de trancher le conflit silencieusement avec une constante codée en dur plutôt que de consigner le compromis et de choisir une issue."
+      },
+      {
+        "decision": "Une SPA rendue côté client plutôt qu’une génération statique",
+        "alternatives": "Astro ou la génération statique de Next.js, ou du HTML pur",
+        "reasoning": "Le framework venait du scaffold dans lequel le projet avait démarré, et la page regorge d’animations déclenchées par le défilement et la zone d’affichage qui deviendraient de toute façon des composants client sous SSR, ce qui réduit le gain au premier affichage d’une page déjà légère.",
+        "tradeoff": "La page livre un élément racine vide, donc tout le contenu dépend de l’exécution de JavaScript — et pour un site dont l’objectif tout entier est la découverte locale, c’est la plus grande lacune stratégique du projet."
+      },
+      {
+        "decision": "Pas d’analytics, de gestionnaire de balises, de pixels de suivi ni de bandeau de cookies",
+        "alternatives": "Une pile standard d’analytics et de remarketing",
+        "reasoning": "Une sobriété adaptée à la façon dont ce marché contacte réellement un café : un bouton WhatsApp et quatre canaux sur lesquels on peut appuyer. Comme rien ne dépose de cookie, aucun bandeau de consentement n’est nécessaire non plus.",
+        "tradeoff": "Aucune donnée first-party sur l’usage de la page par les visiteurs ; les évolutions futures devront donc être défendues par le raisonnement plutôt que par la mesure."
+      }
+    ],
+    "challenges": [
+      "Construire l’arabe comme une expérience conçue plutôt que dérivée — polices selon la direction, animations inversées et sélection du contenu localisé à chaque point d’appel, au lieu de définir un attribut de direction en espérant que tout suive.",
+      "Garder toute la base de code dans la tête d’une seule personne : pas de routeur, pas de bibliothèque d’état, pas de backend, pas de CMS, le plus gros fichier faisant 209 lignes.",
+      "Concilier un menu que le personnel doit pouvoir modifier avec un menu que les moteurs de recherche et les lecteurs d’écran doivent pouvoir lire — un vrai conflit sans réponse gratuite."
+    ],
+    "outcomes": [
+      "Un site bilingue de sept sections — carrousel hero, histoire, équipements, menu, bandeau défilant d’avis, galerie en maçonnerie et contact — avec un bouton de langue en un appui et une prise en charge complète du RTL.",
+      "Huit dépendances d’exécution, 1 158 lignes réparties sur quinze fichiers et aucun suivi tiers d’aucune sorte.",
+      "Six avis Google cinq étoiles réels et vérifiables, affichés en version bilingue et liés à la fiche en ligne — aucun témoignage inventé.",
+      "Conversion orientée vers les canaux que ce marché utilise réellement : WhatsApp, téléphone, e-mail et itinéraire Maps."
+    ],
+    "retrospective": "La rigueur sur le périmètre et le modèle d’i18n scindé étaient les bons choix, et l’expérience arabe est conçue plutôt que dérivée. La revue qui a produit ce document a toutefois aussi révélé de vrais défauts. Une table de couleurs JavaScript parallèle reflétait les tokens CSS-first de Tailwind et a fini par diverger, si bien que trois composants référencent des classes utilitaires qui n’ont jamais été générées — les sections du menu et des avis perdent leur fond gris chaud prévu, et l’appel à l’action principal du hero n’a aucun état de survol. Cet échec est silencieux à chaque niveau : TypeScript voit des chaînes, Tailwind ignore les utilitaires inconnus, le build reste vert, et la page a simplement l’air légèrement fausse. La leçon se généralise : une seule source de vérité, sinon la seconde sera fausse. Deux autres points méritent d’être nommés — une constante nommée comme un feature flag qui n’a jamais été vraie n’est pas un flag, c’est un travail inachevé avec des étapes en plus, et un commentaire listant ce qui manque aurait mieux traduit l’état réel ; et un scaffold hérité demande un passage de nettoyage explicite, car quatre dépendances inutilisées et une clé d’API que personne ne lit font perdre un temps réel à la personne suivante qui cherche à savoir si quoi que ce soit est porteur. La lacune stratégique est le même problème en double : comme la page est rendue côté client, il n’y a jamais eu de head de document à renseigner, et les métadonnées n’ont donc jamais été écrites. Prérendre la route unique et ajouter des données structurées d’entreprise locale (local business) représente quelques heures de travail et le point restant de plus grande valeur.",
+    "stackDetail": [
+      {
+        "category": "Langage et framework",
+        "items": [
+          "TypeScript 5.8",
+          "React 19",
+          "React DOM 19"
+        ]
+      },
+      {
+        "category": "Build et outillage",
+        "items": [
+          "Vite 6",
+          "@vitejs/plugin-react",
+          "@tailwindcss/vite",
+          "tsc --noEmit"
+        ]
+      },
+      {
+        "category": "Styles",
+        "items": [
+          "Tailwind CSS v4 (configuration @theme CSS-first)",
+          "clsx + tailwind-merge",
+          "Bodoni Moda, Inter, Readex Pro via Google Fonts"
+        ]
+      },
+      {
+        "category": "Internationalisation",
+        "items": [
+          "i18next + react-i18next pour les éléments d’interface",
+          "Enregistrements bilingues appariés pour le contenu",
+          "Typographie selon la direction et animations inversées"
+        ]
+      },
+      {
+        "category": "Animation et icônes",
+        "items": [
+          "Motion (respecte la préférence de mouvement réduit)",
+          "lucide-react"
+        ]
+      }
+    ]
+  }
+}

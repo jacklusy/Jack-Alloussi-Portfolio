@@ -1,6 +1,7 @@
 'use client';
 
 import { useSyncExternalStore } from 'react';
+import { useTranslations } from 'next-intl';
 import { Moon, Sun } from 'lucide-react';
 
 type Theme = 'light' | 'dark';
@@ -30,6 +31,7 @@ export type ThemeToggleProps = {
 };
 
 export function ThemeToggle({ className }: ThemeToggleProps) {
+  const t = useTranslations('theme');
   const theme = useSyncExternalStore(subscribeTheme, getTheme, getServerTheme);
   const mounted = useSyncExternalStore(
     () => () => {},
@@ -49,7 +51,7 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
       type="button"
       onClick={handleToggle}
       className={className}
-      aria-label={mounted ? `Switch to ${theme === 'dark' ? 'light' : 'dark'} mode` : 'Toggle colour theme'}
+      aria-label={mounted ? (theme === 'dark' ? t('switchToLight') : t('switchToDark')) : t('toggle')}
     >
       {mounted && theme === 'dark' ? (
         <Sun className="h-5 w-5" aria-hidden />

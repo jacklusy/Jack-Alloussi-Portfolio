@@ -2,17 +2,23 @@
 
 import { motion, useReducedMotion } from 'motion/react';
 import type { ReactNode } from 'react';
+import { useInlineSign } from '@/hooks/useDirection';
 
 const EASE_OUT = [0.2, 0.8, 0.2, 1] as const;
 
-export type RevealDirection = 'up' | 'left' | 'right';
+/**
+ * `start` / `end` are logical: content enters from the inline-start or
+ * inline-end edge, so it slides in from the left in German and from the right
+ * in Arabic without any per-language code at the call site.
+ */
+export type RevealDirection = 'up' | 'start' | 'end';
 
-function offsetFor(direction: RevealDirection, distance: number) {
+function offsetFor(direction: RevealDirection, distance: number, sign: 1 | -1) {
   switch (direction) {
-    case 'left':
-      return { x: -distance, y: 0 };
-    case 'right':
-      return { x: distance, y: 0 };
+    case 'start':
+      return { x: -distance * sign, y: 0 };
+    case 'end':
+      return { x: distance * sign, y: 0 };
     case 'up':
     default:
       return { x: 0, y: distance };
@@ -41,8 +47,9 @@ export function Reveal({
   distance,
 }: RevealProps) {
   const prefersReducedMotion = useReducedMotion();
+  const sign = useInlineSign();
   const dist = distance ?? (direction === 'up' ? y : 32);
-  const from = offsetFor(direction, dist);
+  const from = offsetFor(direction, dist, sign);
 
   if (prefersReducedMotion) {
     return <div className={className}>{children}</div>;
@@ -113,7 +120,8 @@ export function StaggerItem({
   distance = 20,
 }: StaggerItemProps) {
   const prefersReducedMotion = useReducedMotion();
-  const from = offsetFor(direction, distance);
+  const sign = useInlineSign();
+  const from = offsetFor(direction, distance, sign);
 
   if (prefersReducedMotion) {
     return <div className={className}>{children}</div>;

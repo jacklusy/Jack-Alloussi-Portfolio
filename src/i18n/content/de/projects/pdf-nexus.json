@@ -1,0 +1,153 @@
+{
+  "title": "PDFNexus — browsernatives PDF-Toolkit",
+  "summary": "27 PDF-Werkzeuge, von denen 25 Ihre Datei nie irgendwohin senden: Das Datenschutzversprechen gilt strukturell, weil alles im Browser verarbeitet wird — mit Schwärzung, die Inhalte wirklich vernichtet, und Werbetexten, die das Typsystem begrenzt.",
+  "description": "Jedes universelle PDF-Tool im Web beruht auf demselben unausgesprochenen Handel — Sie laden Ihr Dokument auf einen Server hoch, den Sie nicht kontrollieren. PDFNexus wurde gebaut, um diesen Handel für alle Operationen abzuschaffen, die nie einen Server gebraucht haben: Zusammenführen, Teilen, Drehen, Wasserzeichen, Schwärzen und Seitenbearbeitung sind strukturelle Manipulationen eines Dateiformats und laufen lokal in einem Worker.",
+  "role": "Full-Stack Engineer",
+  "timeframe": "2025 – 2026",
+  "metrics": [
+    {
+      "label": "Ausgelieferte Werkzeuge",
+      "value": "27"
+    },
+    {
+      "label": "Lokal verarbeitet",
+      "value": "25 von 27"
+    },
+    {
+      "label": "Bestandene Tests",
+      "value": "182"
+    }
+  ],
+  "thumbnail": {
+    "alt": "Die PDFNexus-Startseite. Die Überschrift lautet „Merge & organize PDFs without uploading your drafts“, darunter Karten zum lokalen Zusammenführen, zum Organisieren von Seiten und zum Konvertieren in Word."
+  },
+  "gallery": [
+    {
+      "alt": "Die Seite mit den PDF-Werkzeugen: vier Kategoriekarten — Organisieren, Konvertieren, Bearbeiten und Markieren, Absichern — mit jeweils der Anzahl der Werkzeuge; darüber ist das Menü „Tools“ geöffnet und listet die einzelnen Werkzeuge auf.",
+      "caption": "Die Werkzeuge sind in vier Kategorien gegliedert, jedes mit eigener Seite. Der Text benennt die Aufteilung offen, statt sie zu verstecken: Lokale Werkzeuge brauchen kein Konto, und die Server- und OCR-Funktionen fragen zuerst nach Ihrer Einwilligung."
+    },
+    {
+      "alt": "Der PDFNexus-Arbeitsbereich: ein Raster von Seitenminiaturen aus einer Zusammenstellung von vier Dateien mit 351 Seiten, jede Seite farblich nach Quelldatei markiert, neben einer Seitenleiste mit Statistiken zum Arbeitsbereich und den hochgeladenen Dateien.",
+      "caption": "Der Arbeitsbereich fügt vier Dateien mit 351 Seiten zu einer einzigen Seitenreihenfolge zusammen, farblich nach Quelle markiert. Das Badge „Local Engine“ in der Kopfzeile zeigt den Verarbeitungsmodus an — es ist derselbe deklarierte Wert, der entscheidet, ob eine Operation in die Nähe des Netzwerks darf."
+    },
+    {
+      "alt": "Das PDFNexus-Feedbackformular mit Feldern für Kategorie, Betreff, Nachricht und eine optionale Kontakt-E-Mail-Adresse.",
+      "caption": "Das Feedbackformular folgt derselben Prämisse: Die Kontakt-E-Mail-Adresse ist optional, und das Formular bittet ausdrücklich darum, vertrauliche Dokumentinhalte nicht in die Nachricht zu schreiben."
+    }
+  ],
+  "caseStudy": {
+    "context": "Der Upload auf einen Drittserver ist bei einer Restaurantkarte unproblematisch. Bei einem unterschriebenen Vertrag, einem medizinischen Aufnahmebogen, einem Beweisstück aus einer Zeugenvernehmung oder einem internen Finanzmodell ist er es nicht — und genau diese Dokumente müssen am häufigsten zusammengeführt, geschwärzt und seitenweise bearbeitet werden. „Dateien werden nach einer Stunde gelöscht“ ist ein Versprechen über die Infrastruktur anderer, und Nutzende haben keine Möglichkeit, es zu überprüfen.",
+    "problem": "Drei Missstände haben das Projekt motiviert. Das Datenschutzversprechen ist meist nicht überprüfbar und oft falsch, und der Server existiert, weil er sich leichter bauen ließ, nicht weil die Aufgabe ihn verlangt. Schwärzung ist üblicherweise eine Lüge — ein großer Teil der Verbrauchertools zeichnet ein schwarzes Rechteck über Text, der darunter erhalten bleibt, markierbar und kopierbar, was in Gerichtsverfahren und bei Behördenveröffentlichungen bereits zu echten Datenlecks geführt hat. Und die Funktionsbeschreibungen sind standardmäßig unehrlich: Tools bewerben „PDF bearbeiten“ und liefern eine Textfeld-Überlagerung, bewerben „PDF in Word“ und liefern eine Word-Datei mit einem Bild pro Seite, und Nutzende merken es erst, wenn das Ergebnis weiter unten in der Verarbeitungskette scheitert.",
+    "approach": "Das Datenschutzversprechen strukturell verankern, statt es nur zu geben. Jedes Werkzeug deklariert seinen Verarbeitungsmodus als typisierten Wert, und Badge, Drop-Hinweis, Datenschutzhinweis und Einwilligungsabfrage leiten sich daraus ab — wer ein Werkzeug hinzufügt, muss damit angeben, wohin die Bytes gehen, und die Oberfläche sagt automatisch die Wahrheit. Die Schwärzung setze ich durch Rasterisieren der Seite um, denn eine Umsetzung auf Content-Stream-Ebene ist entweder vollständig oder eine Sicherheitslücke. Einschränkungen halte ich als Konstanten in den Modulen, die sie betreffen, damit der Vorbehalt für alle sichtbar ist, die die Implementierung lesen. Für den Kernablauf gibt es keine Benutzerkonten; eine Identität wird nur für Funktionen verlangt, die sie wirklich brauchen.",
+    "architecture": {
+      "altText": "Ein Turborepo-Monorepo: eine Next.js-15-Web-App, die PDF-Operationen in Modul-Workern über pdf.js, pdf-lib und qpdf-WebAssembly mit IndexedDB-Sitzungswiederherstellung ausführt, daneben eine NestJS-API, die nur die Operationen übernimmt, die einen Server erfordern — Office-Konvertierung, OCR, Multipart-Upload direkt in den Speicher, HMAC-Download-Links und E-Mail-Versand über BullMQ — wobei Zod-Verträge als Workspace-Paket von beiden Seiten gemeinsam genutzt werden; alles läuft als sieben Container hinter Caddy auf einem einzigen Host."
+    },
+    "decisions": [
+      {
+        "decision": "Verarbeitungsmodus als typisierter Wert, der die gesamte Oberfläche steuert",
+        "alternatives": "Das Datenschutzverhalten jedes Werkzeugs in Fließtext daneben dokumentieren",
+        "reasoning": "So wurde aus einem Dokumentationsproblem, das veraltet, ein Typproblem, das nicht veraltet. Ein neues Werkzeug kann nicht erscheinen, ohne zu deklarieren, wohin seine Bytes gehen.",
+        "tradeoff": "Jedes Werkzeug muss in eine feste Menge von Modi passen; eine wirklich neuartige Verarbeitungsform bedeutet, die Union zu ändern, statt einen Absatz zu schreiben."
+      },
+      {
+        "decision": "Seite für die Schwärzung rasterisieren, statt Content-Streams zu bearbeiten",
+        "alternatives": "Die Textobjekte chirurgisch aus dem PDF-Content-Stream entfernen",
+        "reasoning": "Eine unvollständige Content-Stream-Lösung ist eine Sicherheitslücke im Gewand eines Features. Rasterisieren ist die ehrliche Umsetzung einer destruktiven Operation.",
+        "tradeoff": "Ein geschwärztes Dokument verliert überall den markierbaren Text, wird größer und schneidet bei der Barrierefreiheit schlechter ab. Die Abwägung war bewusst, und sie schmerzt trotzdem."
+      },
+      {
+        "decision": "Multipart-Upload direkt in den Speicher statt über die API",
+        "alternatives": "Große Uploads über den Anwendungsserver streamen",
+        "reasoning": "Hält Transfers von 500 MB komplett von der API fern, und das Presigning just in time überlebt eine langsame Verbindung, die länger dauert als eine URL mit fünfzehn Minuten Gültigkeit.",
+        "tradeoff": "Der Client muss als feindlich behandelt werden, und Teilebuchhaltung, Fortsetzen, Ablauf der Presigned-URLs und das Aufräumen verwaister Sitzungen werden zum Problem der Anwendung."
+      },
+      {
+        "decision": "Zod-Verträge in einem gemeinsamen Workspace-Paket",
+        "alternatives": "Auf beiden Seiten der Schnittstelle unabhängig gepflegte Typen",
+        "reasoning": "Das Multipart-Upload-Protokoll hat sich mehrmals geändert, und jede Änderung zeigte sich als Kompilierfehler auf der Gegenseite statt als Laufzeitfehler mitten in einem halbfertigen Transfer von 400 MB.",
+        "tradeoff": "Eine Build-Reihenfolge über drei Workspaces hinweg, die mit Turborepo-Task-Abhängigkeiten gelöst ist."
+      }
+    ],
+    "challenges": [
+      "Verschachtelte Worker, die stillschweigend scheitern: pdf.js versucht innerhalb eines Modul-Workers, einen eigenen Worker zu starten, scheitert und verhält sich je nach Browser unterschiedlich — die Diagnose bedeutete, inkonsistentes Verhalten über mehrere Engines hinweg zu reproduzieren, für eine Korrektur von sechs Zeilen.",
+      "Abbruch korrekt hinzubekommen, über drei Race Conditions hinweg — Abbruch vor dem Senden, während der Ausführung und nach Abschluss — für etwas, das wie ein kleines Hilfsmodul aussieht, aber von jedem Werkzeug genutzt wird.",
+      "Zwei CORS- und Caching-Vorfälle, deren Fehlermeldungen nirgends in die Nähe der Ursache zeigten: Ein Wildcard-Origin-Header ist mit Requests mit Anmeldedaten stillschweigend unvereinbar, und zwischengespeicherte Antworten können dazu führen, dass ein veralteter Origin-Header erneut angewendet wird.",
+      "Eine Kollision im Build-System, bei der die Framework-Transformation den PDF-Worker mit nicht auflösbaren Helper-Importen umschrieb, behoben durch Kopieren der untransformierten Datei im Prebuild.",
+      "Die Containerisierung des Monorepos brachte vier Fehler ans Licht, die ein funktionierender lokaler Checkout verdeckt hatte: zwei falsche COPY-Pfade, ein nicht kopiertes Scripts-Verzeichnis, eine Upload-Middleware, die nie als Abhängigkeit deklariert war, und einen Standalone-Build, der ohne node_modules ausgeliefert wurde, weil das File-Tracing-Root auf der App statt auf dem Workspace stand."
+    ],
+    "outcomes": [
+      "27 Werkzeug-Routen in den Kategorien Organisieren, Konvertieren, Bearbeiten und Absichern — 25 davon vollständig lokal; nur die Office-Konvertierung und die OCR-gestützte Extraktion deklarieren einen Servermodus.",
+      "Ein durchgängiger Arbeitsbereich: ein virtualisierter Seitenorganizer für mehrere Dateien, Sitzungswiederherstellung über IndexedDB mit typisierter Speicherplatzwarnung, eine Batch-Warteschlange mit Wiederholung pro Job und Übergabe zwischen Werkzeugen, sodass die Ausgabe eines Werkzeugs zur Eingabe des nächsten wird.",
+      "182 bestandene Tests in drei Workspaces; die CI führt bei jedem Pull Request Typecheck, Tests und Builds gegen echte Postgres- und Redis-Container aus.",
+      "Ein Lieferweg mit E-Mail-Verifizierung, fortsetzbarem Direkt-in-den-Speicher-Upload bis 500 MB, signierten Download-Links mit 24 Stunden Gültigkeit und einer Dateiaufbewahrung von 7 Tagen, die ein Cleanup-Job durchsetzt — dazu Drive-, Dropbox- und OneDrive-Konnektoren mit eng begrenzten Berechtigungen und Verschlüsselung im Ruhezustand.",
+      "Live auf einem einzelnen ARM-Host: sieben Container unter Docker Compose hinter Caddy, mit automatischem TLS, HTTP/2 und HTTP/3; der Speicher-Origin ist bewusst nicht über einen Proxy geführt, damit das Upload-Limit von 500 MB das der Anwendung ist und nicht das eines CDN."
+    ],
+    "retrospective": "Den Verarbeitungsmodus zu einem typisierten Wert zu machen, war die wirkungsvollste Entscheidung im Code, und jede Einschränkung als Konstante direkt neben dem betroffenen Code zu halten, die zweitwirkungsvollste — Werbetext in einer separaten Datei driftet, eine Konstante neben der Implementierung nicht. Außerdem habe ich ein Status-Dokument mit bewusst leeren Zellen für Prüfungen geführt, die nie ausgeführt wurden; Lücken zu veröffentlichen ist unangenehm, aber weit besser als ein Dokument, in dem die Lücken optimistisch gefüllt wurden und niemand erkennt, welche Zellen echt sind. Was nicht funktioniert hat: Das Bundle ist schwer, und es gibt keine saubere Lösung, denn das Local-First-Prinzip verlangt, dass all diese Parsing- und Generierungsbibliotheken im Browser ankommen — Lazy Loading und ein CI-Budget-Gate halten es in Grenzen, aber begrenzt ist nicht klein, und auf einfachen Mobilgeräten bleibt das Erlebnis schlecht. Die Produktionszahlen haben das greifbar statt theoretisch gemacht: Die Workspace-Route erreicht Largest Contentful Paint bei 5,5 Sekunden hinter einem Time-to-first-Byte von 10 Millisekunden, was ein eindeutiges Urteil ist — der Server ist im Leerlauf, das Bundle ist das ganze Problem, und die Lösung besteht darin, die PDF-Engine erst zu laden, wenn tatsächlich eine Datei geöffnet wird. Der Multipart-Upload war wesentlich aufwendiger als geschätzt; der Happy Path dauerte einen Nachmittag und alles andere deutlich länger, und das ist die eigentliche Lehre: Bei Uploads direkt in den Speicher sollten die Fehlerfälle als Hauptarbeit eingeplant werden. Und der Umfang wuchs über die eigene Prämisse hinaus — eine Admin-Konsole mit zehn Modulen dient heute einem Betreiber statt den Nutzenden, um deren Privatsphäre es im Produkt geht. Sie ist nützlich und funktioniert, aber sie ist das deutlichste Beispiel für einen Umfang, der gewachsen ist, weil es möglich war, und nicht, weil die Prämisse es verlangte. Fünf Dinge würde ich anders machen: in der ersten Woche auf einen sauberen Host deployen, denn jeder Build-Fehler bei der Umstellung war eine Abhängigkeit oder ein Pfad, der nur auf einem Rechner funktionierte, auf dem er schon einmal installiert worden war; das Bundle-Budget am ersten Tag festlegen, statt es nachzurüsten, wenn eine Abhängigkeit bereits tragend ist; die automatisierte Cross-Browser-Matrix bauen, bevor ich 27 Werkzeuge schreibe, denn lokale PDF-Verarbeitung ist genau der Bereich, in dem Engine-Unterschiede zuschlagen; die Grenzen der Admin-Konsole ausdrücklich festlegen, statt sie anwachsen zu lassen; und die ehrlichen Funktionsbeschreibungen zuerst schreiben und danach bauen, statt auf bereits geschriebenen Seiten nachträglich einen Ehrlichkeitsdurchgang einzuziehen.",
+    "stackDetail": [
+      {
+        "category": "Web-App",
+        "items": [
+          "Next.js 15 (App Router, RSC)",
+          "React 19",
+          "pdfjs-dist (Parsing, Rendering, Textebene)",
+          "pdf-lib (strukturelles Schreiben)",
+          "qpdf.wasm-Bindings",
+          "@tanstack/react-virtual",
+          "Tailwind CSS v4"
+        ]
+      },
+      {
+        "category": "Dokumentenerzeugung",
+        "items": [
+          "docx",
+          "xlsx",
+          "pptxgenjs",
+          "jszip",
+          "node-forge (PKCS#12 / PKCS#7)"
+        ]
+      },
+      {
+        "category": "Browser-Plattform",
+        "items": [
+          "Module Web Workers",
+          "WebAssembly",
+          "IndexedDB-Sitzungswiederherstellung",
+          "Canvas 2D",
+          "crypto.subtle",
+          "AbortController"
+        ]
+      },
+      {
+        "category": "API & Infrastruktur",
+        "items": [
+          "NestJS",
+          "PostgreSQL + Prisma",
+          "Redis + BullMQ",
+          "Gotenberg (Office-Konvertierung)",
+          "Multipart-Upload direkt in den Speicher",
+          "HMAC-signierte Download-Links"
+        ]
+      },
+      {
+        "category": "Deployment",
+        "items": [
+          "Docker Compose — 7 Container auf einem ARM-Host",
+          "Caddy (TLS, HTTP/2 + HTTP/3, automatische Zertifikatserneuerung)",
+          "MinIO (S3-kompatibler Objektspeicher)",
+          "Gotenberg mit begrenzter Konvertierungsparallelität",
+          "Getrennte Origins für App, API und Speicher"
+        ]
+      },
+      {
+        "category": "Monorepo & Qualität",
+        "items": [
+          "Turborepo (3 Workspaces)",
+          "Gemeinsames Zod-Vertragspaket",
+          "Vitest — 182 Tests",
+          "CSP-Artefakt zur Build-Zeit",
+          "CI-Gate für das Bundle-Größenbudget"
+        ]
+      }
+    ]
+  }
+}

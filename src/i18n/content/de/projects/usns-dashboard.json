@@ -1,0 +1,145 @@
+{
+  "title": "USNS Administration Dashboard",
+  "summary": "Eine Next.js-16-Administrationskonsole für die Hochschulleitung: 44 authentifizierte Routen in neun Funktionsbereichen, durchgängig Mock-first hinter einer per Lint erzwungenen Schnittstelle entwickelt und Modul für Modul auf die Live-API umgestellt.",
+  "description": "Das Werkzeug, mit dem Präsident, Dekane, Fachbereichsleitungen und DBA die Kommunikation der Hochschule im Alltag steuern. Es bildet die Autorisierung des Backends exakt ab — denn ein Menüpunkt, der beim Klick 403 liefert, ist keine Zugriffskontrolle, sondern eine kaputte App — und war bereits ab den ersten Commits als vollständiges, funktionierendes Produkt auf Mock-Daten lauffähig.",
+  "role": "Frontend Engineer",
+  "timeframe": "2026",
+  "metrics": [
+    {
+      "label": "Authentifizierte Routen",
+      "value": "44"
+    },
+    {
+      "label": "Funktionsbereiche",
+      "value": "9"
+    },
+    {
+      "label": "Dateien / Commits",
+      "value": "789 / 92"
+    }
+  ],
+  "thumbnail": {
+    "alt": "Das USNS-Dashboard, angemeldet als Hochschulpräsident: Kennzahlen-Kacheln, ein Diagramm zur Einschreibungsentwicklung, eine Aufschlüsselung der Nutzer nach Rolle und ein Systemüberblick mit den Bereichen, auf die diese Rolle zugreifen kann."
+  },
+  "gallery": [
+    {
+      "alt": "Die Nutzertabelle mit den Dashboard-Konten samt Name, E-Mail, Rolle, Status und Erstellungsdatum sowie Such-, Spalten- und Filterfunktionen.",
+      "caption": "Kontenverwaltung für alle fünf Rollen. Die Tabelle ist einer von neun Funktionsbereichen; jeder wurde zuerst gegen Mock-Daten gebaut und erst auf die Live-API umgestellt, als der Screen bereits funktionierte."
+    },
+    {
+      "alt": "Die Fakultätentabelle mit neun Fakultäten der Hochschule, ihren Kürzeln sowie der Anzahl ihrer Fachbereiche und Studierenden.",
+      "caption": "Die akademische Hierarchie, auf der das ganze Produkt aufbaut. Eine Ankündigung ermittelt ihre Zielgruppe, indem sie von der Fakultät über den Fachbereich zum Studiengang läuft — diese Zeilen sind also keine Referenzdaten, sondern das Adressierungsschema."
+    },
+    {
+      "alt": "Die Fachbereichstabelle mit Kürzel und übergeordneter Fakultät je Fachbereich, filterbar nach Fakultät.",
+      "caption": "Fachbereiche hängen an Fakultäten, und eine Fachbereichsleitung sieht immer nur den eigenen. Seitenleiste und Systemüberblick werden aus derselben Berechtigungsmenge erzeugt, die auch die API durchsetzt — ein Menüpunkt, der beim Klick 403 liefert, ist keine Zugriffskontrolle, sondern eine kaputte App."
+    }
+  ],
+  "group": {
+    "label": "USNS-Plattform"
+  },
+  "links": {
+    "liveNote": "Live und mit Demodaten befüllt. Melden Sie sich mit einem der Konten unten an — jedes verlangt bei der ersten Nutzung einen Passwortwechsel. Wenn ein Login nicht mehr funktioniert, war also schon jemand vor Ihnen da.",
+    "demoAccounts": [
+      {
+        "role": "Präsident"
+      },
+      {
+        "role": "DBA (Vollzugriff)"
+      },
+      {
+        "role": "Dekan, Naturwissenschaften & IT"
+      }
+    ]
+  },
+  "caseStudy": {
+    "context": "Das Backend legt fest, wer was an wen veröffentlichen darf, und die Student-App bringt Ankündigungen auf das Gerät der Studierenden. Dazwischen bleibt eine Anforderung, die keines von beiden löst: Die Hochschulleitung braucht ein Werkzeug, das sie tatsächlich benutzt. Ein Dekan, der eine fakultätsweite Ankündigung verfasst, ein DBA, der ein kompromittiertes Konto sperrt, ein Präsident, der vor einer Vorstandssitzung den Audit-Trail prüft — keiner von ihnen debuggt eine API.",
+    "problem": "Vier Randbedingungen, die die beiden anderen Repositories nicht kennen. Die Oberfläche ist in einem System mit realen institutionellen Folgen die primäre Schnittstelle für Nicht-Entwickler; sie braucht deshalb korrekte Leerzustände, korrekte Fehlerzustände, eine Bestätigung vor allem Destruktiven und keinen Screen, auf dem ein Fehler stillschweigend durchgeht. Sie muss die Autorisierung des Backends exakt abbilden, sonst wird aus einem versteckten Menüpunkt ein Support-Ticket. Neun Funktionsbereiche mit sehr unterschiedlichen Datenformen und Interaktionsmustern — ein Editor für die Berechtigungsmatrix hat mit einem CSV-exportierbaren Audit-Log nichts gemein — mussten als ein stimmiges Produkt erscheinen und nicht als neun zusammengetackerte Apps. Und sie musste gegen einen Backend-Vertrag entwickelbar sein, den es noch nicht gab, und dabei durchgehend vorführbar bleiben, für UAT und die Abschlussverteidigung.",
+    "approach": "Mock-first entwickeln, mit einer vollwertigen Schnittstelle, die per Lint-Regeln statt per Konvention erzwungen wird. So ließ sich jeder Funktionsbereich vor der Integration vollständig bauen, gestalten und interaktiv durchspielen, und die Umstellung auf Live-Daten war pro Modul ein Austausch der Service-Datei. Die Architektur- und Design-System-Standards entstehen vor dem Großteil der Feature-Arbeit, damit Regeln wie „kein direktes Fetch in Komponenten“ und „Farben nur aus Tokens“ über 789 Dateien hinweg galten. Den Passwortwechsel-Zwang sowohl auf Routen- als auch auf Netzwerkebene durchsetzen, denn Route Guards schützen die Navigation, nicht aber einen bereits laufenden Request.",
+    "architecture": {
+      "altText": "Ein Next.js-16-Dashboard mit App Router: Route Groups hinter einer dreistufigen Guard-Kette aus Authentifizierung, Rollen- und Berechtigungsprüfung sowie erzwungenem Passwortwechsel; Feature-Module rufen eine Service-Schicht auf, die hinter einer per Lint erzwungenen Schnittstelle entweder zu Mock-Implementierungen oder zur Live-Laravel-API aufgelöst wird, wobei ein einziger Interceptor Retry, Token-Refresh und das Entpacken des Response-Envelopes übernimmt."
+    },
+    "decisions": [
+      {
+        "decision": "Mock-first-Entwicklung hinter einer per Lint erzwungenen Schnittstelle",
+        "alternatives": "Auf Backend-Endpunkte warten oder auf Netzwerkebene mocken",
+        "reasoning": "Drei Repositories wurden parallel entwickelt. Durch das Mocken an der Service-Grenze ließen sich alle neun Funktionsbereiche vor der Integration bauen und vorführen, und die Lint-Regel verhinderte, dass die Schnittstelle zur Wartungslast verkam.",
+        "tradeoff": "Jeder Service existiert doppelt und muss synchron gehalten werden, und eine Lücke zeigt sich erst bei der Integration, wenn Mock und realer Vertrag voneinander abweichen."
+      },
+      {
+        "decision": "RBAC im Frontend dupliziert statt zur Laufzeit geladen",
+        "alternatives": "Die Berechtigungsmatrix beim Login vom Backend abrufen",
+        "reasoning": "Navigation und Route Guards brauchen die Berechtigungsmenge, bevor irgendein Request abgeschlossen ist, und ein Abruf zur Laufzeit würde genau der Stelle, die über die Sichtbarkeit entscheidet, eine weitere Fehlerquelle hinzufügen.",
+        "tradeoff": "Dieselben Regeln sind von Hand in zwei Sprachen und zwei Repositories kodiert, und nichts prüft, ob sie übereinstimmen — die einzige Entscheidung hier, die ich ändern würde."
+      },
+      {
+        "decision": "Ein Passwortwechsel-Zwang, der auf Routen- und Netzwerkebene durchgesetzt wird",
+        "alternatives": "Nur ein Route Guard",
+        "reasoning": "Route Guards schützen die Navigation; sie stoppen keinen Request, der bereits unterwegs ist, weil eine Komponente noch nicht unmountet wurde. Das Abweisen in der API-Client-Schicht schloss diese Lücke und spiegelte den Schichtgedanken des Backends.",
+        "tradeoff": "Eine Liste ausgenommener URLs, die gepflegt werden muss, und ein Interceptor, der etwas über Authentifizierung wissen muss."
+      },
+      {
+        "decision": "Selektives Entpacken des Envelopes, mit den Auth-Endpunkten als benannter Ausnahme",
+        "alternatives": "Eine pauschale Entpackregel für jede Response",
+        "reasoning": "Eine pauschale Regel hätte den erzwungenen Passwortwechsel beim ersten Lauf gegen das Live-Backend stillschweigend gebrochen. Die Ausnahme in einem Prädikat zu benennen, machte den Grund lesbar, statt ihn inline zu verstecken.",
+        "tradeoff": "Ein weiteres Konzept im Interceptor und eine Regel, von deren Existenz Mitwirkende wissen müssen."
+      }
+    ],
+    "challenges": [
+      "789 Dateien über neun unterschiedliche Funktionsbereiche hinweg in sich konsistent zu halten — erreicht, indem die Architektur- und Design-System-Regeln früh und konkret formuliert wurden, statt sich auf Reviews zu verlassen.",
+      "Rollenbasierten Zugriff überprüfbar statt nur behauptet zu machen — gelöst mit einer dokumentierten Mock-Konten-Matrix, die die RBAC-Prüfung zu einem fünfminütigen manuellen Durchlauf statt zu einer Debugging-Sitzung macht.",
+      "Eine Enterprise-Qualität statt Prototyp-Niveau zu erreichen: Lade-Skeletons statt Spinner, Error Boundaries statt weißer Seiten, Behandlung von Offline-Zustand und Sitzungsablauf sowie eine Tour beim ersten Start."
+    ],
+    "outcomes": [
+      "44 authentifizierte Routen plus vollständiger Auth-Flow, die jeden vom Backend bereitgestellten Funktionsbereich abdecken; von den ersten Commits an Mock-first betrieben und für die Produktion auf die Live-API umgestellt.",
+      "Eine dreistufige Kette zum Routenschutz — Authentifizierung, dann Rolle und Berechtigung, dann erzwungener Passwortwechsel —, wobei Letzterer zusätzlich redundant auf Netzwerkebene durchgesetzt wird.",
+      "Module für Nutzer-CRUD mit optimistischen Massenaktionen und Rollback, einen Editor für die Berechtigungsmatrix, die akademische Struktur mit Erkennung von Zyklen bei Voraussetzungen, Audit und Monitoring mit CSV-Export sowie asynchrone Report-Analysen.",
+      "Ein wiederverwendbares UI-Primitive-Kit mit lebendiger Showcase-Seite, Live-Theme-Wechsel und per Lazy Loading geladenen Diagrammen."
+    ],
+    "retrospective": "Mock-first ließ sich auf die gesamte Anwendung skalieren statt nur auf einen Ausschnitt, und weil die Architekturregeln vor der Feature-Arbeit geschrieben wurden, blieb eine Codebasis dieser Größe konsistent, ohne dass ein Schema dies erzwang. Das zweistufige Passwort-Gate fing eine echte Lücke ab, die eine einstufige Variante übersehen hätte. Was ich ändern würde, beginnt bei RBAC: Die Berechtigungstabelle im Frontend und die Matrix im Backend kodieren dieselben Regeln unabhängig voneinander, von Hand, in zwei Sprachen. Beim Verfassen dieser Fallstudie stimmten sie überein, aber nichts stellt sicher, dass das so bleibt — eine Berechtigung, die auf einer Seite ergänzt und auf der anderen vergessen wird, erzeugt genau den Fehler, den diese Architektur vermeiden soll. Das ist dieselbe Risikokategorie wie das Prosa-Vertragsdokument zwischen Backend und Mobile-App, und die Abhilfe ist dieselbe: eine Seite aus der anderen generieren oder beide aus einem gemeinsamen Schema, und den Build bei Abweichung scheitern lassen. Die Test-Suite umfasst drei Dateien — echte, gut geschriebene Tests für wirklich knifflige Synchronisationslogik, aber eher die Ausnahme als die Regel. Die Route Guards, die jede geschützte Seite absichern, haben null Abdeckung, obwohl gerade dort ein stiller Rückschritt institutionelle Folgen hätte. Eine Test-Suite, die für jede der fünf Rollen prüft „diese Rolle sieht diese Route, jene wird umgeleitet“, ist ein paar Stunden Arbeit und schützt genau die Eigenschaft, die das ganze Projekt richtig machen soll. Zwei kleinere Erkenntnisse: Ein Dokument und seine eingehenden Links gehören in denselben Commit gelöscht, denn jeder zurückbleibende Verweis ist eine Sackgasse für künftige Leser; und eine Regel „keine Kommentare“, die Kommentar-Veralterung vermeiden soll, kostet in einer anderen Dimension etwas — die Begründung einer bewussten Ausnahme, die man auf die harte Tour entdeckt, ist eine Information, die Benennung allein nicht wiederherstellen kann, weshalb die Ausnahmeklausel von Anfang an in die Regel gehört.",
+    "stackDetail": [
+      {
+        "category": "Framework",
+        "items": [
+          "TypeScript",
+          "Next.js 16 (App Router)",
+          "React",
+          "Redux Toolkit"
+        ]
+      },
+      {
+        "category": "UI",
+        "items": [
+          "Tailwind CSS mit Regel „Farben nur aus Tokens“",
+          "Wiederverwendbares Primitive-Kit mit lebendiger Showcase-Seite",
+          "Lade-Skeletons, Error Boundaries, Tour beim ersten Start",
+          "Live-Theme-Wechsel"
+        ]
+      },
+      {
+        "category": "Daten & Validierung",
+        "items": [
+          "Zod-Schemas direkt bei den Formularen",
+          "Ein einziger API-Client-Interceptor (Retry, Refresh, Envelope)",
+          "Per Lint erzwungene Schnittstelle zwischen Mock- und echten Services"
+        ]
+      },
+      {
+        "category": "Zugriffskontrolle",
+        "items": [
+          "Dreistufige Guard-Kette",
+          "Editor für die Berechtigungsmatrix mit CSV-Export",
+          "Dokumentierte Mock-Konten-Matrix zur Verifikation"
+        ]
+      },
+      {
+        "category": "Auslieferung",
+        "items": [
+          "Docker-Multi-Stage-Build auf Basis des Next.js-Standalone-Outputs",
+          "Oracle Cloud (Ampere A1), hinter Caddy",
+          "Firebase Cloud Messaging Web Push"
+        ]
+      }
+    ]
+  }
+}

@@ -1,29 +1,19 @@
-import { roleSchema, type Role } from '@/content/schemas';
-import { z } from 'zod';
+import type { Role } from '@/content/schemas';
+
+/** Text fields of a role: translated per locale in `src/i18n/content/<locale>/experience.json`. */
+type RoleText = 'title' | 'employmentType' | 'location' | 'summary' | 'achievements' | 'confidentialityNote';
 
 /**
  * Single source of truth for employment dates — must match CV and LinkedIn.
+ * Roles are keyed by `id` in the locale JSON.
  */
-const experienceData = [
+export const experienceStructure = [
   {
     id: 'csc-beyond-se',
-    title: 'Software Engineer',
     company: 'CSC Beyond',
-    employmentType: 'Full-time',
-    location: 'Amman, Jordan',
-    locationType: 'onsite' as const,
+    locationType: 'onsite',
     startDate: '2024-09',
-    endDate: 'present' as const,
-    summary:
-      'Custom software delivery for United States based clients across web, API, and mobile platforms.',
-    achievements: [
-      'Design, build, and maintain production backend services in TypeScript (NestJS, Express.js) and PHP (Laravel 9–12), backed by PostgreSQL and Redis, across multiple client applications.',
-      'Build and release 15+ cross-platform mobile applications using React Native CLI and Expo, owning provisioning, signing, and submission to the Apple App Store and Google Play Store.',
-      'Build React and Next.js frontends in TypeScript, integrated with internally developed REST APIs.',
-      'Containerise services with Docker and maintain CI/CD pipelines for faster, more consistent releases.',
-      'Deploy and operate applications on Google Cloud Platform, DigitalOcean, Vercel, Railway, and Render.',
-      'Work in a two-week Agile cycle using Jira, participating in sprint planning, code review, and direct requirements discussions with English-speaking client stakeholders.',
-    ],
+    endDate: 'present',
     technologies: [
       'TypeScript',
       'NestJS',
@@ -39,41 +29,21 @@ const experienceData = [
       'GCP',
       'CI/CD',
     ],
-    confidentialityNote:
-      'Client work is confidential. Descriptions are generalised: system type, scale, technologies, and personal contribution only — no client names, schemas, or proprietary logic.',
   },
   {
     id: 'csc-beyond-junior',
-    title: 'Junior Full Stack Developer',
     company: 'CSC Beyond',
-    employmentType: 'Full-time',
-    location: 'Amman, Jordan',
-    locationType: 'onsite' as const,
+    locationType: 'onsite',
     startDate: '2023-05',
     endDate: '2023-07',
-    summary: 'Backend features and internal tooling for client web applications.',
-    achievements: [
-      'Developed backend features in PHP and Laravel for client web applications.',
-      'Built internal tooling and e-commerce integrations using Retool and Shopify.',
-    ],
     technologies: ['PHP', 'Laravel', 'Retool', 'Shopify'],
   },
   {
     id: 'aiq-intern',
-    title: 'Web Development Intern',
     company: 'AI Quintessential',
-    employmentType: 'Internship',
-    location: 'Amman, Jordan',
-    locationType: 'onsite' as const,
+    locationType: 'onsite',
     startDate: '2023-03',
     endDate: '2023-05',
-    summary:
-      'Internship completed as part of the Orange Coding Academy full-stack programme.',
-    achievements: [
-      'Built and maintained WordPress websites; contributed to UI/UX design workflows using Framer.',
-    ],
     technologies: ['WordPress', 'Framer'],
   },
-] satisfies Role[];
-
-export const experience = z.array(roleSchema).parse(experienceData);
+] satisfies Omit<Role, RoleText>[];

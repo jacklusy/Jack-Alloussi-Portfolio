@@ -1,0 +1,138 @@
+{
+  "title": "Stockwell — mandantenfähige Bestands- und Lager-API",
+  "summary": "Eine NestJS-Bestands-API, die vier Korrektheitseigenschaften unter Nebenläufigkeit nicht bloß behauptet, sondern beweist: 50 parallele Anpassungen ergeben einen Gewinner und 49 explizite 409-Antworten — bei jedem CI-Lauf verifiziert.",
+  "description": "Lagersoftware versagt leise — das System antwortet mit 200 OK, während die Daten darunter falsch werden. Stockwell ist eine mandantenfähige Bestands- und Lager-API, die genau auf dieser These aufbaut: Nebenläufigkeitssicherheit, Exactly-once-Wiederholungen, atomare Umlagerungen und Mandantenisolation gelten als beweisbare Eigenschaften, die jeweils durch einen ausführbaren Test abgesichert sind statt durch einen Absatz Prosa.",
+  "role": "Backend Engineer",
+  "timeframe": "2026",
+  "metrics": [
+    {
+      "label": "Parallele Anpassungen, ein Gewinner",
+      "value": "50 → 1 + 49×409"
+    },
+    {
+      "label": "Teststufen",
+      "value": "Unit · Integration · E2E"
+    },
+    {
+      "label": "Architecture Decision Records",
+      "value": "8"
+    }
+  ],
+  "thumbnail": {
+    "alt": "Die Swagger-Seite der Stockwell-API: Titel, Versions- und OAS-Badges, Authentifizierungshinweise zu Registrierung, Login, Mandantenkontext und dem Header Idempotency-Key sowie darunter die Endpunktgruppe für die Authentifizierung."
+  },
+  "gallery": [
+    {
+      "alt": "Der Swagger-Endpunktkatalog: aufgeklappte Gruppen für Health, Inventory und Products mit Routen wie /api/v1/inventory/transfer und /api/v1/inventory/reservations; Schloss-Symbole markieren authentifizierte Routen.",
+      "caption": "Jede Route ist real und direkt im Browser aufrufbar — Health-Probes, die fünf Inventory-Endpunkte, um die herum die Arbeit an Nebenläufigkeit und Locking aufgebaut ist, sowie CRUD für Produkte und Lager, jeweils mit dokumentierten Request- und Response-Formaten."
+    }
+  ],
+  "group": {
+    "label": "Stockwell"
+  },
+  "links": {
+    "liveNote": "Live und offen — kein Demo-Konto nötig. Einen Mandanten registrieren, anmelden, auf Authorize klicken, und jeder Endpunkt oben ist direkt im Browser aufrufbar."
+  },
+  "caseStudy": {
+    "context": "Eine Lagermenge ist kein gewöhnliches Feld. Sie ist eine Zahl, die viele Akteure gleichzeitig verändern — beim Wareneingang wird eine Palette gescannt, bei der Kommissionierung werden Einheiten entnommen, bei der Inventur wird eine Abweichung korrigiert, ein Hintergrundjob reserviert Bestand für eine Bestellung — alles auf derselben Zeile aus Produkt und Lagerplatz, in derselben Sekunde. Die naive Read-Modify-Write-Implementierung verliert Aktualisierungen unbemerkt: Es gibt keinen Fehler, niemand wird benachrichtigt, und das physische Lager und die Datenbank laufen stillschweigend auseinander.",
+    "problem": "Vier Fehlerszenarien mussten unmöglich statt nur unwahrscheinlich werden. Gleichzeitige Anpassungen müssen genau einen Gewinner und für die Verlierer explizite Konflikte erzeugen, niemals ein verlorenes Update oder eine negative Menge. Wiederholte Mutationen — mobile Scanner in instabilen Netzen senden erneut, wenn eine Antwort in ein Timeout läuft — müssen genau eine Wirkung haben. Umlagerungen verändern zwei Zeilen in einer logischen Operation, also müssen sie atomar sein und dürfen nicht in einen Deadlock laufen, wenn gegenläufige Umlagerungen gleichzeitig starten. Und in einem Multi-Tenant-Design mit gemeinsamem Schema ist ein einziges vergessenes Mandantenprädikat kein Bug, sondern ein mandantenübergreifendes Datenleck — unsichtbar in der lokalen Entwicklung, wo nur ein Mandant existiert.",
+    "approach": "Jede Eigenschaft als Behauptung behandeln, die einen ausführbaren Beweis braucht. Standardmäßig Optimistic Locking mit einer Versionsspalte, für den Umlagerungspfad über zwei Zeilen pessimistische Zeilensperren mit expliziter Sperrreihenfolge. Idempotenzschlüssel werden in derselben Transaktion wie die Bewegung beansprucht, sodass Schlüssel und Wirkung gemeinsam committet oder zurückgerollt werden. Bewegungen werden ausschließlich angehängt, Salden sind eine Projektion daraus, damit sich die Historie nicht wegeditieren lässt. Die Mandantenisolation ist in vier Schichten abgesichert und endet bei PostgreSQL Row-Level Security; zurückgegeben wird 404 statt 403, denn 403 bestätigt, dass eine Ressource existiert, und erlaubt einem Angreifer, die Produkt-IDs eines Wettbewerbers aufzuzählen. Aufwand asymmetrisch verteilt: hoch in der Bestandsdomäne, bewusst gering im Rest.",
+    "architecture": {
+      "altText": "Eine NestJS-API über vier Bounded Contexts auf PostgreSQL 16 und Redis: Schreibzugriffe im Bestand nutzen für Einzelzeilen-Anpassungen eine optimistische Versionsprüfung und für Umlagerungen über zwei Zeilen geordnete pessimistische Zeilensperren, beanspruchen einen Idempotenzschlüssel in derselben Transaktion und hängen unveränderliche Bewegungsdatensätze an, aus denen die Lagersalden projiziert werden — die Mandantenisolation wird in der Anwendungsschicht durchgesetzt und durch Row-Level Security unter einer dedizierten Datenbankrolle ohne Superuser-Rechte abgesichert."
+    },
+    "decisions": [
+      {
+        "decision": "Standardmäßig Optimistic Locking, für Umlagerungen Pessimistic Locking",
+        "alternatives": "Eine einheitliche Locking-Strategie für alle Bestandsschreibzugriffe",
+        "reasoning": "Einzelzeilen-Anpassungen sind mit einer Versionsprüfung besser bedient, die laut fehlschlägt; Umlagerungen über zwei Zeilen brauchen geordnete Zeilensperren, denn genau so entstehen Deadlocks in PostgreSQL: gegenläufige Umlagerungen, die ihre Sperren in entgegengesetzter Reihenfolge anfordern.",
+        "tradeoff": "Zwei Lock-Strategien in einem Modul, und Clients müssen 409 mit einem Retry behandeln. Lohnt sich neu zu bewerten, wenn die Konfliktrate im Betrieb schmerzhaft wird oder eine dritte Mehrzeilen-Operation hinzukommt."
+      },
+      {
+        "decision": "Bewegungen unveränderlich, Salden als Projektion darüber",
+        "alternatives": "Eine Saldenzeile direkt aktualisieren und ein separates Audit-Log führen",
+        "reasoning": "Ein direktes Aktualisieren des Saldos vernichtet die Spuren, die man braucht, um herauszufinden, wann die Abweichung entstanden ist. Append-only-Bewegungen mit einem Datenbank-Trigger, der UPDATE und DELETE ablehnt, machen die Nachvollziehbarkeit strukturell statt bestmöglich.",
+        "tradeoff": "Der Speicherbedarf wächst mit jeder Mutation, und einen Fehler zu korrigieren bedeutet, eine Gegenbewegung zu buchen, statt eine Zeile zu ändern."
+      },
+      {
+        "decision": "Multi-Tenancy mit gemeinsamem Schema und Row-Level Security als Absicherung",
+        "alternatives": "Isolation per Schema pro Mandant oder per Datenbank pro Mandant",
+        "reasoning": "Ein einziges Deployment bleibt für eine einzelne Person betrieblich beherrschbar, und RLS verändert das Fehlerbild eines fehlenden Prädikats von „Zeilen eines anderen Mandanten“ zu „null Zeilen“.",
+        "tradeoff": "Ein fehlendes Mandantenprädikat ist ein Datenleck statt eines Bugs; deshalb ist die Absicherung vierschichtig, und deshalb läuft der Isolationstest unter der eingeschränkten Anwendungsrolle."
+      },
+      {
+        "decision": "TypeORM statt Prisma oder Drizzle",
+        "alternatives": "Prisma, für stärkere durchgängige Typinferenz",
+        "reasoning": "Ein explizites SELECT … FOR UPDATE mit kontrollierter Sperrreihenfolge ist der tragende Mechanismus des Umlagerungspfads, und TypeORM unterstützt das als erstklassige Funktion.",
+        "tradeoff": "Schwächere generierte Typinferenz als bei Prisma — in Kauf genommen, weil das Locking-Primitiv wichtiger war als der Typkomfort."
+      },
+      {
+        "decision": "Testcontainers mit echtem PostgreSQL und Redis statt gemockter Repositories",
+        "alternatives": "Gemockte Persistenz für schnelle Abdeckung derselben Pfade auf Unit-Ebene",
+        "reasoning": "Sperrreihenfolge, RLS-Bindung, aufgeschobene Fremdschlüssel und Append-only-Trigger sind Eigenschaften von PostgreSQL. Ein gemocktes Repository kann nicht so scheitern wie echtes Postgres, diese Mechanismen wären also durch Tests verifiziert worden, die nichts beweisen.",
+        "tradeoff": "Langsamere Suiten, serialisierte Testläufe und lokal notwendiges Docker — ein Preis, der sich mehrfach auszahlt."
+      }
+    ],
+    "challenges": [
+      "Row-Level Security war in den ersten Commits nur Sicherheitstheater: Die Policies waren geschrieben und erzwungen, aber nichts griff, weil die Anwendung als Tabelleneigentümer verbunden war und PostgreSQL Eigentümer stillschweigend ausnimmt — ohne Fehler, ohne Warnung.",
+      "Ein deterministisches Race konstruieren. Der Test, der prüft, dass parallele Anpassungen kollidieren, war selbst racy: Gelegentlich liefen beide Requests sauber nacheinander durch und beide waren erfolgreich.",
+      "Lifecycle-Hooks, die in Kontexten feuern, für die sie nie gedacht waren — der Export des OpenAPI-Schemas bootet die Nest-Anwendung, um deren Decorators zu durchlaufen, wodurch ein Queue-Worker startete und bei einem Dokumentations-Build versuchte, sich mit Redis zu verbinden.",
+      "Rate Limiting gegen die Testsuite: Das Registrieren vieler Nutzer löste den Throttler aus und erzeugte instabile 429-Antworten, die mit nichts Getesteten zu tun hatten.",
+      "Das Deployment auf einem Host, auf dem bereits zwei andere, voneinander unabhängige Stacks laufen: Standardnamen wie postgres und redis würden im selben Docker-Netzwerk stillschweigend mit deren Diensten kollidieren. Die Lösung bestand darin, jedem Dienst ein Präfix zu geben — stockwell-postgres, stockwell-redis — und nur den API-Container in das gemeinsame Routing-Netzwerk zu hängen, während Datenbank und Cache in einem isolierten Netzwerk liegen, das gar keine Ports zum Host freigibt."
+    ],
+    "outcomes": [
+      "Fünfzig gleichzeitige Anpassungen desselben Saldos enden in genau einem Gewinner und neunundvierzig expliziten 409-Konflikten, mit exakter Endmenge und ohne je einen negativen Zwischenzustand — bei jedem CI-Lauf als JSON-Artefakt festgehalten.",
+      "Eine dreistufige Teststrategie: Unit-Tests ganz ohne I/O für Domäneninvarianten und RBAC-Grenzen, Integrationstests mit Testcontainers für Transaktionen, Sperren, Idempotenz und RLS sowie End-to-End-Tests für HTTP-Verträge und Mandantenisolation über die Leitung.",
+      "Mandantenübergreifender Zugriff liefert bei jeder Ressource 404 statt 403, Ende-zu-Ende verifiziert, wobei Row-Level Security unter der eingeschränkten Anwendungsrolle geprüft wird statt unter dem Eigentümer.",
+      "Eine CI-Pipeline mit Lint, Typecheck, Prüfung der Abhängigkeitsgrenzen, drei Teststufen, Migrationen, OpenAPI-Export, Image-Build, Terraform-Validierung und Audit der Produktionsabhängigkeiten — dazu ein Deployment, das ein Rollback-Ziel sichert, bevor es irgendetwas ändert.",
+      "Live unter einer echten URL mit öffentlicher Swagger-UI: eine separate Docker-Compose-Datei für die Produktion, auf einem bestehenden Oracle-Cloud-Host, den sich das Projekt mit zwei weiteren, voneinander unabhängigen Projekten teilt, jeweils in eigenen Containern isoliert, wobei Datenbank und Cache vollständig vom gemeinsamen Netzwerk ferngehalten werden. Aktuell auf einem eigenen Branch, noch nicht in main gemergt."
+    ],
+    "retrospective": "Ein schwieriges Problem auszuwählen und es zu beweisen, war der ganze Wert. Eine Version mit doppelt so viel CRUD-Umfang und ohne Nebenläufigkeits-Artefakt würde deutlich weniger aussagen. Zwei Fehlschläge haben mir am meisten beigebracht. Row-Level Security bestand jeden Test, der prüfte, ob die Policies existieren, und scheiterte am ersten Test, der prüfte, ob sie wirken — eine Sicherheitskontrolle, die in einem Test nicht sichtbar fehlschlagen kann, ist keine Kontrolle, und der Test ist das eigentliche Feature. Außerdem hat der Deploy-Workflow Tasks gegen die bestehende Task-Definition zwangsweise neu gestartet, sodass jedes Deployment grün war und dabei das vorherige Release auslieferte; eine grüne Pipeline ist eine Behauptung, keine Tatsache, und man muss das ausgelieferte Artefakt prüfen statt den Exit-Code. Was ich anders machen würde: die Lese-Endpunkte schon im ersten Inventory-Commit mitliefern, denn ein sorgfältig entworfenes Audit-Log, das kein HTTP-Client lesen kann, ist ein echter Designfehler, der entstand, weil der Schreibpfad die interessanten Probleme enthielt. Früher auf etwas Günstiges deployen, da Terraform, das validiert, aber nie angewendet wurde, deutlich weniger Aussagekraft hat als eine laufende URL — und Beobachtung hätte den Deploy-Bug gefunden, den das Lesen des Codes nicht fand. Diese Lehre wurde umgesetzt, nur nicht über den Pfad, den CI validiert: Das Projekt ist jetzt live über eine schlichte Docker-Compose-Datei auf einem bestehenden Oracle-Cloud-Server, erreichbar an einem Nachmittag statt über ein Cloud-Konto und ein Terraform Apply. Die AWS/ECS-Topologie bleibt im Repository als validierte, aber nicht angewendete Infrastruktur — eine ehrlichere Beschreibung, als nahezulegen, sie sei es, die die URL tatsächlich bedient. Den Reaper für das Ablaufen von Idempotenzschlüsseln im Rahmen der Idempotenzarbeit bauen, statt ihn als bekannten Nachteil aufzulisten, denn eine Spalte ohne Reaper ist ein schleichendes Leck mit beiliegender Dokumentation. Und die Konfliktrate unter anhaltender, realistischer Konkurrenz messen — das ist die Zahl, die mir tatsächlich sagen würde, ob die Standard-Locking-Strategie richtig ist.",
+    "stackDetail": [
+      {
+        "category": "Laufzeit & Framework",
+        "items": [
+          "TypeScript (strict)",
+          "Node.js ≥ 20",
+          "NestJS",
+          "Clean Architecture, 4 Bounded Contexts"
+        ]
+      },
+      {
+        "category": "Daten",
+        "items": [
+          "PostgreSQL 16",
+          "TypeORM mit 10 handgeschriebenen Migrationen",
+          "Row-Level Security unter einer dedizierten NOSUPERUSER-Rolle",
+          "Append-only-Trigger für Bewegungen + CHECK-Constraints"
+        ]
+      },
+      {
+        "category": "Asynchronität & Caching",
+        "items": [
+          "Redis 7",
+          "BullMQ (Warnungen bei niedrigem Bestand, dauerhafte Retries)",
+          "Throttler-Zähler"
+        ]
+      },
+      {
+        "category": "Testing",
+        "items": [
+          "Jest (Unit, ~60%)",
+          "Testcontainers mit echtem Postgres + Redis (~35%)",
+          "supertest E2E (~5%)",
+          "k6-Smoke-Test mit Schwellenwerten"
+        ]
+      },
+      {
+        "category": "Delivery",
+        "items": [
+          "Mehrstufiges Docker-Image",
+          "Terraform (ECS/ALB/ECR-Topologie, in CI validiert, nicht angewendet)",
+          "GitHub Actions: Migration vor dem Traffic-Wechsel, Rollback-ARN zuerst gesichert",
+          "OpenAPI-Export + Swagger UI",
+          "Live: Docker Compose für die Produktion auf einem gemeinsam genutzten Oracle-Cloud-Host, hinter Caddy"
+        ]
+      }
+    ]
+  }
+}

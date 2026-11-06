@@ -2,12 +2,26 @@
 
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useTranslations } from 'next-intl';
 import type { ContactFormInput } from '@/content/schemas';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
 
-type FormStatus = { kind: 'idle' } | { kind: 'success' } | { kind: 'error'; message: string };
+type FormStatus = { kind: 'idle' } | { kind: 'success' } | { kind: 'error'; code: string };
+
+/** Error codes returned by `/api/contact`; anything else falls back to `generic`. */
+const API_ERROR_CODES = [
+  'rate_limited',
+  'invalid_json',
+  'validation_failed',
+  'unavailable',
+  'misconfigured',
+  'send_failed',
+] as const;
+type ApiErrorCode = (typeof API_ERROR_CODES)[number];
+
+const CONTACT_EMAIL = 'jackalloussi23@gmail.com';
 
 // Mirrors contactFormSchema in @/content/schemas. The server route
 // re-validates with the real zod schema — this is only for instant client
@@ -18,6 +32,7 @@ type FormStatus = { kind: 'idle' } | { kind: 'success' } | { kind: 'error'; mess
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function ContactForm() {
+  const t = useTranslations('contactForm');
   const [status, setStatus] = useState<FormStatus>({ kind: 'idle' });
   const {
     register,
@@ -42,23 +57,17 @@ export function ContactForm() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(values),
       });
-      const payload = (await response.json()) as { error?: string };
+      const payload = (await response.json().catch(() => ({}))) as { error?: string };
 
       if (!response.ok) {
-        setStatus({
-          kind: 'error',
-          message: payload.error ?? 'Something went wrong. Please email me directly.',
-        });
+        setStatus({ kind: 'error', code: payload.error ?? 'generic' });
         return;
       }
 
       reset();
       setStatus({ kind: 'success' });
     } catch {
-      setStatus({
-        kind: 'error',
-        message: 'Network error. Please email jackalloussi23@gmail.com instead.',
-      });
+      setStatus({ kind: 'error', code: 'network' });
     }
   }
 
@@ -69,66 +78,72 @@ export function ContactForm() {
       noValidate
     >
       <Input
-        label="Name"
+        label={t('name')}
         autoComplete="name"
-        placeholder="Your name"
+        placeholder={t('namePlaceholder')}
         error={errors.name?.message}
         {...register('name', {
-          required: 'Name is required',
-          minLength: { value: 2, message: 'Name must be at least 2 characters' },
-          maxLength: { value: 100, message: 'Name must be 100 characters or fewer' },
+          required: t('validation.nameRequired'),
+          minLength: { value: 2, message: t('validation.nameMin') },
+          maxLength: { value: 100, message: t('validation.nameMax') },
         })}
       />
       <Input
-        label="Email"
+        label={t('email')}
         type="email"
         autoComplete="email"
         inputMode="email"
-        placeholder="you@company.com"
+        placeholder={t('emailPlaceholder')}
         error={errors.email?.message}
         {...register('email', {
-          required: 'Email is required',
-          pattern: { value: EMAIL_PATTERN, message: 'Enter a valid email address' },
+          required: t('validation.emailRequired'),
+          pattern: { value: EMAIL_PATTERN, message: t('validation.emailInvalid') },
         })}
       />
       <Input
-        label="Subject"
+        label={t('subject')}
         autoComplete="off"
-        placeholder="Role, intro call, or question"
+        placeholder={t('subjectPlaceholder')}
         error={errors.subject?.message}
         {...register('subject', {
-          required: 'Subject is required',
-          minLength: { value: 3, message: 'Subject must be at least 3 characters' },
-          maxLength: { value: 120, message: 'Subject must be 120 characters or fewer' },
+          required: t('validation.subjectRequired'),
+          minLength: { value: 3, message: t('validation.subjectMin') },
+          maxLength: { value: 120, message: t('validation.subjectMax') },
         })}
       />
       <Textarea
-        label="Message"
-        placeholder="A short note about the role or what you’d like to discuss…"
+        label={t('message')}
+        placeholder={t('messagePlaceholder')}
         error={errors.message?.message}
         {...register('message', {
-          required: 'Message is required',
-          minLength: { value: 20, message: 'Message must be at least 20 characters' },
-          maxLength: { value: 5000, message: 'Message must be 5000 characters or fewer' },
+          required: t('validation.messageRequired'),
+          minLength: { value: 20, message: t('validation.messageMin') },
+          maxLength: { value: 5000, message: t('validation.messageMax') },
         })}
       />
 
-      <div className="pointer-events-none absolute left-0 top-0 h-px w-px overflow-hidden opacity-0" aria-hidden="true">
-        <label htmlFor="website">Website</label>
+      <div className="pointer-events-none absolute start-0 top-0 h-px w-px overflow-hidden opacity-0" aria-hidden="true">
+        <label htmlFor="website">{t('honeypot')}</label>
         <input id="website" type="text" tabIndex={-1} autoComplete="off" {...register('website')} />
       </div>
 
       <div aria-live="polite" className="min-h-6 text-[var(--text-sm)]">
         {status.kind === 'success' ? (
-          <p className="text-[var(--color-success)]">Message sent. I will get back to you soon.</p>
+          <p className="text-[var(--color-success)]">{t('success')}</p>
         ) : null}
         {status.kind === 'error' ? (
-          <p className="text-[var(--color-danger)]">{status.message}</p>
+          <p className="text-[var(--color-danger)]">
+            {(API_ERROR_CODES as readonly string[]).includes(status.code)
+              ? t(`errors.${status.code as ApiErrorCode}`, { email: CONTACT_EMAIL })
+              : status.code === 'network'
+                ? t('errors.network', { email: CONTACT_EMAIL })
+                : t('errors.generic')}
+          </p>
         ) : null}
       </div>
 
       <Button type="submit" isLoading={isSubmitting} className="w-full sm:w-auto">
-        {isSubmitting ? 'Sending…' : 'Send message'}
+        {isSubmitting ? t('sending') : t('send')}
       </Button>
     </form>
   );

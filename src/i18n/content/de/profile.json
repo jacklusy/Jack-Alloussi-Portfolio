@@ -1,0 +1,38 @@
+{
+  "role": "Software Engineer",
+  "tagline": "TypeScript · Node.js · NestJS · React · React Native – Entwicklung von Web-, API- und Mobile-Anwendungen für Kunden in den USA, von Amman in Jordanien aus.",
+  "location": "Amman, Jordanien",
+  "bio": [
+    "Ich bin Software Engineer mit zwei Jahren Vollzeit-Praxiserfahrung in der Entwicklung von Web-, API- und Mobile-Anwendungen für Kunden in den USA. Im Alltag liegt mein Schwerpunkt auf Backend-Entwicklung mit TypeScript und Node.js – insbesondere NestJS – sowie PHP und Laravel, ergänzt durch PostgreSQL, Redis, Docker und CI/CD-Pipelines.",
+    "Mein Werdegang zeichnet sich dadurch aus, dass ich nach Kundenvorgaben auf vielen unterschiedlichen Stacks arbeite. Diese Bandbreite hilft mir, mich schnell in unbekannte Codebasen einzuarbeiten und innerhalb bestehender Rahmenbedingungen zu liefern, statt aus Bequemlichkeit alles neu zu schreiben. Ich habe eine fundierte Ausbildung in Clean Architecture, Domain-Driven Design und den SOLID-Prinzipien und bereite mich derzeit auf die Prüfung AWS Certified Developer – Associate vor.",
+    "Im Oktober 2026 schließe ich mein Bachelorstudium in Software Engineering ab und suche eine Stelle im Backend- oder Full-Stack-Bereich in Deutschland. Ich erfülle die Voraussetzungen für die Blaue Karte EU und kann umziehen."
+  ],
+  "portraitAlt": "Jack Alloussi, Software Engineer, mit verschränkten Armen in formellem Rahmen",
+  "availability": {
+    "status": "Offen für Angebote",
+    "visaNote": "Jordanische Staatsangehörigkeit. Anspruch auf die Blaue Karte EU nach § 18g des Aufenthaltsgesetzes (Engpassberuf und Gehaltsschwelle für Berufseinsteiger). Eine Arbeitserlaubnis für Deutschland ist erforderlich.",
+    "graduationDate": "Oktober 2026",
+    "relocationNote": "Umzug ab Oktober 2026, nach dem Studienabschluss, möglich."
+  },
+  "socials": [
+    { "id": "github", "label": "GitHub" },
+    { "id": "linkedin", "label": "LinkedIn" },
+    { "id": "email", "label": "E-Mail" }
+  ],
+  "ctas": [
+    { "id": "projects", "label": "Projekte ansehen" },
+    { "id": "cv", "label": "Lebenslauf herunterladen (PDF, EN)" }
+  ],
+  "cvLabel": "Lebenslauf herunterladen (PDF, EN)",
+  "spokenLanguages": [
+    { "language": "Arabisch", "level": "Muttersprache" },
+    { "language": "Englisch", "level": "Professionelle Arbeitssprache" },
+    { "language": "Deutsch", "level": "A1, im Aufbau" }
+  ],
+  "highlights": [
+    { "label": "Praxiserfahrung", "value": "2 Jahre in Vollzeit" },
+    { "label": "Abschluss", "value": "Oktober 2026" },
+    { "label": "Arbeitserlaubnis", "value": "Blaue Karte EU möglich" },
+    { "label": "Schwerpunkt", "value": "Backend & Full-Stack" }
+  ]
+}

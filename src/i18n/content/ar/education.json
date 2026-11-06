@@ -1,0 +1,15 @@
+{
+  "entries": {
+    "bsc-se": {
+      "degree": "بكالوريوس",
+      "field": "هندسة البرمجيات",
+      "location": "عمّان، الأردن",
+      "note": "توقفت الدراسة خلال 2022–2023 لإتمام برنامج Full Stack في Orange Coding Academy."
+    },
+    "orange-academy": {
+      "degree": "برنامج تطوير Full Stack",
+      "location": "عمّان، الأردن",
+      "note": "برنامج مكثّف مدته سبعة أشهر في JavaScript وPHP وLaravel وReact وRedux، تلاه تدريب ميداني مدته شهر."
+    }
+  }
+}

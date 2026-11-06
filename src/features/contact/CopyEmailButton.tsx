@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/Button';
 
 export type CopyEmailButtonProps = {
@@ -8,6 +9,7 @@ export type CopyEmailButtonProps = {
 };
 
 export function CopyEmailButton({ email }: CopyEmailButtonProps) {
+  const t = useTranslations('actions');
   const [copied, setCopied] = useState(false);
 
   async function handleCopy() {
@@ -22,7 +24,7 @@ export function CopyEmailButton({ email }: CopyEmailButtonProps) {
 
   return (
     <Button type="button" variant="ghost" size="sm" onClick={handleCopy} aria-live="polite">
-      {copied ? 'Copied' : 'Copy'}
+      {copied ? t('copied') : t('copy')}
     </Button>
   );
 }

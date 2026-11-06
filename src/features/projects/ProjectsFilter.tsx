@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/i18n/navigation';
+import { useTranslations } from 'next-intl';
 import { Search } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
 import { cn } from '@/lib/utils';
@@ -31,6 +32,8 @@ export function ProjectsFilter({
   resultCount,
   totalCount,
 }: ProjectsFilterProps) {
+  const t = useTranslations('projectsFilter');
+  const tCats = useTranslations('categories');
   const router = useRouter();
   const hasFilter = Boolean(activeTech || activeCategory || activeQuery);
 
@@ -84,16 +87,16 @@ export function ProjectsFilter({
     <div className="space-y-5">
       <div className="flex flex-wrap items-center gap-3">
         <label className="relative block w-full max-w-md">
-          <span className="sr-only">Search projects by name</span>
+          <span className="sr-only">{t('searchLabel')}</span>
           <Search
-            className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[var(--color-text-subtle)]"
+            className="pointer-events-none absolute top-1/2 start-3 h-4 w-4 -translate-y-1/2 text-[var(--color-text-subtle)]"
             aria-hidden
           />
           <input
             type="search"
-            placeholder="Search projects by name…"
+            placeholder={t('searchPlaceholder')}
             defaultValue={activeQuery ?? ''}
-            className="field-control min-h-12 w-full rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-bg)] py-3 pr-4 pl-10 text-[var(--color-text)]"
+            className="field-control min-h-12 w-full rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-bg)] py-3 pe-4 ps-10 text-[var(--color-text)]"
             onChange={(event) => handleSearchChange(event.target.value)}
             onKeyDown={(event) => {
               if (event.key !== 'Enter') return;
@@ -107,12 +110,14 @@ export function ProjectsFilter({
           className="font-mono text-[11px] tracking-[0.12em] text-[var(--color-text-subtle)] uppercase"
           role="status"
         >
-          {hasFilter ? `${resultCount} of ${totalCount}` : `${totalCount} projects`}
+          {hasFilter
+            ? t('countFiltered', { shown: resultCount, total: totalCount })
+            : t('countAll', { total: totalCount })}
         </p>
       </div>
 
       <div>
-        <p className="font-mono-label mb-2.5 text-[var(--color-text-subtle)]">Discipline</p>
+        <p className="font-mono-label mb-2.5 text-[var(--color-text-subtle)]">{t('discipline')}</p>
         <ul className="flex flex-wrap gap-2">
           <li>
             <button
@@ -125,7 +130,7 @@ export function ProjectsFilter({
               onClick={() => go({ category: undefined })}
               aria-pressed={!activeCategory}
             >
-              <Badge tone={!activeCategory ? 'brand' : 'mono'}>All</Badge>
+              <Badge tone={!activeCategory ? 'brand' : 'mono'}>{t('all')}</Badge>
             </button>
           </li>
           {categories.map((category) => {
@@ -142,7 +147,9 @@ export function ProjectsFilter({
                   onClick={() => go({ category: isActive ? undefined : category })}
                   aria-pressed={isActive}
                 >
-                  <Badge tone={isActive ? 'brand' : 'mono'}>{category}</Badge>
+                  <Badge tone={isActive ? 'brand' : 'mono'}>
+                    {tCats(category as Parameters<typeof tCats>[0])}
+                  </Badge>
                 </button>
               </li>
             );
@@ -151,7 +158,7 @@ export function ProjectsFilter({
       </div>
 
       <div>
-        <p className="font-mono-label mb-2.5 text-[var(--color-text-subtle)]">Stack</p>
+        <p className="font-mono-label mb-2.5 text-[var(--color-text-subtle)]">{t('stack')}</p>
         <ul className="flex flex-wrap gap-2">
           {topTechs.map((tech) => {
             const isActive = activeTech?.toLowerCase() === tech.toLowerCase();

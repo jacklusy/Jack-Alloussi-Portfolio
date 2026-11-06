@@ -1,0 +1,38 @@
+{
+  "roles": {
+    "csc-beyond-se": {
+      "title": "Software Engineer",
+      "employmentType": "Vollzeit",
+      "location": "Amman, Jordanien",
+      "summary": "Entwicklung individueller Software für Kunden in den USA – über Web-, API- und Mobile-Plattformen hinweg.",
+      "achievements": [
+        "Entwurf, Entwicklung und Pflege produktiver Backend-Services in TypeScript (NestJS, Express.js) und PHP (Laravel 9–12) auf Basis von PostgreSQL und Redis – für mehrere Kundenanwendungen.",
+        "Entwicklung und Veröffentlichung von mehr als 15 plattformübergreifenden Mobile-Apps mit React Native CLI und Expo – einschließlich Provisioning, Signierung und Einreichung im Apple App Store und Google Play Store.",
+        "Entwicklung von React- und Next.js-Frontends in TypeScript, angebunden an intern entwickelte REST-APIs.",
+        "Containerisierung von Services mit Docker und Pflege von CI/CD-Pipelines für schnellere, konsistentere Releases.",
+        "Deployment und Betrieb von Anwendungen auf Google Cloud Platform, DigitalOcean, Vercel, Railway und Render.",
+        "Arbeit in zweiwöchigen Agile-Zyklen mit Jira: Teilnahme an Sprint-Planung und Code-Reviews sowie direkter Austausch zu Anforderungen mit englischsprachigen Stakeholdern auf Kundenseite."
+      ],
+      "confidentialityNote": "Kundenarbeit ist vertraulich. Die Beschreibungen sind bewusst allgemein gehalten: nur Systemart, Größenordnung, Technologien und mein eigener Beitrag – keine Kundennamen, Schemas oder proprietäre Logik."
+    },
+    "csc-beyond-junior": {
+      "title": "Junior Full-Stack Developer",
+      "employmentType": "Vollzeit",
+      "location": "Amman, Jordanien",
+      "summary": "Backend-Funktionen und interne Tools für Web-Anwendungen von Kunden.",
+      "achievements": [
+        "Entwicklung von Backend-Funktionen in PHP und Laravel für Web-Anwendungen von Kunden.",
+        "Aufbau interner Tools und E-Commerce-Integrationen mit Retool und Shopify."
+      ]
+    },
+    "aiq-intern": {
+      "title": "Praktikum Webentwicklung",
+      "employmentType": "Praktikum",
+      "location": "Amman, Jordanien",
+      "summary": "Praktikum im Rahmen des Full-Stack-Programms der Orange Coding Academy.",
+      "achievements": [
+        "Aufbau und Pflege von WordPress-Websites; Mitarbeit an UI/UX-Design-Workflows mit Framer."
+      ]
+    }
+  }
+}

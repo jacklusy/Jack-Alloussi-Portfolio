@@ -102,11 +102,11 @@ export function ParallaxTilt({ className }: ParallaxTiltProps) {
         </svg>
       </div>
       <div className="parallax-layer parallax-layer-near absolute inset-0">
-        <div className="absolute left-[12%] top-[18%] h-40 w-40 rotate-12 rounded-[var(--radius-xl)] border border-[rgb(var(--color-brand-rgb)/0.25)] bg-[rgb(var(--color-brand-rgb)/0.06)]" />
-        <div className="absolute right-[14%] top-[42%] h-28 w-28 -rotate-6 rounded-full border border-[rgb(var(--color-brand-rgb)/0.3)]" />
+        <div className="absolute start-[12%] top-[18%] h-40 w-40 rotate-12 rounded-[var(--radius-xl)] border border-[rgb(var(--color-brand-rgb)/0.25)] bg-[rgb(var(--color-brand-rgb)/0.06)]" />
+        <div className="absolute end-[14%] top-[42%] h-28 w-28 -rotate-6 rounded-full border border-[rgb(var(--color-brand-rgb)/0.3)]" />
         <div className="absolute bottom-[16%] left-[38%] h-2 w-48 rounded-full bg-[rgb(var(--color-brand-rgb)/0.35)]" />
-        <div className="absolute right-[22%] top-[14%] h-3 w-3 rounded-full bg-[var(--color-brand)] opacity-70" />
-        <div className="absolute left-[28%] bottom-[22%] h-2 w-2 rounded-full bg-[var(--color-brand)] opacity-50" />
+        <div className="absolute end-[22%] top-[14%] h-3 w-3 rounded-full bg-[var(--color-brand)] opacity-70" />
+        <div className="absolute start-[28%] bottom-[22%] h-2 w-2 rounded-full bg-[var(--color-brand)] opacity-50" />
       </div>
     </div>
   );

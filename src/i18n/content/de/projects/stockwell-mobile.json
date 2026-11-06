@@ -1,0 +1,117 @@
+{
+  "title": "Stockwell Mobile — Offline-First-Client für das Lager",
+  "summary": "Eine React-Native-Lager-App mit selbst gebauter Offline-Sync-Engine: Delta-Mutationen, Exactly-once-Replay und manuelle Konfliktauflösung — 105 Tests, mindestens 90 % Coverage im Sync-Modul.",
+  "description": "Ein Android-Client für Lagermitarbeitende, die dort arbeiten, wo die Konnektivität systembedingt unzuverlässig ist — zwischen Stahlregalen, in Kühlräumen, an Verladerampen. Der Offline-Schreibpfad berührt das Netzwerk nie. Jede eingereihte Mutation ist ein Delta und kein Absolutwert; genau das macht den erneuten Versuch auf neuer Basis zu einer korrekten Operation statt zu einer Heuristik.",
+  "role": "Mobile Engineer",
+  "timeframe": "2026",
+  "metrics": [
+    {
+      "label": "Bestandene Tests",
+      "value": "105 / 105"
+    },
+    {
+      "label": "Coverage-Untergrenze im Sync-Modul",
+      "value": "90% / 70%"
+    },
+    {
+      "label": "Latenz beim Offline-Schreiben",
+      "value": "Kein Netzwerk im Schreibpfad"
+    }
+  ],
+  "group": {
+    "label": "Stockwell"
+  },
+  "caseStudy": {
+    "context": "Lagerbestände werden dort bewegt, wo die Konnektivität systembedingt ausfällt: auf günstigen Android-Handhelds, bedient von Menschen mit Handschuhen, bei Blendung oder in schwach beleuchteten Gängen, mit nur einer freien Hand. Ein klassischer Client, der pro Aktion eine Anfrage sendet und einen Ladekreisel anzeigt, scheitert hier teuer: Der Spinner hängt, weil das WLAN „verbunden“ meldet, aber keinen Weg nach außen hat; die Bedienperson kann nicht erkennen, ob die Bestandsanpassung angekommen ist, und notiert die Zählung zum Weiterarbeiten auf Papier, um sie später erneut einzugeben.",
+    "problem": "Sobald Papier im Spiel ist, driftet das führende System von der physischen Realität ab, und jede nachgelagerte Zahl erbt den Fehler. Offline-Fähigkeit allein genügt jedoch nicht — sobald ein Client Schreibvorgänge lokal einreiht, entstehen vier neue Probleme. Replay: Die App wird mitten im Push beendet und sendet nach dem Neustart erneut, sodass die Anpassung doppelt gebucht wird. Konflikt: Zwei Personen zählen offline dasselbe Lagerfach, und eine Zählung überschreibt die andere unbemerkt. Reihenfolge: Ein Pull, der vor Abschluss eines Push läuft, lässt einen veralteten Serverwert ungesendete lokale Arbeit überschreiben. Poison Messages: Eine fehlerhafte Mutation wird endlos wiederholt und blockiert alles, was dahinter in der Warteschlange steht. Jedes dieser Probleme führt zu falschen Bestandszahlen statt zu Abstürzen, was sie weit gefährlicher macht — sie lösen nie einen Alarm aus, sondern verfälschen still das Hauptbuch.",
+    "approach": "Deltas einreihen, niemals Absolutwerte — die wirkungsvollste Entscheidung im Code, weil sie den erneuten Versuch auf neuer Basis exakt statt näherungsweise macht. Push-vor-Pull als unumstößliche Invariante festlegen: im Kommentar benannt, in der Zustandsmaschine verankert und in den Tests über ein Phasenprotokoll geprüft, damit sie Refactorings übersteht. Die Sync-Engine selbst bauen, statt eine fertige Bibliothek einzusetzen, weil der serverseitige Vertrag, gegen den sie verhandelt — Idempotency Keys, optimistische Versionskonflikte, inkrementelle Cursor —, gemeinsam mit ihr entworfen wurde. Bestandskonflikte manuell auflösen und dabei lokalen und Serverwert nebeneinander zeigen, statt automatisch einen Gewinner zu wählen.",
+    "architecture": {
+      "altText": "Ein Offline-First-React-Native-Client: Schreibvorgänge der UI landen über Drizzle als Deltas in einer lokalen SQLite-Mutationswarteschlange; eine Single-Flight-Sync-Engine sendet die eingereihten Deltas mit Idempotency Keys per Push, bevor sie einen inkrementellen Cursor-Pull ausführt; Versionskonflikte führen zu einem manuellen Auflösungsbildschirm mit den Optionen „Auf neuer Basis erneut versuchen“ oder „Verwerfen“, und ausgeschöpfte Einträge werden als einsehbare Dead Letters in einem Sync Centre geführt."
+    },
+    "decisions": [
+      {
+        "decision": "Deltas statt absoluter Mengen einreihen",
+        "alternatives": "In jeder eingereihten Mutation die beabsichtigte Endmenge speichern",
+        "reasoning": "Ein Delta lässt sich gegen eine veränderte Basis erneut abspielen und bedeutet trotzdem dasselbe. Damit ist der erneute Versuch auf neuer Basis korrekt, das Replay sicher und das Konfliktregelwerk einfach zu formulieren.",
+        "tradeoff": "Der Client kann „setze auf genau N“ nicht ohne eine eigene Operation ausdrücken, und der Server-Vertrag muss Deltas als gleichberechtigte Operationen akzeptieren."
+      },
+      {
+        "decision": "Manuelle Konfliktauflösung für Bestände statt automatischem Merge",
+        "alternatives": "Last-write-wins oder automatisches Mergen zugunsten des Servers",
+        "reasoning": "Eine physische Zählung ist ein Beleg über die reale Welt. Wird die Zählung einer Person automatisch zugunsten einer anderen verworfen, zerstört das diesen Beleg unbemerkt.",
+        "tradeoff": "Es kostet Zeit der Bedienperson und skaliert nicht auf Massenfälle — ein Tag Abweichung über Hunderte SKUs bräuchte Werkzeuge zur Stapelauflösung, die es nicht gibt."
+      },
+      {
+        "decision": "Selbst gebaute Sync-Engine statt fertiger Sync-Bibliothek",
+        "alternatives": "WatermelonDB oder ein vergleichbares All-inclusive-Sync-Framework",
+        "reasoning": "Der Idempotenz-Vertrag, die optimistischen Versionskonflikte und die inkrementellen Cursor auf dem Server wurden entworfen, weil ein mobiler Client eine Offline-Warteschlange dagegen abspielen würde. Mit beiden Hälften in eigener Hand ist die Exactly-once-Garantie überprüfbar statt bloß angenommen.",
+        "tradeoff": "Deutlich mehr Code zu schreiben, zu testen und zu pflegen als bei einer Bibliothek, die den allgemeinen Fall löst."
+      },
+      {
+        "decision": "Hintergrund-Sync ausdrücklich als Best-Effort ausgeliefert",
+        "alternatives": "Hintergrund-Sync als verlässliche Garantie darstellen",
+        "reasoning": "Die Akkuoptimierung von Android hält kein Versprechen zeitnaher Hintergrundausführung ein. Deshalb sagt die App, was sie tatsächlich tut, statt einen Zeitplan zu behaupten, den sie nicht einhalten kann.",
+        "tradeoff": "Es kostet einen selbstbewussten Feature-Punkt, dafür wird die Bedienperson nicht darüber getäuscht, wann sich ihre Warteschlange leert."
+      }
+    ],
+    "challenges": [
+      "Ein latenter Fehler in der Initialisierungsreihenfolge überlebte mehrere Meilensteine: Das Datenbank-Handle wurde veröffentlicht, bevor die Migrationen abgeschlossen waren, sodass der Sync-Provider auf noch nicht existierende Tabellen zugreifen konnte und parallele Aufrufer die Datenbank jeweils selbst öffnen konnten.",
+      "Mit einem aktuellen React-Native-Release Schritt halten — die Kamera-Bibliothek ließ sich unter Android nicht gegen 0.86 kompilieren; gelöst mit einer festgepinnten Version und einem dokumentierten Patch, dazu kam eine fehlende Babel-Transformation.",
+      "Gestaltung für Handschuhe und Blendung statt für Dashboards: eine Sync-Status-Leiste am Rand jeder Zeile, die Farbe stets mit einem Icon kombiniert, sodass Farbe nie der alleinige Bedeutungsträger ist.",
+      "Den Scope-Schnitt immer wieder zugunsten von Tiefe beim Sync statt Breite neu setzen und für jede Zurückstellung eine ehrliche Begründung schreiben, damit sie als Entscheidung und nicht als Auslassung gelesen wird."
+    ],
+    "outcomes": [
+      "Ein vollständiger Arbeitsablauf für Bedienpersonen: biometrische Anmeldung, Lagerauswahl, durchsuchbare Bestandsliste, optimistische Bestandsanpassung, Barcode-Scan mit manueller SKU-Eingabe als Fallback und ein Sync Centre, das ausstehende, fehlgeschlagene, konfliktbehaftete und als Dead Letter abgelegte Einträge zeigt.",
+      "105 Tests in 26 Suites bestanden, mit einer Statement-Untergrenze von 90 % speziell für das Sync-Modul statt eines einzelnen globalen Schwellenwerts, der entweder zu niedrig wäre, um es zu schützen, oder zu hoch, um ihn anderswo zu halten.",
+      "Alle fünf verpflichtenden Offline-Sync-Suites bestanden, darunter Exactly-once-Zustellung beim Replay, Konfliktwiederholung auf neuer Basis und Wiederaufnahme nach unterbrochenem Sync ohne doppelte Bewegung.",
+      "Ein eigens entwickeltes Designsystem, dessen Kontrastverhältnisse per Unit-Test statt per Augenschein durchgesetzt werden, und Komponenten, die semantische Tokens lesen — ganz ohne Theme-Fallunterscheidungen."
+    ],
+    "retrospective": "Tests nach Aussagen zu benennen hat sich als die Praxis erwiesen, die ich beibehalten würde — ein Test namens „idempotent replay: double push, one server movement“ ist Spezifikation, Regressionsschutz und Beleg zugleich, und eine Aussage, die auf einen Testnamen abgebildet ist, kann nicht unbemerkt falsch werden. Die schärfere Lehre kam aus dem Initialisierungsfehler: Er existierte, weil die Integrationstests eine bereits migrierte Datenbank injizieren — Tests, die den schwierigen Teil mocken, testen den schwierigen Teil nicht. Ein Test mit kaltem, unmigriertem Bootstrap hätte ihn in dem Meilenstein gefunden, der ihn eingeführt hat. Zwei Planungsfehler würde ich beheben: Den Zugang zu physischen Geräten zu Beginn statt am Ende einplanen, denn Performance- und Barrierefreiheitsziele wurden früh und richtig formuliert und ließen sich dann nicht überprüfen, sodass zwei nicht verifizierbare Abschnitte in der Dokumentation stehen. Und eine Last-write-wins-Strategie liegt implementiert und vollständig getestet im Code, wird aber nirgends verwendet — als ausdrücklicher Kontrast zur manuellen Strategie hat sie ihre Berechtigung, doch ein Reviewer könnte sie mit Recht toten Code mit beigelegter Begründung nennen. Zu den Grenzen: Das Design setzt einen einzigen Schreibenden pro Bereich voraus, der vollständige Pull ist nicht partitioniert, die Mutationswarteschlange hat weder Obergrenze noch Archivierungsregel, und Konflikte werden einzeln aufgelöst. Das Muster, das ich mitnehme, ist das allgemeine: Wenn ein System still falsch liegen kann, lohnt zusätzlicher Code, damit es entweder richtig ist oder laut sichtbar wird. Dass Dead Letters im Sync Centre auftauchen, ist schlechtere UX, als sie stillschweigend zu verwerfen — und weit bessere Ingenieurskunst.",
+    "stackDetail": [
+      {
+        "category": "Plattform",
+        "items": [
+          "React Native 0.86 (Android; iOS zurückgestellt)",
+          "TypeScript 5.8",
+          "Hermes"
+        ]
+      },
+      {
+        "category": "Lokale Persistenz",
+        "items": [
+          "SQLite über op-sqlite",
+          "Drizzle ORM mit Migrationen",
+          "Mutationswarteschlange + Dead-Letter-Speicher"
+        ]
+      },
+      {
+        "category": "Sync-Engine",
+        "items": [
+          "Delta-Mutationen mit Idempotency Keys",
+          "Single-Flight-Engine, Invariante Push-vor-Pull",
+          "Inkrementeller Cursor-Pull",
+          "Manuelle Konfliktstrategie (erneut auf neuer Basis versuchen / verwerfen / Menge manuell setzen)",
+          "WebSocket-Deltas hinter einem Flag"
+        ]
+      },
+      {
+        "category": "UI & Gerät",
+        "items": [
+          "FlashList mit virtualisierten Listen",
+          "Barcode-Scan mit Vision Camera und manuellem Fallback",
+          "Biometrische Entsperrung",
+          "Semantisches Token-System für Hell/Dunkel"
+        ]
+      },
+      {
+        "category": "Qualität",
+        "items": [
+          "Jest — 105 Tests, 26 Suites",
+          "Coverage-Untergrenzen je Verzeichnis",
+          "Automatisierter Kontrastverhältnis-Test",
+          "Sentry mit PII-Scrubbing"
+        ]
+      }
+    ]
+  }
+}

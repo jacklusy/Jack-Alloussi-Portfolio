@@ -11,17 +11,6 @@ export function cn(...inputs: ClassValue[]): string {
 }
 
 /**
- * Formats an ISO date string (YYYY-MM) for display.
- */
-export function formatMonthYear(value: string): string {
-  if (value === 'present') return 'Present';
-  const [year, month] = value.split('-');
-  if (!year || !month) return value;
-  const date = new Date(Number(year), Number(month) - 1, 1);
-  return date.toLocaleDateString('en-GB', { month: 'short', year: 'numeric' });
-}
-
-/**
  * Returns file size label for the CV download link.
  */
 export function formatBytes(bytes: number): string {

@@ -1,0 +1,118 @@
+{
+  "title": "USNS Backend — API de notification pour l’université",
+  "summary": "Une API Laravel 12 qui sert deux clients via deux contrats : 165 routes réparties en 23 modules, droits de publication imposés par la hiérarchie et journal d’audit impossible à contourner, auto-hébergée sur une seule instance Oracle Cloud derrière Caddy.",
+  "description": "Le backend du University Student Notification System, conçu pour l’Al-Zaytoonah University of Jordan. Il gère l’identité, la hiérarchie académique, le cycle de vie des annonces, la résolution des audiences, la diffusion des notifications (fan-out) et la journalisation d’audit — exposés sous la forme de deux surfaces HTTP distinctes, consommées par un tableau de bord d’administration et par une application mobile pour les étudiants.",
+  "role": "Backend Engineer",
+  "timeframe": "2026",
+  "metrics": [
+    {
+      "label": "Routes enregistrées",
+      "value": "165"
+    },
+    {
+      "label": "Modules fonctionnels",
+      "value": "23"
+    },
+    {
+      "label": "Enums typés",
+      "value": "40"
+    }
+  ],
+  "group": {
+    "label": "USNS Platform"
+  },
+  "links": {
+    "liveNote": "La racine en production confirme seulement que l’API est active — chaque vraie route exige un jeton authentifié."
+  },
+  "caseStudy": {
+    "context": "L’Al-Zaytoonah University of Jordan diffusait ses annonces par des groupes WhatsApp et Telegram, des fils d’e-mails improvisés et des affichages papier. Avec neuf facultés, des dizaines de départements et des milliers d’étudiants, cela produit trois défaillances structurelles qu’aucune rigueur de processus ne corrige.",
+    "problem": "Les listes de diffusion se périment plus vite qu’on ne les entretient — un groupe de messagerie est un instantané des inscriptions au moment où quelqu’un l’a créé, alors que les étudiants obtiennent leur diplôme, changent d’établissement ou d’année chaque semestre ; la liste fuit donc dans les deux sens. Les périmètres d’autorité existent sur le papier mais pas dans les outils : le président parle au nom de l’université, le doyen au nom d’une faculté, le chef de département au nom d’un département, et rien dans une application de messagerie ne rend un message hors périmètre impossible plutôt que simplement déconseillé. Enfin, il n’existe aucune trace défendable de qui a dit quoi à qui — un fil de discussion ne fait pas preuve quand un étudiant conteste avoir été informé d’un changement d’horaire, ou quand un audit d’accréditation demande l’auteur, l’horodatage, le périmètre et le nombre de destinataires.",
+    "approach": "Traiter les annonces comme des objets métier à part entière, dotés d’un cycle de vie, de métadonnées de ciblage, d’une piste d’audit et d’un droit de publication imposé — avec la même rigueur d’ingénierie que celle que l’université applique déjà aux inscriptions ou aux notes. Modéliser explicitement la hiérarchie académique pour que la résolution des audiences découle des inscriptions en cours plutôt que d’une liste entretenue à la main. Servir deux publics par deux contrats délibérément différents plutôt que par une enveloppe de compromis unique. Implémenter la journalisation d’audit sous forme de middleware, afin qu’il soit impossible de livrer un endpoint sans elle.",
+    "architecture": {
+      "altText": "Une API Laravel 12 avec un pipeline contrôleur → service → dépôt → ressource, qui expose une surface tableau de bord de 139 routes et une surface mobile de 26 routes sous authentification Sanctum ; les annonces résolvent leur audience à partir de la hiérarchie faculté–département–programme, se diffusent aux destinataires par une insertion par lots mise en file, et chaque requête traverse un middleware de journalisation d’audit avant d’aboutir dans MySQL — déployée en conteneur Docker derrière le même reverse proxy Caddy qui sert déjà un autre projet sur la machine, avec sa propre instance MariaDB isolée."
+    },
+    "decisions": [
+      {
+        "decision": "Des tables users et students séparées plutôt qu’une table polymorphe unique",
+        "alternatives": "Une seule table de comptes avec un discriminant de type",
+        "reasoning": "Le personnel et les étudiants ont réellement des cycles de vie, des parcours d’authentification et des modèles d’autorisation différents. Les fusionner oblige chaque requête à porter un discriminant et rend chaque colonne nullable pour la moitié des lignes.",
+        "tradeoff": "Deux flux d’authentification et deux surfaces d’identité à maintenir, et tout ce qui est réellement commun doit être modélisé deux fois ou extrait."
+      },
+      {
+        "decision": "La journalisation d’audit en middleware plutôt qu’en appels explicites à un service",
+        "alternatives": "Appeler un service d’audit depuis chaque handler qui modifie des données",
+        "reasoning": "Cela a rendu la couverture complète structurelle. Aucun endpoint n’a été livré sans couverture d’audit, parce qu’il n’était pas possible d’en livrer un sans elle.",
+        "tradeoff": "Le middleware voit la requête, pas la modification métier — il enregistre qui a appelé quoi, mais pas la valeur de départ ni la valeur d’arrivée."
+      },
+      {
+        "decision": "Un fan-out par insertion par lots de type insert-or-ignore, délégué à une file",
+        "alternatives": "Créer les lignes de notification une par destinataire dans la requête de publication",
+        "reasoning": "Le fan-out vers une population étudiante est en principe non borné ; il ne peut donc pas s’exécuter dans une requête, et une insertion en masse avec garde d’unicité rend le rejeu inoffensif.",
+        "tradeoff": "La publication devient à cohérence éventuelle — le nombre de destinataires n’est pas définitif au moment où la requête rend la main."
+      },
+      {
+        "decision": "Un driver de vérification d’e-mail interchangeable",
+        "alternatives": "Brancher SMTP directement dans le flux d’inscription",
+        "reasoning": "Construit après avoir été échaudé une première fois plutôt que par spéculation : quand l’hébergeur a bloqué SMTP, la correction a consisté en un changement de configuration et un nouveau driver, pas en une refonte de l’inscription.",
+        "tradeoff": "Une couche d’abstraction supplémentaire dans un flux qui serait sinon direct, justifiée uniquement parce que la défaillance s’était déjà produite."
+      }
+    ],
+    "challenges": [
+      "Modéliser neuf facultés aux départements inégalement répartis à partir de données institutionnelles réelles, ce qui a fait apparaître des cas limites de résolution d’audience qu’un jeu de test synthétique à trois facultés n’aurait jamais produits.",
+      "Servir deux clients aux besoins réellement différents — une surface d’administration de 139 routes et une surface mobile de 26 routes — sans laisser l’un des contrats déformer l’autre.",
+      "Maintenir stables les contrats transverses au fil de 85 commits de remaniements, grâce à des tests de standards qui parcourent la table des routes et vérifient globalement la forme de l’enveloppe et la cohérence de la matrice de permissions."
+    ],
+    "outcomes": [
+      "Une API Laravel 12 en production avec 165 routes enregistrées réparties en 23 modules fonctionnels, servant deux clients via deux contrats, en ligne sur une instance Oracle Cloud Ampere avec un rechargement Caddy sans interruption sur un proxy partagé avec un autre projet.",
+      "Un cycle de vie complet des annonces — brouillon, publication, archivage — avec résolution des audiences dérivée de la hiérarchie, pièces jointes et nombres de destinataires.",
+      "Journaux d’audit, historique de connexion, événements système et export CSV, avec une couverture garantie structurellement par un middleware plutôt que par la discipline.",
+      "Quarante enums typés couvrant les rôles, les permissions, les statuts et les actions, qui transforment un renommage de valeur en cascade vérifiée à la compilation plutôt qu’en chasse aux chaînes littérales."
+    ],
+    "retrospective": "Le pipeline en couches a tenu sur 85 commits, et les tests de standards qui parcourent la table des routes ont été d’une valeur disproportionnée — ils ont détecté des dérives d’enveloppe et des régressions de la matrice de permissions que des tests par endpoint auraient manquées, pour une fraction du coût. Trois choses ont mal tourné et méritent d’être nommées. Premièrement, le schéma a été conçu avant que le domaine soit compris, et cinq migrations en ont fait les frais, toutes des corrections de valeurs d’enum choisies trop tôt ; la plus instructive a exigé une danse de colonne en trois étapes pour élargir un ensemble de priorités. La leçon : les colonnes enum au niveau de la base sont un piège pour tout ensemble de valeurs encore en négociation — un varchar avec validation applicative aurait fait de chacune un changement d’une ligne. Deuxièmement, le fan-out du tableau de bord s’exécute de façon synchrone dans la requête de publication, avec une requête d’existence par destinataire, juste à côté d’un fan-out mobile qui fait cela correctement avec une insertion par lots mise en file ; c’est acceptable avec quelques dizaines de comptes du personnel et cela reste le mauvais modèle. Troisièmement, et c’est le plus important : le client mobile a devancé le contrat du backend. L’application est livrée en appelant trois endpoints que ce dépôt n’a jamais implémentés, documentés dans une liste d’écarts rédigée à la main, qui était un très bon artefact et n’avait aucun mode d’échec — rien ne passe au rouge quand un document reste non implémenté. Deux dépôts qui avancent à des vitesses différentes avec un contrat rédigé en prose entre eux finiront par diverger ; une spécification OpenAPI générée avec des tests de contrat des deux côtés aurait transformé cette dérive en build en échec plutôt qu’en 404 à l’exécution. J’ajouterais aussi au module d’audit une comparaison avant/après des payloads, car pour un système dont l’objectif affiché inclut une traçabilité résistante à la falsification, enregistrer la requête mais pas la modification est une lacune significative.",
+    "stackDetail": [
+      {
+        "category": "Runtime et framework",
+        "items": [
+          "PHP 8",
+          "Laravel 12",
+          "Pipeline contrôleur → service → dépôt → ressource"
+        ]
+      },
+      {
+        "category": "Données",
+        "items": [
+          "MySQL",
+          "Hiérarchie faculté → département → programme → cours",
+          "Calendrier académique avec cycle de vie des semestres",
+          "40 enums typés"
+        ]
+      },
+      {
+        "category": "Authentification et autorisation",
+        "items": [
+          "Laravel Sanctum (deux audiences)",
+          "Matrice de permissions pilotée par la configuration",
+          "Verrouillage, changement de mot de passe forcé, réinitialisation du mot de passe"
+        ]
+      },
+      {
+        "category": "Asynchrone et diffusion",
+        "items": [
+          "Fan-out par lots en file avec insert-or-ignore",
+          "Firebase Cloud Messaging",
+          "Driver de vérification d’e-mail interchangeable (OTP / lien)",
+          "Génération de rapports asynchrone"
+        ]
+      },
+      {
+        "category": "Livraison et exploitation",
+        "items": [
+          "Docker Compose sur Oracle Cloud (Ampere A1)",
+          "Reverse proxy Caddy, partagé avec un autre projet sur le même hôte",
+          "MariaDB 11 isolée par projet",
+          "Tests de standards qui parcourent la table des routes"
+        ]
+      }
+    ]
+  }
+}

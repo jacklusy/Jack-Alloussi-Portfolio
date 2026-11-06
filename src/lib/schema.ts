@@ -1,14 +1,13 @@
 import { siteConfig } from '@/config/site';
-import { profile } from '@/content/profile';
-import { experience } from '@/content/experience';
-import { projects } from '@/content/projects';
+import { localeMeta, type Locale } from '@/i18n/config';
+import { localizedPath } from '@/lib/seo';
 import { isUsableHref } from '@/lib/content-text';
-import type { Project } from '@/content/schemas';
+import type { Profile, Project, Role } from '@/content/schemas';
 
 /**
  * Stable `@id` anchors. Every node in the graph references these rather than
  * repeating the entity, so Google can resolve one Person across every page
- * instead of treating each page's blob as a separate thing.
+ * and every language instead of treating each page's blob as a separate thing.
  */
 export const SCHEMA_IDS = {
   website: `${siteConfig.url}/#website`,
@@ -18,13 +17,31 @@ export const SCHEMA_IDS = {
 
 const personRef = { '@id': SCHEMA_IDS.person } as const;
 
-function socialProfiles(): string[] {
-  return profile.socials
-    .filter((social) => social.external && isUsableHref(social.href))
-    .map((social) => social.href);
-}
+const url = (locale: Locale, path = '') => `${siteConfig.url}${localizedPath(locale, path)}`;
 
-function personNode() {
+const SKILLS = [
+  'TypeScript',
+  'Node.js',
+  'NestJS',
+  'Laravel',
+  'React',
+  'Next.js',
+  'React Native',
+  'PostgreSQL',
+  'Docker',
+  'Clean Architecture',
+  'Domain-Driven Design',
+];
+
+export type SiteJsonLdInput = {
+  locale: Locale;
+  profile: Profile;
+  experience: Role[];
+  title: string;
+  description: string;
+};
+
+function personNode({ locale, profile, experience, description }: SiteJsonLdInput) {
   const current = experience[0];
 
   return {
@@ -34,10 +51,10 @@ function personNode() {
     givenName: 'Jack',
     familyName: 'Alloussi',
     jobTitle: profile.role,
-    description: siteConfig.description,
+    description,
     email: `mailto:${profile.email}`,
     telephone: profile.phone,
-    url: siteConfig.url,
+    url: url(locale),
     image: {
       '@type': 'ImageObject',
       url: `${siteConfig.url}${profile.portrait.src}`,
@@ -50,7 +67,7 @@ function personNode() {
     },
     homeLocation: {
       '@type': 'Place',
-      name: 'Amman, Jordan',
+      name: profile.location,
     },
     alumniOf: {
       '@type': 'CollegeOrUniversity',
@@ -70,73 +87,48 @@ function personNode() {
       : undefined,
     hasOccupation: {
       '@type': 'Occupation',
-      name: 'Software Engineer',
+      name: profile.role,
       occupationalCategory: '15-1252.00',
-      skills: [
-        'TypeScript',
-        'Node.js',
-        'NestJS',
-        'Laravel',
-        'React',
-        'Next.js',
-        'React Native',
-        'PostgreSQL',
-        'Docker',
-        'Clean Architecture',
-        'Domain-Driven Design',
-      ].join(', '),
+      skills: SKILLS.join(', '),
     },
-    knowsAbout: [
-      'TypeScript',
-      'Node.js',
-      'NestJS',
-      'Laravel',
-      'React',
-      'Next.js',
-      'React Native',
-      'PostgreSQL',
-      'Redis',
-      'Docker',
-      'Clean Architecture',
-      'Domain-Driven Design',
-      'Multi-tenant systems',
-      'Offline-first mobile',
-    ],
+    knowsAbout: [...SKILLS.slice(0, 8), 'Redis', ...SKILLS.slice(8), 'Multi-tenant systems', 'Offline-first mobile'],
     knowsLanguage: profile.spokenLanguages.map((language) => ({
       '@type': 'Language',
       name: language.language,
-      alternateName: language.language === 'Arabic' ? 'ar' : language.language === 'English' ? 'en' : undefined,
+      alternateName: language.code,
     })),
-    sameAs: socialProfiles(),
+    sameAs: profile.socials
+      .filter((social) => social.external && isUsableHref(social.href))
+      .map((social) => social.href),
   };
 }
 
-function websiteNode() {
+function websiteNode({ locale, title, description }: SiteJsonLdInput) {
   return {
     '@type': 'WebSite',
     '@id': SCHEMA_IDS.website,
     url: siteConfig.url,
-    name: siteConfig.title,
-    description: siteConfig.description,
-    inLanguage: 'en',
+    name: title,
+    description,
+    inLanguage: Object.values(localeMeta).map((meta) => meta.ogLocale.replace('_', '-')),
     publisher: personRef,
     author: personRef,
     potentialAction: {
       '@type': 'SearchAction',
       target: {
         '@type': 'EntryPoint',
-        urlTemplate: `${siteConfig.url}/projects?tech={search_term_string}`,
+        urlTemplate: `${url(locale, '/projects')}?tech={search_term_string}`,
       },
       'query-input': 'required name=search_term_string',
     },
   };
 }
 
-/** The site-wide graph, emitted once from the root layout. */
-export function siteJsonLd() {
+/** The site-wide graph, emitted once from the locale layout. */
+export function siteJsonLd(input: SiteJsonLdInput) {
   return {
     '@context': 'https://schema.org',
-    '@graph': [websiteNode(), personNode()],
+    '@graph': [websiteNode(input), personNode(input)],
   };
 }
 
@@ -144,23 +136,25 @@ export function siteJsonLd() {
  * `ProfilePage` is the type Google uses to build a person knowledge panel, so
  * the about page carries it with the Person as its main entity.
  */
-export function profilePageJsonLd() {
+export function profilePageJsonLd(locale: Locale, name: string) {
   return {
     '@context': 'https://schema.org',
     '@type': 'ProfilePage',
-    '@id': `${siteConfig.url}/about/#profilepage`,
-    url: `${siteConfig.url}/about`,
-    name: `About ${profile.name}`,
+    '@id': `${url(locale, '/about')}/#profilepage`,
+    url: url(locale, '/about'),
+    inLanguage: localeMeta[locale].ogLocale.replace('_', '-'),
+    name,
     isPartOf: { '@id': SCHEMA_IDS.website },
     mainEntity: personRef,
     about: personRef,
   };
 }
 
-export function faqJsonLd(faqs: ReadonlyArray<{ question: string; answer: string }>) {
+export function faqJsonLd(locale: Locale, faqs: ReadonlyArray<{ question: string; answer: string }>) {
   return {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
+    inLanguage: localeMeta[locale].ogLocale.replace('_', '-'),
     mainEntity: faqs.map((faq) => ({
       '@type': 'Question',
       name: faq.question,
@@ -172,7 +166,11 @@ export function faqJsonLd(faqs: ReadonlyArray<{ question: string; answer: string
   };
 }
 
-export function breadcrumbJsonLd(trail: ReadonlyArray<{ name: string; path: string }>) {
+/** `path` values are language-neutral (`/projects`); the locale prefix is added here. */
+export function breadcrumbJsonLd(
+  locale: Locale,
+  trail: ReadonlyArray<{ name: string; path: string }>,
+) {
   return {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -180,7 +178,7 @@ export function breadcrumbJsonLd(trail: ReadonlyArray<{ name: string; path: stri
       '@type': 'ListItem',
       position: index + 1,
       name: crumb.name,
-      item: `${siteConfig.url}${crumb.path}`,
+      item: url(locale, crumb.path),
     })),
   };
 }
@@ -189,21 +187,21 @@ export function breadcrumbJsonLd(trail: ReadonlyArray<{ name: string; path: stri
  * A project with a public repository is `SoftwareSourceCode`; everything else
  * stays a `CreativeWork`. Both link back to the Person by `@id`.
  */
-export function projectJsonLd(project: Project) {
+export function projectJsonLd(locale: Locale, project: Project) {
   const hasRepo = Boolean(project.links.repo && isUsableHref(project.links.repo));
 
   return {
     '@context': 'https://schema.org',
     '@type': hasRepo ? 'SoftwareSourceCode' : 'CreativeWork',
-    '@id': `${siteConfig.url}/projects/${project.slug}/#project`,
+    '@id': `${url(locale, `/projects/${project.slug}`)}/#project`,
     name: project.title,
     headline: project.title,
     description: project.summary,
-    url: `${siteConfig.url}/projects/${project.slug}`,
+    url: url(locale, `/projects/${project.slug}`),
     author: personRef,
     creator: personRef,
     isPartOf: { '@id': SCHEMA_IDS.website },
-    inLanguage: 'en',
+    inLanguage: localeMeta[locale].ogLocale.replace('_', '-'),
     keywords: project.technologies.join(', '),
     about: project.categories,
     datePublished: `${project.year}-01-01`,
@@ -216,17 +214,18 @@ export function projectJsonLd(project: Project) {
   };
 }
 
-export function projectListJsonLd() {
+export function projectListJsonLd(locale: Locale, name: string, projects: Project[]) {
   return {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
-    '@id': `${siteConfig.url}/projects/#list`,
-    name: 'Engineering case studies',
+    '@id': `${url(locale, '/projects')}/#list`,
+    name,
+    inLanguage: localeMeta[locale].ogLocale.replace('_', '-'),
     numberOfItems: projects.length,
     itemListElement: projects.map((project, index) => ({
       '@type': 'ListItem',
       position: index + 1,
-      url: `${siteConfig.url}/projects/${project.slug}`,
+      url: url(locale, `/projects/${project.slug}`),
       name: project.title,
     })),
   };

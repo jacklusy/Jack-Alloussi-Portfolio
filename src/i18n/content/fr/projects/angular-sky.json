@@ -1,0 +1,107 @@
+{
+  "title": "Angular SKY — portail de demandes de congé des employés",
+  "summary": "Un portail interne Angular 17 rendu côté serveur : annuaire des employés, profil et consultation des demandes de congé, avec ~20 composants standalone, construit en trois semaines face à une API fictive.",
+  "description": "Un projet de formation frontend de la Sky Academy. Trois pages routées — tableau de bord d’accueil, profil et consultation des demandes — assemblées à partir d’une vingtaine de composants standalone Angular 17, rendues côté serveur via Angular Universal. Construit sans véritable backend RH, avec une API fictive publique comme source de données de substitution ; la documentation ci-dessous indique explicitement où cette substitution se voit.",
+  "role": "Développement frontend",
+  "timeframe": "Septembre – octobre 2024",
+  "metrics": [
+    {
+      "label": "Composants standalone",
+      "value": "~20"
+    },
+    {
+      "label": "Durée de développement",
+      "value": "3 semaines"
+    },
+    {
+      "label": "Rendu",
+      "value": "SSR + hydratation"
+    }
+  ],
+  "group": {
+    "label": "Sky Academy"
+  },
+  "caseStudy": {
+    "context": "Les employés ont besoin d’un portail en libre-service : consulter leur propre profil et leurs soldes de congés, parcourir un annuaire consultable de leurs collègues et suivre leurs demandes de vacances et de congés. C’est le problème classique du libre-service RH interne — plusieurs vues distinctes qui partagent beaucoup de langage visuel, reposant sur un schéma d’interaction de recherche, de filtrage, de sélection et de pagination qui revient sur plus d’un écran.",
+    "problem": "Il n’existait aucun véritable backend pour les données de demandes de congé sur lequel s’appuyer. L’exercice devait démontrer un frontend Angular complet et découpé en composants — routage, composants standalone, récupération de données HTTP, recherche et pagination côté client, SSR — alors que les données métier des demandes de congé n’avaient aucune source dont provenir.",
+    "approach": "La mise en page d’abord, les données ensuite, puis la finition. Initialiser Angular 17 avec Bootstrap et FontAwesome ; construire trois pages statiques avant d’écrire le moindre code de service ; restructurer en séparant pages/ (routées) et components/ (réutilisables) dès que la forme de l’application était claire ; brancher le routage et une barre de navigation partagée ; introduire les services HTTP en dernier, adossés à une API fictive publique ; puis consacrer les derniers commits à fiabiliser les états de chargement et les détails visuels plutôt qu’à ajouter des fonctionnalités.",
+    "architecture": {
+      "altText": "Trois pages routées (Home, Profile, Request), chacune composée de composants standalone, qui récupèrent leurs données via les services partagés UserService, PostService et PhotoService au-dessus de HttpClient avec withFetch(), rendues côté serveur par un hôte Express exécutant le CommonEngine d’Angular Universal, puis hydratées côté client."
+    },
+    "decisions": [
+      {
+        "decision": "Composants standalone d’Angular 17 partout, sans NgModules",
+        "alternatives": "Des modules fonctionnels classiques fondés sur NgModule",
+        "reasoning": "L’approche idiomatique d’Angular à l’époque, qui évite le code répétitif des NgModules pour une application de cette taille.",
+        "tradeoff": "Chaque composant répète son propre tableau imports — CommonModule, FormsModule et FontAwesomeModule sont visiblement dupliqués dans de nombreux fichiers."
+      },
+      {
+        "decision": "Dériver les liens de la barre de navigation de la table de routes plutôt que de les coder en dur",
+        "alternatives": "Un tableau d’éléments de navigation maintenu à la main dans le composant de la barre de navigation",
+        "reasoning": "Lire les routes directement depuis app.routes.ts empêche la navigation et le routage de diverger à mesure que des pages s’ajoutent.",
+        "tradeoff": "L’ordre et les libellés de la navigation dépendent de l’ordre de déclaration des routes, de sorte que les changements purement visuels doivent se faire dans la configuration du routeur."
+      },
+      {
+        "decision": "Une API REST fictive publique comme unique source de données",
+        "alternatives": "Des jeux de données locaux écrits à la main derrière des services nommés selon le domaine",
+        "reasoning": "Elle fournissait gratuitement des données REST de forme réaliste, adressables par identifiant et paginées, ce qui a permis de construire et de démontrer de bout en bout les vrais schémas frontend — récupération, recherche, pagination, sélection — sans qu’aucun backend n’existe.",
+        "tradeoff": "Le modèle de données de l’application ne correspond pas à son domaine. Des enregistrements génériques d’utilisateurs, de publications et de photos tiennent lieu d’employés, d’historique de demandes et d’avatars, et les véritables champs métier sont codés en dur dans l’état des composants à leurs côtés au lieu d’être modélisés."
+      },
+      {
+        "decision": "Recherche, filtrage et pagination côté client plutôt que requêtes pilotées par le serveur",
+        "alternatives": "Un filtrage côté serveur piloté par des paramètres de requête",
+        "reasoning": "L’API fictive ne prenait pas en charge une recherche arbitraire par sous-chaîne de nom, le filtrage devait donc avoir lieu après la récupération.",
+        "tradeoff": "Chaque opération de filtrage parcourt de nouveau l’intégralité du tableau en mémoire. Sans conséquence avec dix enregistrements ; cela ne tiendrait pas face à un véritable annuaire d’employés."
+      }
+    ],
+    "challenges": [
+      "Composer environ vingt composants en trois pages sans obtenir une arborescence plate et impossible à parcourir — résolu en restructurant très tôt en pages/ et components/, une fois les trois pages statiques en place mais avant que la logique de récupération de données ne rende ce déplacement coûteux.",
+      "Faire fonctionner HttpClient correctement avec le rendu côté serveur, ce qui a exigé le client fondé sur fetch plutôt que le XHR par défaut.",
+      "Garder la couche d’accès aux données mince : quatre composants avaient besoin des données d’utilisateurs et de photos, et si chacun les avait récupérées séparément, la logique HTTP aurait été dupliquée quatre fois."
+    ],
+    "outcomes": [
+      "Trois pages routées et rendues côté serveur : un tableau de bord d’accueil avec des tuiles de synthèse et un carrousel de photos, une page de profil avec historique et sections de demandes en attente, et une liste de demandes consultable, paginée et à sélection multiple.",
+      "Environ vingt composants standalone dans une hiérarchie claire entre routés et réutilisables, avec des services partagés réutilisés par quatre consommateurs au lieu d’une logique HTTP dupliquée.",
+      "Un build SSR de production qui génère à la fois les bundles navigateur et serveur, servi par un hôte Express avec hydratation côté client.",
+      "Une barre de navigation qui reste automatiquement synchronisée avec le routeur, parce qu’elle lit la table de routes plutôt qu’une liste parallèle."
+    ],
+    "retrospective": "La lacune honnête, c’est que le modèle métier n’a jamais été construit. L’interface affiche des soldes de congés, des statuts de demandes et un circuit d’approbation, mais ce qui est réellement récupéré, ce sont des données fictives génériques, les chiffres propres au domaine étant codés en dur dans les classes des composants au lieu d’être modélisés par une interface et un service VacationRequest. Un service fictif local avec des données calquées sur le domaine aurait rendu l’intention lisible dans le code, et pas seulement dans les libellés de l’interface. Il n’y a pas non plus de parcours de soumission de demande alors que l’application est articulée autour des demandes, pas d’authentification (la page de profil affiche toujours le même identifiant d’utilisateur codé en dur), et chacun des quelque vingt et un fichiers spec est un échafaudage de la CLI laissé intact — le test de fumée « should create » par défaut, sans aucune assertion sur la recherche, la sélection ou la pagination. La leçon plus large : une API fictive publique est excellente pour exercer les schémas HTTP et le rendu asynchrone, mais elle laisse discrètement la forme des données disponibles devenir la forme de l’application, au lieu que ce soit le domaine qui détermine ce qui est récupéré. Et un test généré qui passe est facile à laisser tel quel, car rien n’oblige à remarquer que « des tests existent » et « des tests testent quelque chose » sont deux affirmations différentes.",
+    "stackDetail": [
+      {
+        "category": "Langage et framework",
+        "items": [
+          "TypeScript 5.4",
+          "Angular 17.3 (composants standalone)",
+          "RxJS 7.8",
+          "zone.js"
+        ]
+      },
+      {
+        "category": "Rendu côté serveur",
+        "items": [
+          "@angular/platform-server",
+          "@angular/ssr (Angular Universal)",
+          "Hôte SSR Express 4.18",
+          "provideClientHydration()",
+          "HttpClient avec withFetch()"
+        ]
+      },
+      {
+        "category": "UI et style",
+        "items": [
+          "Bootstrap 5.3",
+          "@ng-bootstrap/ng-bootstrap",
+          "Bootstrap Icons",
+          "FontAwesome"
+        ]
+      },
+      {
+        "category": "Outillage",
+        "items": [
+          "Angular CLI 17.3",
+          "Karma + Jasmine (configurés, non exploités)"
+        ]
+      }
+    ]
+  }
+}

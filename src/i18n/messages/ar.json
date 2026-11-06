@@ -1,0 +1,378 @@
+{
+  "meta": {
+    "siteTitle": "Jack Alloussi — مهندس برمجيات",
+    "siteDescription": "مهندس برمجيات في عمّان، الأردن. TypeScript وNode.js وNestJS وReact وReact Native. منفتح على الانتقال للعمل في الخارج، وتنطبق عليه شروط البطاقة الزرقاء للاتحاد الأوروبي. التخرج في أكتوبر 2026.",
+    "keywords": [
+      "Jack Alloussi",
+      "Jack Alloussi مهندس برمجيات",
+      "Jack Alloussi بورتفوليو",
+      "Jack Alloussi مطوّر",
+      "مهندس برمجيات عمّان",
+      "مطوّر NestJS",
+      "مطوّر React Native",
+      "مهندس Backend بلغة TypeScript",
+      "مهندس برمجيات البطاقة الزرقاء الأوروبية"
+    ],
+    "ogAlt": "{name} — {role}",
+    "og": {
+      "badge": "بورتفوليو",
+      "headline": "مهندس برمجيات — TypeScript · NestJS · React · React Native",
+      "location": "عمّان، الأردن · البطاقة الزرقاء الأوروبية",
+      "graduation": "التخرج في أكتوبر 2026"
+    },
+    "pages": {
+      "about": {
+        "title": "نبذة عني",
+        "description": "المسار المهني وأسلوب العمل والتعليم والشهادات لـ Jack Alloussi — مهندس برمجيات في عمّان، الأردن، تنطبق عليه شروط البطاقة الزرقاء للاتحاد الأوروبي."
+      },
+      "experience": {
+        "title": "الخبرة",
+        "description": "المسار المهني لـ Jack Alloussi — مهندس برمجيات في CSC Beyond، والوظائف السابقة، والتقنيات المستخدمة، وسياق العمل السرّي مع العملاء."
+      },
+      "contact": {
+        "title": "التواصل",
+        "description": "تواصل مع Jack Alloussi — البريد الإلكتروني والهاتف وLinkedIn، والجاهزية للانتقال إلى ألمانيا بالبطاقة الزرقاء للاتحاد الأوروبي."
+      },
+      "projects": {
+        "title": "المشاريع",
+        "description": "دراسات حالة هندسية من إعداد Jack Alloussi — واجهة برمجية متعددة المستأجرين للمخزون بـ NestJS، وتطبيق React Native يعمل دون اتصال أولًا، وأدوات PDF تعمل داخل المتصفح، ومنصة إشعارات جامعية، وغيرها."
+      },
+      "notFound": { "title": "الصفحة غير موجودة" },
+      "projectNotFound": "المشروع غير موجود",
+      "projectFallback": "مشروع"
+    }
+  },
+
+  "a11y": {
+    "skipToContent": "تخطَّ إلى المحتوى"
+  },
+
+  "nav": {
+    "home": "الرئيسية",
+    "about": "نبذة",
+    "projects": "المشاريع",
+    "experience": "الخبرة",
+    "contact": "التواصل",
+    "primary": "التنقل الرئيسي",
+    "mobilePrimary": "التنقل الرئيسي (الجوال)",
+    "siteNavigation": "التنقل في الموقع",
+    "openMenu": "فتح القائمة",
+    "closeMenu": "إغلاق القائمة",
+    "shortName": "Jack A."
+  },
+
+  "actions": {
+    "hireMe": "تواصل معي",
+    "hireMeAria": "تواصل معي — الانتقال إلى صفحة التواصل",
+    "downloadCv": "السيرة الذاتية (EN)",
+    "contactShort": "تواصل",
+    "contactForm": "نموذج التواصل",
+    "viewProjects": "عرض المشاريع",
+    "discussRole": "مناقشة وظيفة",
+    "tryAgain": "حاول مرة أخرى",
+    "copy": "نسخ",
+    "copied": "تم النسخ",
+    "exploreAllProjects": "استكشاف كل المشاريع"
+  },
+
+  "theme": {
+    "switchToLight": "التبديل إلى الوضع الفاتح",
+    "switchToDark": "التبديل إلى الوضع الداكن",
+    "toggle": "تبديل نمط الألوان"
+  },
+
+  "language": {
+    "label": "اللغة",
+    "choose": "اختيار اللغة",
+    "current": "اللغة الحالية: {language}"
+  },
+
+  "labels": {
+    "present": "الآن",
+    "expected": "متوقع",
+    "inProgress": "قيد التنفيذ",
+    "earned": "مكتملة",
+    "status": {
+      "shipped": "منشور",
+      "in-progress": "قيد التنفيذ",
+      "archived": "مؤرشف"
+    },
+    "dateRange": "{start} — {end}",
+    "dateRangeExpected": "{start} — {end} ({expected})",
+    "moreCount": "+{count}"
+  },
+
+  "categories": {
+    "Backend": "الواجهة الخلفية",
+    "Architecture": "البنية المعمارية",
+    "DevOps": "DevOps",
+    "Frontend": "الواجهة الأمامية",
+    "Mobile": "الجوال",
+    "Full-stack": "Full Stack"
+  },
+
+  "footer": {
+    "tagline": "{role} — Next.js وTypeScript وTailwind.",
+    "availability": "{status} · البطاقة الزرقاء الأوروبية",
+    "navigation": "التنقل",
+    "connect": "التواصل",
+    "rights": "© {year} {name}"
+  },
+
+  "hero": {
+    "available": "جاهز للانتقال",
+    "tagline": "Full Stack يميل إلى الواجهة الخلفية — TypeScript وNestJS وReact وReact Native — أبني أنظمة ويب وواجهات API وتطبيقات جوال لعملاء في الولايات المتحدة، من عمّان.",
+    "statusPanel": "لوحة الحالة",
+    "statusAria": "الجاهزية وتصريح العمل",
+    "meta": {
+      "location": { "label": "الموقع", "value": "عمّان، الأردن" },
+      "availability": { "label": "الجاهزية", "value": "مستعد للانتقال" },
+      "authorisation": { "label": "تصريح العمل", "value": "البطاقة الزرقاء الأوروبية" },
+      "graduation": { "label": "التخرج", "value": "أكتوبر 2026" }
+    },
+    "chips": {
+      "apps": "أكثر من 15 تطبيق جوال منشور",
+      "locks": "50 عملية كتابة متزامنة ← فائز واحد"
+    },
+    "proof": {
+      "years": "سنوات في بيئات الإنتاج",
+      "apps": "تطبيقات جوال منشورة",
+      "caseStudies": "دراسات حالة موثَّقة",
+      "technologies": "تقنيات مستخدمة"
+    },
+    "scroll": "مرِّر",
+    "scrollAria": "مرِّر إلى قسم النبذة"
+  },
+
+  "about": {
+    "eyebrow": "نبذة · 01",
+    "title": "أنظمة متينة منذ التصميم",
+    "description": "تسليم أعمال للعملاء عبر حزم تقنية متعددة — مع تدريب رسمي في Clean Architecture وDDD وSOLID.",
+    "portraitCaption": "عمّان · الأردن",
+    "relocation": "الانتقال: {note}",
+    "moments": {
+      "label": "لحظات",
+      "intro": "Orange Coding Academy — العام المكثّف الذي شكّل طريقة عملي تحت ضغط التسليم الحقيقي.",
+      "alts": [
+        "Jack Alloussi مع دفعة Orange Coding Academy",
+        "لحظة من برنامج Orange Coding Academy",
+        "Jack Alloussi خلال Orange Coding Academy",
+        "جلسة ورشة عمل في Orange Coding Academy"
+      ]
+    }
+  },
+
+  "skills": {
+    "eyebrow": "الحزمة التقنية · 02",
+    "title": "مصفوفة التقنيات الأساسية",
+    "description": "كيف أنجز عملي — مجمَّعة حسب مجال الاستخدام، لا بنسب مئوية للتباهي.",
+    "bands": {
+      "backend": "الواجهة الخلفية واللغات",
+      "clients": "الواجهة الأمامية والجوال",
+      "platform": "البيانات والبنية التحتية",
+      "practices": "الممارسات الهندسية"
+    }
+  },
+
+  "projectsPreview": {
+    "eyebrow": "المشاريع · 03",
+    "title": "عمليات النشر التقنية",
+    "description": "يُعرض كل مشروع في صورة مشكلة وبنية وقرارات ونتيجة — بما في ذلك ما لم ينجح. تبقى هوية العملاء سرّية، أما العمل الهندسي فلا.",
+    "mostUsed": "الأكثر استخدامًا"
+  },
+
+  "experiencePreview": {
+    "eyebrow": "المسار · 04",
+    "title": "محطات المسار المهني",
+    "description": "التواريخ مطابقة للسيرة الذاتية. أعمال العملاء مذكورة بصيغة عامة عن قصد.",
+    "cta": "المسار المهني كاملًا",
+    "alsoOn": "وفي <link>النبذة</link> أيضًا."
+  },
+
+  "educationSection": {
+    "eyebrow": "التعليم · 05",
+    "title": "تعليم متين",
+    "description": "مؤهلات رسمية تهمّ في الاعتراف بالشهادة الجامعية لأغراض البطاقة الزرقاء للاتحاد الأوروبي.",
+    "education": "التعليم",
+    "certifications": "الشهادات"
+  },
+
+  "contactSection": {
+    "eyebrow": "التواصل · 06",
+    "title": "لنبنِ معًا ما هو قادم",
+    "description": "منفتح على وظائف الواجهة الخلفية أو Full Stack في ألمانيا وبقية دول الاتحاد الأوروبي. البريد الإلكتروني هو الأفضل — النموذج اختياري."
+  },
+
+  "aboutPage": {
+    "eyebrow": "نبذة",
+    "title": "Jack Alloussi — بناء أنظمة إنتاجية عبر حزم تقنية متعددة",
+    "lead": "مهندس برمجيات في عمّان، الأردن. Full Stack يميل إلى الواجهة الخلفية عبر TypeScript وNestJS وLaravel وReact وReact Native — مع {count} دراسة حالة موثَّقة تغطي البنية المعمارية والمفاضلات والأجزاء التي لم تنجح.",
+    "howIWork": "كيف أعمل",
+    "howIWorkBody": "أفضّل الحدود الواضحة والعقود المنمَّطة والقرارات القابلة للتراجع. ويشكّل التدريب الرسمي في Clean Architecture وDDD وSOLID طريقة هيكلتي لخدمات NestJS وLaravel — دون إجراءات شكلية لا حاجة لها.",
+    "spokenLanguages": "اللغات المحكية: {languages}.",
+    "experienceTimeline": "المسار المهني",
+    "educationCertifications": "التعليم والشهادات",
+    "faqEyebrow": "أسئلة",
+    "faqTitle": "الأسئلة الشائعة",
+    "faq": [
+      {
+        "question": "من هو Jack Alloussi؟",
+        "answer": "مهندس برمجيات مقيم في عمّان، الأردن، يعمل في CSC Beyond على تطوير برمجيات مخصّصة لعملاء في الولايات المتحدة عبر منصات الويب وواجهات API والجوال. Full Stack يميل إلى الواجهة الخلفية: TypeScript وNestJS وPHP وLaravel، وReact وNext.js على الويب، وReact Native على الجوال."
+      },
+      {
+        "question": "على ماذا يعمل Jack Alloussi؟",
+        "answer": "على خدمات واجهة خلفية إنتاجية بلغتي TypeScript وPHP فوق PostgreSQL وRedis، وواجهات أمامية بـ React وNext.js، وتطبيقات جوال متعددة المنصات — نُشر منها أكثر من خمسة عشر تطبيقًا على Apple App Store وGoogle Play باستخدام React Native CLI وExpo. ومن أعماله الشخصية واجهة برمجية متعددة المستأجرين للمخزون مبنية على ضمانات تزامن قابلة للإثبات، وتطبيق React Native يعمل دون اتصال أولًا، وأدوات PDF تعمل داخل المتصفح."
+      },
+      {
+        "question": "هل Jack Alloussi متاح للانتقال إلى ألمانيا أو الاتحاد الأوروبي؟",
+        "answer": "نعم. منفتح على وظائف الواجهة الخلفية أو Full Stack في ألمانيا وبقية دول الاتحاد الأوروبي، ويمكنه الانتقال اعتبارًا من أكتوبر 2026 بعد التخرج، وتنطبق عليه شروط البطاقة الزرقاء للاتحاد الأوروبي."
+      },
+      {
+        "question": "ما التقنيات التي يتخصص فيها Jack Alloussi؟",
+        "answer": "TypeScript وNode.js وNestJS وLaravel وReact وNext.js وReact Native وExpo وPostgreSQL وRedis وDocker — بتطبيق Clean Architecture وDomain-Driven Design حيث تبرّر المشكلة هذا الجهد."
+      }
+    ]
+  },
+
+  "experiencePage": {
+    "eyebrow": "المسار",
+    "title": "محطات المسار المهني",
+    "description": "سجلّ متصل بلا فجوات ومطابق للسيرة الذاتية. وسِّع أي وظيفة لعرض الإنجازات والتقنيات. أعمال العملاء مذكورة بصيغة عامة عن قصد."
+  },
+
+  "contactPage": {
+    "eyebrow": "التواصل",
+    "title": "لنتحدث عن وظيفة",
+    "description": "تفضّل البريد الإلكتروني؟ استخدم العنوان أدناه — النموذج اختياري.",
+    "intro": "منفتح على وظائف الواجهة الخلفية أو Full Stack في ألمانيا وبقية دول الاتحاد الأوروبي. المقر: {location} ({timezone}).",
+    "email": "البريد الإلكتروني",
+    "phone": "الهاتف",
+    "workAuthorisation": "تصريح العمل"
+  },
+
+  "projectsPage": {
+    "eyebrow": "المشاريع",
+    "title": "دراسات حالة هندسية",
+    "description": "{count, plural, one {نظام واحد} other {# أنظمة}}، يُعرض كل منها في صورة مشكلة وبنية وقرارات ونتيجة — بما في ذلك الأجزاء التي لم تنجح. تبقى هوية العملاء سرّية، أما العمل الهندسي فلا.",
+    "empty": "لا توجد مشاريع تطابق هذا المرشِّح. أزِله لعرض كل شيء."
+  },
+
+  "projectsFilter": {
+    "searchLabel": "البحث عن مشروع بالاسم",
+    "searchPlaceholder": "ابحث عن مشروع بالاسم…",
+    "countFiltered": "{shown} من {total}",
+    "countAll": "{total, plural, one {# مشروع} other {# مشاريع}}",
+    "discipline": "التخصص",
+    "stack": "الحزمة التقنية",
+    "all": "الكل"
+  },
+
+  "projectCard": {
+    "caseStudy": "دراسة حالة",
+    "liveSite": "الموقع المنشور لمشروع {title}",
+    "repository": "مستودع مشروع {title}"
+  },
+
+  "projectPage": {
+    "breadcrumb": "مسار التنقل",
+    "adjacent": "المشاريع المجاورة",
+    "previous": "السابق",
+    "next": "التالي",
+    "confidential": "أعمال عملاء سرّية",
+    "training": "مشروع تدريبي",
+    "visitLive": "زيارة الموقع المنشور",
+    "viewSource": "عرض الشيفرة المصدرية",
+    "getInTouch": "تواصل معي",
+    "demoAccess": "حسابات العرض التجريبي",
+    "contents": "المحتويات",
+    "onThisPage": "في هذه الصفحة",
+    "stack": "الحزمة التقنية",
+    "discussWork": "ناقش هذا العمل",
+    "toc": {
+      "problem": "المشكلة",
+      "approach": "المنهج",
+      "architecture": "البنية المعمارية",
+      "decisions": "القرارات",
+      "outcome": "النتيجة",
+      "retrospective": "نظرة استرجاعية",
+      "stack": "الحزمة التقنية",
+      "interface": "الواجهة"
+    },
+    "theProblem": "المشكلة",
+    "challenge": "التحدي",
+    "approachHeading": "المنهج",
+    "technicalApproach": "المنهج التقني",
+    "hardParts": "الأجزاء الصعبة",
+    "architectureHeading": "البنية المعمارية",
+    "decisionsHeading": "القرارات والمفاضلات",
+    "insteadOf": "بدلًا من",
+    "why": "لماذا",
+    "tradeoff": "المفاضلة",
+    "outcomeHeading": "النتيجة",
+    "retrospectiveHeading": "ما الذي كنت سأفعله بشكل مختلف",
+    "stackDetail": "الحزمة التقنية بالتفصيل",
+    "summaryOnly": "مشروع مختصر — ستُضاف دراسة الحالة الكاملة عند توفّر تفاصيل قابلة للنشر.",
+    "interface": "الواجهة"
+  },
+
+  "contactForm": {
+    "name": "الاسم",
+    "namePlaceholder": "اسمك",
+    "email": "البريد الإلكتروني",
+    "emailPlaceholder": "you@company.com",
+    "subject": "الموضوع",
+    "subjectPlaceholder": "وظيفة، أو مكالمة تعارف، أو سؤال",
+    "message": "الرسالة",
+    "messagePlaceholder": "نبذة قصيرة عن الوظيفة أو عمّا تودّ مناقشته…",
+    "honeypot": "الموقع الإلكتروني",
+    "send": "إرسال الرسالة",
+    "sending": "جارٍ الإرسال…",
+    "success": "تم إرسال الرسالة. سأرد عليك قريبًا.",
+    "validation": {
+      "nameRequired": "الاسم مطلوب",
+      "nameMin": "يجب ألا يقل الاسم عن حرفين",
+      "nameMax": "يجب ألا يزيد الاسم على 100 حرف",
+      "emailRequired": "البريد الإلكتروني مطلوب",
+      "emailInvalid": "أدخل عنوان بريد إلكتروني صالحًا",
+      "subjectRequired": "الموضوع مطلوب",
+      "subjectMin": "يجب ألا يقل الموضوع عن 3 أحرف",
+      "subjectMax": "يجب ألا يزيد الموضوع على 120 حرفًا",
+      "messageRequired": "الرسالة مطلوبة",
+      "messageMin": "يجب ألا تقل الرسالة عن 20 حرفًا",
+      "messageMax": "يجب ألا تزيد الرسالة على 5000 حرف"
+    },
+    "errors": {
+      "rate_limited": "عدد الطلبات كبير جدًا. حاول لاحقًا أو راسلني مباشرة عبر البريد الإلكتروني.",
+      "invalid_json": "تعذّرت قراءة الطلب. حاول مرة أخرى.",
+      "validation_failed": "فشل التحقق. راجع الحقول وحاول مرة أخرى.",
+      "unavailable": "خدمة إرسال نموذج التواصل غير متاحة مؤقتًا. راسل {email} مباشرة.",
+      "misconfigured": "نموذج التواصل غير مُعدّ بشكل صحيح. راسل {email} مباشرة.",
+      "send_failed": "تعذّر إرسال رسالتك. راسلني مباشرة عبر البريد الإلكتروني.",
+      "generic": "حدث خطأ ما. راسلني مباشرة عبر البريد الإلكتروني.",
+      "network": "خطأ في الشبكة. راسل {email} بدلًا من ذلك."
+    }
+  },
+
+  "errorPage": {
+    "eyebrow": "خطأ",
+    "title": "حدث خطأ ما",
+    "description": "تعذّر عرض الصفحة. يمكنك المحاولة مرة أخرى أو الانتقال إلى صفحة تعمل."
+  },
+
+  "notFoundPage": {
+    "eyebrow": "404",
+    "title": "هذه الصفحة غير موجودة",
+    "description": "ربما نُقلت الصفحة. جرّب المشاريع أو الخبرة أو التواصل."
+  },
+
+  "rail": {
+    "label": "أقسام الصفحة",
+    "hero": "المقدمة",
+    "about": "نبذة",
+    "skills": "المهارات",
+    "projects": "المشاريع",
+    "experience": "الخبرة",
+    "education": "التعليم",
+    "contact": "التواصل"
+  }
+}

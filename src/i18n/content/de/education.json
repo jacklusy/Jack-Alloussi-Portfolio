@@ -1,0 +1,15 @@
+{
+  "entries": {
+    "bsc-se": {
+      "degree": "Bachelor of Science (BSc)",
+      "field": "Software Engineering",
+      "location": "Amman, Jordanien",
+      "note": "Studium 2022–2023 unterbrochen, um das Full-Stack-Programm der Orange Coding Academy abzuschließen."
+    },
+    "orange-academy": {
+      "degree": "Full-Stack-Entwicklungsprogramm",
+      "location": "Amman, Jordanien",
+      "note": "Siebenmonatiges Intensivprogramm in JavaScript, PHP, Laravel, React und Redux, gefolgt von einem einmonatigen Praktikum in einem Unternehmen."
+    }
+  }
+}

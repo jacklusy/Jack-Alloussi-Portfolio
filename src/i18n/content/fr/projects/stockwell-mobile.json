@@ -1,0 +1,117 @@
+{
+  "title": "Stockwell Mobile — client d’entrepôt offline-first",
+  "summary": "Une application d’entrepôt React Native avec un moteur de synchronisation hors ligne développé sur mesure : mutations en delta, rejeu exactly-once et résolution manuelle des conflits — 105 tests, seuil de couverture de 90 %+ sur le module de synchronisation.",
+  "description": "Un client Android pour les opérateurs d’entrepôt qui travaillent là où la connectivité est par nature peu fiable — rayonnages métalliques, chambres froides, quais de chargement. Le chemin d’écriture hors ligne ne touche jamais le réseau. Chaque mutation mise en file est un delta et non une valeur absolue, ce qui fait de la nouvelle tentative sur une nouvelle base une opération correcte plutôt qu’une heuristique.",
+  "role": "Mobile Engineer",
+  "timeframe": "2026",
+  "metrics": [
+    {
+      "label": "Tests réussis",
+      "value": "105 / 105"
+    },
+    {
+      "label": "Seuil de couverture du module de synchronisation",
+      "value": "90% / 70%"
+    },
+    {
+      "label": "Latence d’écriture hors ligne",
+      "value": "Aucun réseau sur le chemin d’écriture"
+    }
+  ],
+  "group": {
+    "label": "Stockwell"
+  },
+  "caseStudy": {
+    "context": "Les mouvements de stock d’un entrepôt se font là où la connectivité défaille par nature, sur des terminaux Android bon marché, manipulés par des personnes gantées, sous un éclairage éblouissant ou dans des allées sombres, avec une seule main libre. Un client classique qui envoie une requête par action et affiche un indicateur de chargement échoue ici à grands frais : l’indicateur reste figé parce que le Wi-Fi se dit connecté sans aucune route vers l’extérieur, l’opérateur ne sait pas si l’ajustement est bien passé, et pour continuer à travailler il note le comptage sur papier et le ressaisit plus tard.",
+    "problem": "Dès que le papier entre dans la boucle, le système de référence s’écarte de la réalité physique et chaque chiffre en aval hérite de l’erreur. Mais la capacité hors ligne ne suffit pas : dès qu’un client met des écritures en file localement, quatre nouveaux problèmes apparaissent. Le rejeu : l’application est tuée en pleine émission et renvoie au redémarrage, ce qui enregistre l’ajustement deux fois. Le conflit : deux opérateurs comptent le même emplacement hors ligne et l’un écrase l’autre sans bruit. L’ordre : une récupération (pull) lancée avant la fin d’une émission (push) laisse une valeur serveur obsolète écraser un travail local non envoyé. Les messages empoisonnés : une mutation mal formée est retentée indéfiniment et bloque tout ce qui se trouve derrière elle dans la file. Chacun de ces problèmes produit des quantités d’inventaire fausses plutôt que des plantages, ce qui les rend bien plus dangereux — ils ne déclenchent jamais d’alerte, ils corrompent discrètement le registre.",
+    "approach": "Mettre en file des deltas, jamais des valeurs absolues — la décision au meilleur effet de levier du code, car elle rend la nouvelle tentative sur une nouvelle base correcte plutôt qu’approximative. Faire de « push avant pull » un invariant non négociable : énoncé dans un commentaire, codé dans la machine à états et vérifié dans les tests par un journal de phases, pour qu’il survive aux refactorisations. Construire le moteur de synchronisation soi-même plutôt qu’adopter une bibliothèque toute faite, car le contrat côté serveur avec lequel il négocie — clés d’idempotence, conflits de version optimistes, curseurs incrémentaux — a été conçu avec lui. Résoudre les conflits de stock manuellement, en affichant côte à côte la valeur locale et la valeur du serveur, plutôt que de désigner un gagnant automatiquement.",
+    "architecture": {
+      "altText": "Un client React Native offline-first : les écritures de l’interface arrivent sous forme de deltas dans une file de mutations SQLite locale via Drizzle ; un moteur de synchronisation à vol unique (single-flight) envoie les deltas en file avec des clés d’idempotence avant d’exécuter une récupération par curseur incrémental ; les conflits de version mènent à un écran de résolution manuelle qui propose de réessayer sur la nouvelle base ou d’abandonner, et les éléments dont les tentatives sont épuisées deviennent des dead letters consultables dans un Sync Centre."
+    },
+    "decisions": [
+      {
+        "decision": "Mettre en file des deltas plutôt que des quantités absolues",
+        "alternatives": "Stocker la quantité finale souhaitée dans chaque mutation en file",
+        "reasoning": "Un delta peut être rejoué sur une base modifiée en gardant le même sens, ce qui rend la nouvelle tentative sur une nouvelle base correcte, le rejeu sûr et les règles de conflit simples à énoncer.",
+        "tradeoff": "Le client ne peut jamais exprimer « fixer exactement à N » sans une opération distincte, et le contrat serveur doit accepter les deltas comme des opérations à part entière."
+      },
+      {
+        "decision": "Résolution manuelle des conflits pour le stock, plutôt qu’une fusion automatique",
+        "alternatives": "Last-write-wins, ou fusion automatique en faveur du serveur",
+        "reasoning": "Un comptage physique est une preuve sur le monde réel. Écarter automatiquement le comptage d’un opérateur au profit de celui d’un autre détruit cette preuve sans bruit.",
+        "tradeoff": "Cela coûte du temps aux opérateurs et ne passe pas à l’échelle pour les volumes importants — une journée de divergences sur des centaines de SKU exigerait un outillage de résolution par lots qui n’existe pas."
+      },
+      {
+        "decision": "Un moteur de synchronisation développé sur mesure plutôt qu’une bibliothèque de synchronisation du commerce",
+        "alternatives": "WatermelonDB ou un framework de synchronisation clés en main comparable",
+        "reasoning": "Le contrat d’idempotence, les conflits de version optimistes et les curseurs incrémentaux côté serveur ont été conçus parce qu’un client mobile y rejouerait une file hors ligne. Maîtriser les deux moitiés a rendu la garantie exactly-once vérifiable plutôt que supposée.",
+        "tradeoff": "Nettement plus de code à écrire, tester et maintenir que d’adopter une bibliothèque qui résout le cas général."
+      },
+      {
+        "decision": "Synchronisation en arrière-plan livrée explicitement en best-effort",
+        "alternatives": "Présenter la synchronisation en arrière-plan comme une garantie fiable",
+        "reasoning": "L’optimisation de batterie d’Android n’honore aucune promesse d’exécution en arrière-plan dans les délais ; l’application indique donc ce qu’elle fait réellement plutôt que d’annoncer une planification qu’elle ne peut pas tenir.",
+        "tradeoff": "Cela coûte une ligne de fonctionnalité assurée, en échange de ne pas mentir à l’opérateur sur le moment où sa file se vide."
+      }
+    ],
+    "challenges": [
+      "Un bug latent d’ordre d’initialisation a survécu à plusieurs jalons : le handle de base de données était publié avant la fin des migrations, de sorte que le provider de synchronisation pouvait toucher des tables qui n’existaient pas encore, et que des appelants concurrents pouvaient chacun ouvrir la base.",
+      "Suivre une version récente de React Native — la bibliothèque de caméra ne compilait pas contre la 0.86 sur Android, problème résolu par une version épinglée et un patch documenté, en plus d’une transformation Babel manquante.",
+      "Concevoir pour les gants et l’éblouissement plutôt que pour des tableaux de bord : un liseré d’état de synchronisation sur le bord de chaque ligne, qui associe toujours la couleur à une icône, de sorte que la couleur ne soit jamais le seul vecteur de sens.",
+      "Refaire sans cesse l’arbitrage de périmètre en faveur de la profondeur sur la synchronisation plutôt que de la largeur, et rédiger une justification honnête pour chaque report afin qu’il se lise comme une décision et non comme un oubli."
+    ],
+    "outcomes": [
+      "Une boucle opérateur complète : authentification biométrique, choix de l’entrepôt, liste d’inventaire avec recherche, ajustement de stock optimiste, scan de codes-barres avec saisie manuelle du SKU en secours, et un Sync Centre qui expose les éléments en attente, en échec, en conflit et mis en dead letter.",
+      "105 tests répartis en 26 suites réussis, avec un seuil de 90 % d’instructions propre au module de synchronisation plutôt qu’un seuil global unique, qui serait soit trop bas pour le protéger, soit trop haut pour être tenu ailleurs.",
+      "Les cinq suites obligatoires de synchronisation hors ligne réussies, dont la livraison exactly-once en cas de rejeu, la nouvelle tentative après conflit sur une nouvelle base et la reprise après une synchronisation interrompue sans mouvement en double.",
+      "Un design system sur mesure dont les rapports de contraste sont garantis par un test unitaire plutôt que par une vérification visuelle, et des composants qui lisent des tokens sémantiques sans aucune condition de thème."
+    ],
+    "retrospective": "Nommer les tests d’après des affirmations s’est révélé la pratique à conserver — un test intitulé « idempotent replay: double push, one server movement » est à la fois une spécification, un garde-fou contre les régressions et une preuve, et une affirmation qui correspond à un nom de test ne peut pas devenir fausse en silence. Le bug d’initialisation a donné la leçon la plus tranchante : il existait parce que les tests d’intégration injectent une base déjà migrée, et des tests qui simulent la partie difficile ne testent pas la partie difficile. Un test exerçant un démarrage à froid, sans migration, l’aurait détecté dès le jalon qui l’a introduit. Deux défaillances de planning que je corrigerais : réserver l’accès aux appareils physiques dès le début plutôt qu’à la fin, car les objectifs de performance et d’accessibilité avaient été écrits tôt et à juste titre, puis n’ont pas pu être vérifiés, laissant deux sections invérifiables dans la documentation. Et une stratégie last-write-wins figure dans le code, implémentée et entièrement testée mais utilisée nulle part — elle mérite sa place comme contraste explicite avec la stratégie manuelle, mais un relecteur pourrait à juste titre y voir du code mort assorti d’une justification. Côté limites : la conception suppose un seul rédacteur par zone, la récupération complète n’est pas partitionnée, la file de mutations n’a ni plafond ni politique d’archivage, et les conflits se résolvent un par un. Le principe que je retiens est le principe général : quand un système peut se tromper en silence, il faut dépenser le code supplémentaire pour qu’il soit soit correct, soit visible de façon bruyante. Voir des dead letters apparaître dans le Sync Centre est une moins bonne UX que de les abandonner en silence — et une bien meilleure ingénierie.",
+    "stackDetail": [
+      {
+        "category": "Plateforme",
+        "items": [
+          "React Native 0.86 (Android ; iOS reporté)",
+          "TypeScript 5.8",
+          "Hermes"
+        ]
+      },
+      {
+        "category": "Persistance locale",
+        "items": [
+          "SQLite via op-sqlite",
+          "Drizzle ORM avec migrations",
+          "File de mutations + stockage des dead letters"
+        ]
+      },
+      {
+        "category": "Moteur de synchronisation",
+        "items": [
+          "Mutations en delta avec clés d’idempotence",
+          "Moteur à vol unique, invariant push avant pull",
+          "Récupération par curseur incrémental",
+          "Stratégie de conflit manuelle (réessayer sur la nouvelle base / abandonner / quantité manuelle)",
+          "Deltas WebSocket derrière un flag"
+        ]
+      },
+      {
+        "category": "Interface et appareil",
+        "items": [
+          "Listes virtualisées avec FlashList",
+          "Scan de codes-barres avec Vision Camera et saisie manuelle en secours",
+          "Déverrouillage biométrique",
+          "Système de tokens sémantiques clair/sombre"
+        ]
+      },
+      {
+        "category": "Qualité",
+        "items": [
+          "Jest — 105 tests, 26 suites",
+          "Seuils de couverture par répertoire",
+          "Test automatisé des rapports de contraste",
+          "Sentry avec masquage des données personnelles (PII)"
+        ]
+      }
+    ]
+  }
+}

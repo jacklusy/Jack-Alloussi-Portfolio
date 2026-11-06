@@ -1,13 +1,14 @@
 'use client';
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
+import { Link, usePathname } from '@/i18n/navigation';
 import { useEffect, useId, useRef, useState, useSyncExternalStore } from 'react';
 import { createPortal } from 'react-dom';
 import { ArrowUpRight, Menu, X } from 'lucide-react';
 import { mainNav } from '@/config/navigation';
-import { profile } from '@/content/profile';
 import { Container } from '@/components/layout/Container';
+import { DirIcon } from '@/components/ui/DirIcon';
+import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher';
 import { ButtonLink } from '@/components/ui/ButtonLink';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { useScrollLock } from '@/hooks/useScrollLock';
@@ -17,7 +18,14 @@ import { cn } from '@/lib/utils';
 const FOCUSABLE =
   'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
-export function Header() {
+export type HeaderProps = {
+  name: string;
+  cv: { href: string; filename: string };
+  socials: Array<{ id: string; label: string; href: string; external: boolean }>;
+};
+
+export function Header({ name, cv, socials: allSocials }: HeaderProps) {
+  const t = useTranslations();
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [menuPath, setMenuPath] = useState(pathname);
@@ -105,7 +113,7 @@ export function Header() {
     return () => window.removeEventListener('keydown', onKey);
   }, [isOpen]);
 
-  const socials = profile.socials.filter((social) => isUsableHref(social.href));
+  const socials = allSocials.filter((social) => isUsableHref(social.href));
 
   const drawer = (
     <div
@@ -114,17 +122,17 @@ export function Header() {
       className="fixed inset-0 z-[var(--z-drawer)] flex h-[100dvh] flex-col bg-[var(--color-bg)] md:hidden"
       role="dialog"
       aria-modal="true"
-      aria-label="Site navigation"
+      aria-label={t('nav.siteNavigation')}
     >
       <div className="flex h-[var(--header-height)] shrink-0 items-center justify-between border-b border-[var(--color-border)] px-4 pt-[env(safe-area-inset-top)] sm:px-6">
         <span className="font-[family-name:var(--font-syne)] text-sm font-semibold tracking-[0.08em] text-[var(--color-text)] uppercase">
-          {profile.name}
+          {name}
         </span>
         <button
           ref={closeRef}
           type="button"
-          className="-mr-2 inline-flex min-h-11 min-w-11 touch-manipulation items-center justify-center rounded-[var(--radius-md)] text-[var(--color-text)] transition-colors hover:bg-[var(--color-surface-sunken)]"
-          aria-label="Close menu"
+          className="-me-2 inline-flex min-h-11 min-w-11 touch-manipulation items-center justify-center rounded-[var(--radius-md)] text-[var(--color-text)] transition-colors hover:bg-[var(--color-surface-sunken)]"
+          aria-label={t('nav.closeMenu')}
           onClick={close}
         >
           <X className="h-5 w-5" aria-hidden />
@@ -132,7 +140,7 @@ export function Header() {
       </div>
 
       <div className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain px-4 pt-6 pb-[max(2rem,env(safe-area-inset-bottom))] sm:px-6">
-        <nav className="flex flex-col gap-1" aria-label="Mobile primary">
+        <nav className="flex flex-col gap-1" aria-label={t('nav.mobilePrimary')}>
           {mainNav.map((item, index) => {
             const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
             return (
@@ -148,7 +156,7 @@ export function Header() {
                 aria-current={isActive ? 'page' : undefined}
               >
                 <span className="font-[family-name:var(--font-syne)] text-xl font-semibold tracking-tight">
-                  {item.label}
+                  {t(`nav.${item.key}`)}
                 </span>
                 <span
                   className="font-mono text-[10px] tracking-[0.14em] text-[var(--color-text-subtle)]"
@@ -163,11 +171,15 @@ export function Header() {
 
         <div className="mt-8 flex flex-col gap-3">
           <ButtonLink href="/contact" variant="primary">
-            Hire me
+            {t('actions.hireMe')}
           </ButtonLink>
-          <ButtonLink href={profile.cv.href} variant="secondary" download={profile.cv.filename}>
-            Download CV
+          <ButtonLink href={cv.href} variant="secondary" download={cv.filename}>
+            {t('actions.downloadCv')}
           </ButtonLink>
+        </div>
+
+        <div className="mt-8">
+          <LanguageSwitcher variant="segmented" />
         </div>
 
         <div className="mt-auto pt-10">
@@ -182,7 +194,7 @@ export function Header() {
                     target={social.external ? '_blank' : undefined}
                   >
                     {social.label}
-                    {social.external ? <ArrowUpRight className="h-3 w-3" aria-hidden /> : null}
+                    {social.external ? <DirIcon icon={ArrowUpRight} className="h-3 w-3" /> : null}
                   </a>
                 </li>
               ))}
@@ -210,11 +222,11 @@ export function Header() {
           href="/"
           className="min-w-0 shrink font-[family-name:var(--font-syne)] text-sm font-semibold tracking-[0.08em] text-[var(--color-text)] uppercase transition-colors hover:text-[var(--color-brand)] sm:text-base"
         >
-          <span className="sm:hidden">Jack A.</span>
-          <span className="hidden sm:inline">{profile.name}</span>
+          <span className="sm:hidden">{t('nav.shortName')}</span>
+          <span className="hidden sm:inline">{name}</span>
         </Link>
 
-        <nav className="hidden items-center gap-0.5 md:flex lg:gap-1" aria-label="Primary">
+        <nav className="hidden items-center gap-0.5 md:flex lg:gap-1" aria-label={t('nav.primary')}>
           {mainNav.map((item) => {
             const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
             return (
@@ -229,30 +241,31 @@ export function Header() {
                 )}
                 aria-current={isActive ? 'page' : undefined}
               >
-                {item.label}
+                {t(`nav.${item.key}`)}
               </Link>
             );
           })}
         </nav>
 
-        <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+        <div className="flex shrink-0 items-center gap-1 sm:gap-1.5">
+          <LanguageSwitcher className="hidden md:block" />
           <ThemeToggle className="hidden min-h-11 min-w-11 items-center justify-center rounded-[var(--radius-md)] text-[var(--color-text-muted)] transition-colors duration-[var(--duration-micro)] hover:bg-[var(--color-surface-sunken)] hover:text-[var(--color-text)] md:inline-flex" />
           <ButtonLink
-            href={profile.cv.href}
+            href={cv.href}
             variant="primary"
             size="sm"
-            className="hidden !min-h-10 px-4 text-[11px] tracking-wide uppercase lg:inline-flex"
-            download={profile.cv.filename}
+            className="hidden !min-h-10 px-4 text-[11px] tracking-wide uppercase xl:inline-flex"
+            download={cv.filename}
           >
-            Download CV
+            {t('actions.downloadCv')}
           </ButtonLink>
           <button
             ref={openRef}
             type="button"
-            className="-mr-2 inline-flex min-h-11 min-w-11 touch-manipulation items-center justify-center rounded-[var(--radius-md)] text-[var(--color-text)] transition-colors hover:bg-[var(--color-surface-sunken)] md:hidden"
+            className="-me-2 inline-flex min-h-11 min-w-11 touch-manipulation items-center justify-center rounded-[var(--radius-md)] text-[var(--color-text)] transition-colors hover:bg-[var(--color-surface-sunken)] md:hidden"
             aria-expanded={isOpen}
             aria-controls={menuId}
-            aria-label={isOpen ? 'Close menu' : 'Open menu'}
+            aria-label={isOpen ? t('nav.closeMenu') : t('nav.openMenu')}
             onClick={() => setIsOpen((prev) => !prev)}
           >
             {isOpen ? <X className="h-5 w-5" aria-hidden /> : <Menu className="h-5 w-5" aria-hidden />}

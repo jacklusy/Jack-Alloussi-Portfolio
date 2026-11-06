@@ -1,0 +1,133 @@
+{
+  "title": "Cloudix — site vitrine bilingue et de génération de leads",
+  "summary": "Un site marketing de sept routes, d’abord en arabe, pour une société de développement boutique : ~45 composants de section, un assistant IA ancré dans les faits et une capture de leads sans backend — maintenable à trois, avec l’allure d’une grande entreprise.",
+  "description": "Un site institutionnel pour une société de services logiciels ciblant le marché saoudien et jordanien. L’arabe est la langue par défaut et non une couche de traduction ajoutée après coup, la capture de leads fonctionne sans aucune infrastructure backend, et un assistant IA répond aux questions des prospects à partir des mêmes données typées que celles affichées par le site — les deux ne peuvent donc pas se contredire sur les faits.",
+  "role": "Frontend Developer",
+  "timeframe": "2025",
+  "metrics": [
+    {
+      "label": "Composants de section",
+      "value": "~45"
+    },
+    {
+      "label": "Taille du code source",
+      "value": "~7 300 lignes"
+    },
+    {
+      "label": "Routes",
+      "value": "7, entièrement bilingues"
+    }
+  ],
+  "thumbnail": {
+    "alt": "La page d’accueil de Cloudix : un hero bleu marine foncé affichant “Building Smarter Connected Systems” sur une photographie de bureau, avec un sélecteur de langue AR/EN dans l’en-tête et quatre cartes de compétences en dessous."
+  },
+  "gallery": [
+    {
+      "alt": "Le méga-menu des services de Cloudix ouvert sur la page, avec des cartes pour IT Solutions, Backend Engineering et Cloud & Deployment.",
+      "caption": "Le méga-menu des services. Une telle profondeur de navigation donne à une petite structure l’allure d’une plus grande société ; il est assemblé à partir du même ensemble d’environ 45 composants de section composables que toutes les autres pages, au lieu d’être construit à la main route par route."
+    },
+    {
+      "alt": "La page projets de Cloudix, intitulée “Driving innovation through successful projects”, avec une liste de contrôle de livraison et une photographie surmontée du chiffre de plus de 150 projets réalisés.",
+      "caption": "La page projets met en avant le chiffre qu’un prospect pèse réellement. Le sélecteur AR/EN présent dans l’en-tête de chacun de ces écrans inverse le sens d’écriture et la mise en page, pas seulement les textes — l’arabe est ici la langue par défaut, et non une traduction plaquée sur un design occidental."
+    },
+    {
+      "alt": "Le hero de la page à propos de Cloudix : une pastille “Smart Solutions” au-dessus de la phrase “Cloudix delivering intelligent solutions for growth”, sur une photographie de bureau teintée.",
+      "caption": "Sept routes partagent un même langage visuel — hero photographique teinté, pastille d’intitulé, un seul appel à l’action — si bien qu’une nouvelle page est une composition d’éléments existants et non un nouveau design."
+    },
+    {
+      "alt": "La page contact de Cloudix, avec un en-tête photographique et des cartes pour le téléphone, l’e-mail et l’adresse.",
+      "caption": "Une capture de leads sans backend derrière. Une société qui crée des sites web pour d’autres entreprises n’allait pas exploiter un serveur uniquement pour recevoir un formulaire de contact : les envois arrivent donc dans une vraie boîte de réception, sans base de données ni service d’e-mail à exploiter."
+    }
+  ],
+  "caseStudy": {
+    "context": "Une société de développement boutique avait besoin d’un site remplissant trois missions qu’un modèle d’agence classique ne couvre pas. Il devait avoir l’allure d’une grande entreprise tout en étant exploité par une petite équipe — le principal obstacle commercial d’une structure de cette taille est de paraître petite ; le site devait donc offrir la densité visuelle d’un grand cabinet d’ingénierie tout en restant maintenable par une poignée de personnes. Il devait fonctionner comme un vrai produit bilingue pour un marché à dominante arabophone, et non comme un site occidental auquel on aurait greffé l’arabe. Et il devait générer des leads qualifiés sans budget de marketing ops.",
+    "problem": "Deux contraintes fortes ont façonné l’architecture. Une société qui construit des sites pour d’autres entreprises ne va raisonnablement pas exploiter son propre backend juste pour recevoir des formulaires de contact : les leads devaient donc arriver dans une vraie boîte de réception sans serveur, base de données ni service d’e-mail à exploiter. Et les clients potentiels voulaient trouver seuls les réponses aux questions qui bloquent habituellement une conversation commerciale — que faites-vous, qui compose l’équipe, avez-vous déjà réalisé ce type de projet — dans les deux langues, sans que le site invente des faits sur l’entreprise.",
+    "approach": "Composer les pages à partir de composants de section nommés et stylés indépendamment, sans logique de liaison, de sorte qu’ajouter une section se résume à un fichier et un import plutôt qu’à une modification du routage. Faire de l’arabe la locale de repli, avec un détecteur actif de la langue du navigateur, pour que le marché soit conçu d’emblée et non rattrapé après coup. Ancrer l’assistant IA en générant son prompt système au moment du rendu à partir des mêmes modules de données typées que ceux affichés par l’interface, et l’encadrer par des règles explicites — ne jamais nommer de collaborateurs, rester dans le périmètre, répondre dans la langue du visiteur. Envoyer les formulaires directement depuis le navigateur via un service de distribution tiers, protégé par un honeypot plutôt que par un CAPTCHA.",
+    "architecture": {
+      "altText": "Une application monopage React Router 7 de sept routes, chaque page étant composée de composants de section importables indépendamment ; des modules de données typées alimentent à la fois l’interface rendue et le prompt système généré pour un assistant IA côté navigateur, tandis que les envois du formulaire de contact passent par un service d’e-mail côté client, et i18next gère la localisation avec l’arabe par défaut partout."
+    },
+    "decisions": [
+      {
+        "decision": "L’arabe comme locale de repli, avec un détecteur actif de la langue du navigateur",
+        "alternatives": "L’anglais par défaut, avec l’arabe comme couche de traduction secondaire",
+        "reasoning": "Le marché cible est à dominante arabophone. En faire la locale de repli plutôt que la variante est le signal le plus clair, dans le code, que le marché a été pensé dès le départ.",
+        "tradeoff": "Chaque texte visible — dont plus de quarante entrées de FAQ, deux documents juridiques et les messages d’erreur de l’assistant — exige une vraie version arabe parallèle, et non une traduction automatique."
+      },
+      {
+        "decision": "Un assistant IA reposant uniquement sur le prompt système plutôt que sur du retrieval ou du fine-tuning",
+        "alternatives": "Une base de données vectorielle avec un pipeline de retrieval, ou un modèle affiné",
+        "reasoning": "Reconstruire le bloc de faits au moment du rendu à partir des mêmes données de services et de projets que celles affichées par l’interface garantit que l’assistant et le site ne peuvent pas se contredire sur les faits — seulement sur le ton. Pour un corpus de cette taille, le retrieval ajouterait de l’infrastructure sans gain de précision.",
+        "tradeoff": "Le prompt grandit avec le site et consomme du contexte à chaque requête, et l’approche ne passe plus à l’échelle dès que le corpus dépasse la taille d’un seul prompt."
+      },
+      {
+        "decision": "Un champ honeypot plutôt qu’un CAPTCHA",
+        "alternatives": "Un widget CAPTCHA tiers sur le formulaire de contact",
+        "reasoning": "Il n’impose aucune friction à l’utilisateur, n’ajoute aucun script tiers et a été mis en place parce que de vrais envois de spam arrivaient — un correctif durable à une défaillance avérée, et non une précaution.",
+        "tradeoff": "Il arrête les bots naïfs, pas les bots déterminés. Un expéditeur ciblé qui lit le balisage passe sans problème."
+      },
+      {
+        "decision": "Un moteur de rendu générique pour les documents juridiques plutôt que deux pages rédigées à la main",
+        "alternatives": "Des pages Confidentialité et Conditions distinctes, faites sur mesure",
+        "reasoning": "Les deux documents sont structurellement identiques dans les deux langues ; un seul moteur de rendu sur du contenu structuré garantit, par construction, la cohérence des quatre variantes de pages.",
+        "tradeoff": "Tout document qui finira par nécessiter une structure réellement différente devra sortir du moteur de rendu partagé."
+      }
+    ],
+    "challenges": [
+      "Donner au site l’allure d’un cabinet d’ingénierie de grande envergure — méga-menus, études de cas, pages sectorielles, un argumentaire « pourquoi nous choisir » — tout en le gardant maintenable par trois personnes.",
+      "Garder l’assistant ancré dans les faits du site : une limite de périmètre stricte qui redirige les questions hors sujet au lieu d’y répondre, et une règle permanente interdisant de nommer des personnes.",
+      "Se prémunir contre l’abandon programmé d’un modèle par un repli explicite, après avoir rencontré la défaillance en production plutôt que de l’avoir anticipée."
+    ],
+    "outcomes": [
+      "Sept routes entièrement bilingues — accueil, services, portfolio, à propos, contact, confidentialité et conditions d’utilisation — avec des ancres de service accessibles par lien direct depuis un méga-menu au survol.",
+      "Environ quarante-cinq composants de section pour quelque 7 300 lignes, chacun composable indépendamment, de sorte qu’une nouvelle section se résume à un fichier et un import.",
+      "Un assistant IA ancré dans les faits, avec des puces de requêtes rapides, des réponses dont les liens sont détectés automatiquement, un indicateur de saisie et des textes distincts pour cinq cas d’échec différents.",
+      "La capture de leads, un thème clair/sombre persistant qui suit la préférence du système jusqu’à ce qu’elle soit modifiée, et des métadonnées SEO complètes, dont Open Graph, cartes Twitter, données structurées d’organisation et manifeste web."
+    ],
+    "retrospective": "La composition à raison d’un fichier par section a évolué exactement comme prévu, et la localisation pensée d’abord en arabe s’est avérée être la décision qui a rendu le reste cohérent. Le prompt système de l’assistant est la partie que je mettrais en avant : la limite de périmètre, la règle de concision et la règle de ne jamais nommer de personnes sont toutes le fruit de tests — je l’ai pris en défaut, puis j’ai écrit une règle durable — et non un premier jet. Je changerais trois choses. Une clé d’API tierce conservée dans le navigateur appelle un fin proxy côté serveur qui détient le véritable identifiant et applique une limitation de débit ; construire d’abord l’intégration côté client et repousser le proxy est le mauvais ordre, car la gestion élégante de l’absence de clé donne l’impression que la lacune est traitée alors qu’elle ne l’est pas. Le découpage des fichiers i18n a été entamé pour trois domaines puis abandonné pour les autres, laissant un module de 854 lignes qui ressemble à un refactoring faute de temps plus qu’à une exception réfléchie. Enfin, une bibliothèque de composants partagés a été construite — boutons en quatre variantes, cartes, titres de section — puis n’a été importée par rien, tandis que chaque section recréait à la main ses propres équivalents ; un design system que personne n’adopte est pire que pas de design system, car il laisse croire à une cohérence que les pages n’ont pas réellement. La leçon plus générale concerne le contenu provisoire : défendable pendant la construction, il devient dangereux au lancement, car dès qu’une page est en ligne, le provisoire est lu comme un fait. Tout ce qui tient lieu de vrai contenu doit passer par un point de contrôle de suppression explicite avant le déploiement, et non par une bonne intention.",
+    "stackDetail": [
+      {
+        "category": "Langage et framework",
+        "items": [
+          "TypeScript 5.8",
+          "React 19",
+          "React Router 7",
+          "Vite 6"
+        ]
+      },
+      {
+        "category": "Styles",
+        "items": [
+          "Tailwind CSS v4 (CSS-first @theme config)",
+          "Variante de mode sombre personnalisée",
+          "clsx + tailwind-merge",
+          "Inter + Noto Sans Arabic avec bascule de police du body en RTL"
+        ]
+      },
+      {
+        "category": "Internationalisation",
+        "items": [
+          "i18next + react-i18next",
+          "i18next-browser-languagedetector",
+          "Arabe comme locale de repli",
+          "Modules de traduction par domaine pour About, Legal et Projects"
+        ]
+      },
+      {
+        "category": "Intégrations",
+        "items": [
+          "@google/genai (assistant, ancré dans les données du site)",
+          "@emailjs/browser (distribution des leads sans backend)",
+          "Garde anti-spam par honeypot"
+        ]
+      },
+      {
+        "category": "Animations et icônes",
+        "items": [
+          "Motion",
+          "lucide-react",
+          "Marquee en keyframes CSS"
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,104 @@
+{
+  "title": "Master Laravel — E-Commerce- und Multi-Rollen-Admin-Plattform",
+  "summary": "Ein selbst gehosteter Laravel-10-Shop mit vollständigem Back Office und einer Super-Admin-Ebene darüber: Katalog, Warenkorb, Checkout, Bestellungen, Gutscheine, moderierte Bewertungen und PDF-Rechnungen — in sieben Monaten allein gebaut.",
+  "description": "Eine Anwendung aus Shop und Back Office für einen einzelnen Online-Händler. Kundinnen und Kunden stöbern und kaufen, das Personal pflegt Katalog und Auftragsabwicklung über ein Admin-Panel, und eine Super-Admin-Rolle verwaltet die Admin-Konten selbst. Gebaut ohne SaaS-Shop-System und ohne transaktionsbasierte Plattformgebühren — nicht nur ein Warenkorb, sondern ein kleines internes Betriebswerkzeug, das zum Shop dazugehört.",
+  "role": "Full-Stack Developer",
+  "timeframe": "Februar – September 2023",
+  "metrics": [
+    {
+      "label": "Admin-Module",
+      "value": "14+"
+    },
+    {
+      "label": "Entwicklungszeit",
+      "value": "7 Monate allein"
+    },
+    {
+      "label": "Rollen",
+      "value": "Kunde · Admin · Vendor"
+    }
+  ],
+  "caseStudy": {
+    "context": "Ein kleines Handelsunternehmen brauchte einen selbst gehosteten Online-Shop, der den gesamten Bestellzyklus abdeckt — ohne SaaS-Shop-System und ohne transaktionsbasierte Plattformgebühren. Das bedeutete: einen öffentlichen Katalog mit Kategorien, Marken, Suche, Galerien und Bewertungen; einen Ablauf aus Warenkorb, Checkout und Bestellung mit regionsbasierten Versandkosten und Gutscheinen; zwei Zahlungswege, weil nicht jeder Kunde im Zielmarkt Kartenzahlung hat oder ihr vertraut; ein Admin-Panel für das Personal mit Katalog, Merchandising, Auftragsabwicklung und Bewertungsmoderation; und eine Verwaltungsebene oberhalb der Admins, um Mitarbeiterkonten ohne direkten Datenbankzugriff anzulegen und zu deaktivieren.",
+    "problem": "Beide Hälften — einen kundenseitigen Shop und ein echtes internes Betriebswerkzeug — als eine wartbare Anwendung zu liefern, gebaut und gepflegt von einer einzelnen Person bei festem Umfang.",
+    "approach": "Vom Starter Kit Laravel Breeze ausgehen statt von einem fertigen E-Commerce-Paket, sodass Authentifizierung, Passwort-Abläufe und Profilverwaltung vom ersten Tag an korrekt waren und das Zeitbudget in die Commerce-Funktionen floss. Eine einzige users-Tabelle mit einer kleinen eigenen Middleware nach Rollen absichern, statt für drei feste Rollen ein Berechtigungspaket einzubinden. Shop und Admin als Blade-Views über eingebundenen Bootstrap-Themes rendern, statt ein eigenes Design-System zu bauen. Streng Modul für Modul iterieren — erst Katalog-Grundlagen, dann Merchandising, dann der transaktionale Pfad, dann unterstützende Funktionen, dann die zweite Admin-Oberfläche —, sodass die App nahezu zu jedem Zeitpunkt ihrer Historie deploybar blieb.",
+    "architecture": {
+      "altText": "Ein Laravel-10-Monolith: Blade-Views für Shop und Admin über Controllern, die per Eloquent in MySQL schreiben, mit einer einzigen users-Tabelle, die per eigener Middleware nach Rollen in die Oberflächen für Kunde, Admin und Vendor aufgeteilt wird, dazu PDF-Rechnungserzeugung mit DomPDF und eine Schicht eingebundener Bootstrap-Themes."
+    },
+    "decisions": [
+      {
+        "decision": "Eine einzige users-Tabelle mit Rollenspalte, abgesichert durch selbst geschriebene Middleware",
+        "alternatives": "Ein Berechtigungspaket mit granularen Rechten oder getrennte Auth-Guards pro Akteurstyp",
+        "reasoning": "Bei drei festen Rollen wäre ein vollständiges ACL-System für den Umfang überdimensioniert gewesen, und die Middleware lässt sich in etwa zehn Sekunden von Anfang bis Ende lesen.",
+        "tradeoff": "Keine granularen Berechtigungen — ein Admin, der Produkte bearbeiten, aber keine Bestellungen löschen darf, ist nicht abbildbar —, und eine vierte Rolle später bedeutet, jede Route-Gruppe von Hand anzufassen."
+      },
+      {
+        "decision": "Blade plus eingebundene HTML-Themes, obwohl das React/Inertia-Starter-Kit angelegt wurde",
+        "alternatives": "Sich auf Inertia und React festlegen oder ein Komponentensystem von Hand bauen",
+        "reasoning": "Die Themes brachten fertige Tabellen, Diagramme, Formular-Widgets und einen responsiven Shop mit, was bei einem Werkzeug für ein kleines Unternehmen und dem Budget einer einzelnen Person wichtiger war als ein eigenständiges Design.",
+        "tradeoff": "Im Repository liegen jetzt zwei parallele Frontend-Stacks. Die React- und Inertia-Seiten sind faktisch toter Code, blähen die Abhängigkeitsliste auf und verwirren alle, die neu im Projekt sind."
+      },
+      {
+        "decision": "Zwei Wege zum Abschluss einer Bestellung, die dieselben Schreibzugriffe auf die Bestellung nutzen",
+        "alternatives": "Ein reiner Kartenzahlungs-Checkout oder von Anfang an eine vollständige Payment-Gateway-Integration",
+        "reasoning": "Der Zielmarkt mischt Kunden, die gern mit Karte zahlen, mit solchen, die Nachnahme bevorzugen; beide mussten also eine Bestellung abschließen können.",
+        "tradeoff": "Der Online-Pfad erfasst die Bestellung, als wäre die Zahlung erfolgreich gewesen — die Benennung verspricht eine Gateway-Integration, die der Code nicht enthält, und das müssen alle wissen, die ihn pflegen."
+      },
+      {
+        "decision": "Moderierte Bewertungen hinter einem Status-Flag statt sofortiger Veröffentlichung",
+        "alternatives": "Bewertungen beim Absenden veröffentlichen und schlechte nachträglich entfernen",
+        "reasoning": "So tauchen unmoderierte und Spam-Bewertungen nicht neben Produkten auf, in einem kleinen Katalog, in dem jede einzelne stark sichtbar ist.",
+        "tradeoff": "Es entsteht eine Admin-Warteschlange, die aktiv abgearbeitet werden muss, sonst erscheinen berechtigte Bewertungen nie."
+      }
+    ],
+    "challenges": [
+      "Einen siebenmonatigen Alleinbau durchgehend deploybar zu halten, indem pro Iteration strikt ein vertikales Modul statt horizontaler Schichten umgesetzt wurde.",
+      "Zwei sehr unterschiedliche Oberflächen — einen auf Produktpräsentation ausgelegten Shop und ein dichtes Back Office mit Datentabellen — aus einer Laravel-Anwendung zu bedienen, ohne dass eine die andere beeinträchtigt.",
+      "Versandkosten gegen eine Adresshierarchie aus Division und Distrikt mit kaskadierender Auswahl zu modellieren, ohne ein vollständiges Geodaten-Paket einzubinden."
+    ],
+    "outcomes": [
+      "Ein funktionierender Shop: Slider und Banner, Stöbern nach Kategorien und Marken, Produktsuche, Detailseiten mit AJAX-Schnellansicht und Bewertungen pro Produkt.",
+      "Eine vollständige Pipeline aus Warenkorb, Checkout und Bestellung, die Bestell- und Bestellpositionsdatensätze transaktional schreibt, mit Gutscheinen, regionsbasierten Versandkosten und zwei Abschlusswegen.",
+      "Ein Back Office mit über vierzehn CRUD-Modulen, eine Bestellwarteschlange mit Übergängen von „ausstehend“ bis „geliefert“, ein Kontakt-Posteingang mit für Kunden sichtbaren Antworten und eine Warteschlange zur Bewertungsmoderation.",
+      "PDF-Rechnungen pro Bestellung, die Personal und Kunden herunterladen können, plus eine Super-Admin-Oberfläche zur Verwaltung der Admin-Konten."
+    ],
+    "retrospective": "Das Projekt hat sein eigentliches Ziel erreicht — ein funktionierender selbst gehosteter Shop plus ein echtes internes Admin-Werkzeug, allein in etwa sieben Monaten geliefert —, und der Start mit Breeze war die Entscheidung, die diesen Zeitplan möglich machte. Beim Schreiben dieser Dokumentation sind Probleme aufgefallen, die ich offen benennen möchte. Das schwerwiegendste: Der Pfad, über den der Super-Admin Konten anlegt, fügt neue Admin-Datensätze über einen Query-Builder-Aufruf ein, der die Eloquent-Mutatoren umgeht und das Passwort nie hasht, sodass Admin-Zugangsdaten im Klartext gespeichert werden. Das ist ein echter Sicherheitsmangel und die Korrektur mit höchster Priorität, bevor diese Codebasis in die Nähe einer öffentlichen Umgebung kommt. Darüber hinaus: Der Admin-View-Baum wurde für die zweite Rollenoberfläche komplett dupliziert, statt in gemeinsame Komponenten refaktoriert zu werden, sodass jede künftige UI-Änderung doppelt gemacht werden muss oder beide unbemerkt auseinanderlaufen; Geld- und Mengenspalten wurden in frühen Schema-Iterationen als Strings typisiert und nie überarbeitet, wodurch eine Schutzschicht entfällt, die die Datenbank sonst bieten würde; ein Add-to-Cart-Pfad liest eine User-ID, die erst innerhalb einer Authentifizierungsprüfung gesetzt wird, und wirft deshalb einen Fehler, statt zum Login weiterzuleiten; und für Warenkorb-, Checkout-, Gutschein- und Bestellstatus-Logik gibt es keinerlei Testabdeckung — genau die Pfade, auf denen Geld bewegt wird und eine Regression am meisten kostet. Eine Handvoll Feature-Tests vom Add-to-Cart bis zur erstellten Bestellung hätte diesen letzten Fehler kostenlos gefunden. Nichts davon erfordert einen Neubau, aber die Reihenfolge dessen, was unter Termindruck gestrichen wurde, ist aufschlussreich: Tests und Härtung gingen zuerst, und die Defekte sind genau dort entstanden.",
+    "stackDetail": [
+      {
+        "category": "Backend",
+        "items": [
+          "PHP 8.1",
+          "Laravel 10",
+          "Laravel Breeze (Auth-Scaffolding)",
+          "Eloquent ORM",
+          "barryvdh/laravel-dompdf (PDF-Rechnungen)",
+          "intervention/image (Galerien & Thumbnails)"
+        ]
+      },
+      {
+        "category": "Datenbank",
+        "items": [
+          "MySQL",
+          "Migrationen für users, products, categories, brands, carts, coupons, shipping states, orders, order items, contacts, reviews, sliders, banners"
+        ]
+      },
+      {
+        "category": "Frontend",
+        "items": [
+          "Blade-Templating (Shop, Admin, Super-Admin)",
+          "Eingebundenes Bootstrap-Admin-Theme (DataTables, ApexCharts, Select2)",
+          "Separates Shop-Theme mit eigenem Sass/JS",
+          "Asset-Bundling mit Vite"
+        ]
+      },
+      {
+        "category": "Tooling",
+        "items": [
+          "Pest & PHPUnit (nur Breeze-Standard)",
+          "Laravel Pint",
+          "Laravel Sail"
+        ]
+      }
+    ]
+  }
+}

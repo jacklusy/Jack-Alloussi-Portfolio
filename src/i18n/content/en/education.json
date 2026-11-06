@@ -1,0 +1,15 @@
+{
+  "entries": {
+    "bsc-se": {
+      "degree": "BSc",
+      "field": "Software Engineering",
+      "location": "Amman, Jordan",
+      "note": "Studies paused during 2022–2023 to complete the Orange Coding Academy full-stack programme."
+    },
+    "orange-academy": {
+      "degree": "Full Stack Development Programme",
+      "location": "Amman, Jordan",
+      "note": "Seven-month intensive programme in JavaScript, PHP, Laravel, React, and Redux, followed by a one-month industry internship."
+    }
+  }
+}

@@ -1,0 +1,378 @@
+{
+  "meta": {
+    "siteTitle": "Jack Alloussi — Software Engineer",
+    "siteDescription": "Software Engineer in Amman, Jordanien. TypeScript, Node.js, NestJS, React, React Native. Offen für einen Umzug; Blaue Karte EU möglich. Studienabschluss im Oktober 2026.",
+    "keywords": [
+      "Jack Alloussi",
+      "Jack Alloussi Software Engineer",
+      "Jack Alloussi Portfolio",
+      "Jack Alloussi Entwickler",
+      "Software Engineer Amman",
+      "NestJS Entwickler",
+      "React Native Entwickler",
+      "TypeScript Backend Engineer",
+      "Blaue Karte EU Software Engineer"
+    ],
+    "ogAlt": "{name} — {role}",
+    "og": {
+      "badge": "Portfolio",
+      "headline": "Software Engineer — TypeScript · NestJS · React · React Native",
+      "location": "Amman, Jordanien · Blaue Karte EU möglich",
+      "graduation": "Abschluss im Okt. 2026"
+    },
+    "pages": {
+      "about": {
+        "title": "Über mich",
+        "description": "Werdegang, Arbeitsweise, Ausbildung und Zertifikate von Jack Alloussi — Software Engineer in Amman, Jordanien, mit Anspruch auf die Blaue Karte EU."
+      },
+      "experience": {
+        "title": "Berufserfahrung",
+        "description": "Beruflicher Werdegang von Jack Alloussi — Software Engineer bei CSC Beyond, frühere Stationen, Technologien und der vertrauliche Kundenkontext."
+      },
+      "contact": {
+        "title": "Kontakt",
+        "description": "Kontakt zu Jack Alloussi — E-Mail, Telefon, LinkedIn und Verfügbarkeit für einen Umzug nach Deutschland mit der Blauen Karte EU."
+      },
+      "projects": {
+        "title": "Projekte",
+        "description": "Technische Fallstudien von Jack Alloussi — eine mandantenfähige NestJS-Bestands-API, ein Offline-first-Client mit React Native, ein browsernatives PDF-Toolkit, eine Benachrichtigungsplattform für Hochschulen und mehr."
+      },
+      "notFound": { "title": "Seite nicht gefunden" },
+      "projectNotFound": "Projekt nicht gefunden",
+      "projectFallback": "Projekt"
+    }
+  },
+
+  "a11y": {
+    "skipToContent": "Zum Inhalt springen"
+  },
+
+  "nav": {
+    "home": "Startseite",
+    "about": "Über mich",
+    "projects": "Projekte",
+    "experience": "Erfahrung",
+    "contact": "Kontakt",
+    "primary": "Hauptnavigation",
+    "mobilePrimary": "Hauptnavigation (mobil)",
+    "siteNavigation": "Seitennavigation",
+    "openMenu": "Menü öffnen",
+    "closeMenu": "Menü schließen",
+    "shortName": "Jack A."
+  },
+
+  "actions": {
+    "hireMe": "Kontakt aufnehmen",
+    "hireMeAria": "Kontakt aufnehmen — zur Kontaktseite",
+    "downloadCv": "Lebenslauf (EN)",
+    "contactShort": "Kontakt",
+    "contactForm": "Kontaktformular",
+    "viewProjects": "Projekte ansehen",
+    "discussRole": "Über eine Stelle sprechen",
+    "tryAgain": "Erneut versuchen",
+    "copy": "Kopieren",
+    "copied": "Kopiert",
+    "exploreAllProjects": "Alle Projekte ansehen"
+  },
+
+  "theme": {
+    "switchToLight": "Zum hellen Modus wechseln",
+    "switchToDark": "Zum dunklen Modus wechseln",
+    "toggle": "Farbschema umschalten"
+  },
+
+  "language": {
+    "label": "Sprache",
+    "choose": "Sprache wählen",
+    "current": "Aktuelle Sprache: {language}"
+  },
+
+  "labels": {
+    "present": "heute",
+    "expected": "voraussichtlich",
+    "inProgress": "In Arbeit",
+    "earned": "Erworben",
+    "status": {
+      "shipped": "Live",
+      "in-progress": "In Arbeit",
+      "archived": "Archiviert"
+    },
+    "dateRange": "{start} — {end}",
+    "dateRangeExpected": "{start} — {end} ({expected})",
+    "moreCount": "+{count}"
+  },
+
+  "categories": {
+    "Backend": "Backend",
+    "Architecture": "Architektur",
+    "DevOps": "DevOps",
+    "Frontend": "Frontend",
+    "Mobile": "Mobile",
+    "Full-stack": "Full-Stack"
+  },
+
+  "footer": {
+    "tagline": "{role} — Next.js, TypeScript, Tailwind.",
+    "availability": "{status} · Blaue Karte EU möglich",
+    "navigation": "Navigation",
+    "connect": "Kontakt & Profile",
+    "rights": "© {year} {name}"
+  },
+
+  "hero": {
+    "available": "Umzugsbereit",
+    "tagline": "Backend-orientierter Full-Stack-Entwickler — TypeScript, NestJS, React und React Native — mit Web-, API- und Mobile-Systemen für Kunden in den USA, von Amman aus.",
+    "statusPanel": "Status.übersicht",
+    "statusAria": "Verfügbarkeit und Arbeitserlaubnis",
+    "meta": {
+      "location": { "label": "Standort", "value": "Amman, Jordanien" },
+      "availability": { "label": "Verfügbarkeit", "value": "Umzugsbereit" },
+      "authorisation": { "label": "Arbeitserlaubnis", "value": "Blaue Karte EU möglich" },
+      "graduation": { "label": "Abschluss", "value": "Oktober 2026" }
+    },
+    "chips": {
+      "apps": "15+ Mobile-Apps veröffentlicht",
+      "locks": "50 parallele Schreibzugriffe → 1 Gewinner"
+    },
+    "proof": {
+      "years": "Jahre Praxiserfahrung",
+      "apps": "Mobile-Apps veröffentlicht",
+      "caseStudies": "Dokumentierte Fallstudien",
+      "technologies": "Eingesetzte Technologien"
+    },
+    "scroll": "Weiter",
+    "scrollAria": "Zum Abschnitt „Über mich“ scrollen"
+  },
+
+  "about": {
+    "eyebrow": "System.profil_01",
+    "title": "Belastbare Systeme von Grund auf",
+    "description": "Auslieferung für Kunden über viele Stacks hinweg — mit fundierter Ausbildung in Clean Architecture, DDD und SOLID.",
+    "portraitCaption": "Amman · Jordanien",
+    "relocation": "Umzug: {note}",
+    "moments": {
+      "label": "Momente",
+      "intro": "Orange Coding Academy — das intensive Jahr, das geprägt hat, wie ich unter echtem Lieferdruck arbeite.",
+      "alts": [
+        "Jack Alloussi mit dem Jahrgang der Orange Coding Academy",
+        "Ein Moment aus dem Programm der Orange Coding Academy",
+        "Jack Alloussi während der Orange Coding Academy",
+        "Workshop-Sitzung der Orange Coding Academy"
+      ]
+    }
+  },
+
+  "skills": {
+    "eyebrow": "System.stack_02",
+    "title": "Technologie-Matrix",
+    "description": "So liefere ich — gegliedert nach Einsatzbereich, nicht nach Fantasie-Prozenten.",
+    "bands": {
+      "backend": "Backend & Sprachen",
+      "clients": "Frontend & Mobile",
+      "platform": "Daten & Infrastruktur",
+      "practices": "Engineering-Methoden"
+    }
+  },
+
+  "projectsPreview": {
+    "eyebrow": "System.projekte_03",
+    "title": "Technische Einsätze",
+    "description": "Jedes Projekt entlang von Problem, Architektur, Entscheidungen und Ergebnis erörtert — einschließlich dessen, was nicht funktioniert hat. Kundenidentitäten bleiben vertraulich; die Technik nicht.",
+    "mostUsed": "Am häufigsten genutzt"
+  },
+
+  "experiencePreview": {
+    "eyebrow": "System.laufbahn_04",
+    "title": "Stationen",
+    "description": "Die Daten entsprechen dem Lebenslauf. Kundenarbeit ist bewusst allgemein gehalten.",
+    "cta": "Gesamter Werdegang",
+    "alsoOn": "Mehr auch unter <link>Über mich</link>."
+  },
+
+  "educationSection": {
+    "eyebrow": "System.ausbildung_05",
+    "title": "Fundierte Ausbildung",
+    "description": "Formale Abschlüsse, die für die Anerkennung des Studiums bei der Blauen Karte EU zählen.",
+    "education": "Ausbildung",
+    "certifications": "Zertifikate"
+  },
+
+  "contactSection": {
+    "eyebrow": "System.kontakt_06",
+    "title": "Lassen Sie uns bauen, was kommt",
+    "description": "Offen für Backend- oder Full-Stack-Stellen in Deutschland und der übrigen EU. Am liebsten per E-Mail — das Formular ist optional."
+  },
+
+  "aboutPage": {
+    "eyebrow": "System.profil",
+    "title": "Jack Alloussi — Produktivsysteme über Stacks hinweg",
+    "lead": "Software Engineer in Amman, Jordanien. Backend-orientierter Full-Stack-Entwickler mit TypeScript, NestJS, Laravel, React und React Native — mit {count} dokumentierten Fallstudien zu Architektur, Zielkonflikten und den Teilen, die nicht funktioniert haben.",
+    "howIWork": "So arbeite ich",
+    "howIWorkBody": "Ich bevorzuge klare Grenzen, typisierte Verträge und umkehrbare Entscheidungen. Die fundierte Ausbildung in Clean Architecture, DDD und SOLID prägt, wie ich NestJS- und Laravel-Services strukturiere — ohne Zeremonie um ihrer selbst willen.",
+    "spokenLanguages": "Sprachen: {languages}.",
+    "experienceTimeline": "Werdegang",
+    "educationCertifications": "Ausbildung & Zertifikate",
+    "faqEyebrow": "System.faq",
+    "faqTitle": "Häufige Fragen",
+    "faq": [
+      {
+        "question": "Wer ist Jack Alloussi?",
+        "answer": "Ein Software Engineer aus Amman, Jordanien, tätig bei CSC Beyond in der Entwicklung individueller Software für Kunden in den USA — über Web-, API- und Mobile-Plattformen hinweg. Backend-orientierter Full-Stack-Entwickler: TypeScript und NestJS, PHP und Laravel, React und Next.js im Web sowie React Native mobil."
+      },
+      {
+        "question": "Woran arbeitet Jack Alloussi?",
+        "answer": "An produktiven Backend-Services in TypeScript und PHP auf Basis von PostgreSQL und Redis, an React- und Next.js-Frontends und an plattformübergreifenden Mobile-Apps — mehr als fünfzehn davon sind mit React Native CLI und Expo im Apple App Store und bei Google Play erschienen. Zu den eigenen Projekten zählen eine mandantenfähige Bestands-API mit nachweisbaren Nebenläufigkeitsgarantien, ein Offline-first-Client mit React Native und ein browsernatives PDF-Toolkit."
+      },
+      {
+        "question": "Ist Jack Alloussi für einen Umzug nach Deutschland oder in die EU verfügbar?",
+        "answer": "Ja. Offen für Backend- oder Full-Stack-Stellen in Deutschland und der übrigen EU, ab Oktober 2026 nach dem Studienabschluss umzugsbereit und mit Anspruch auf die Blaue Karte EU."
+      },
+      {
+        "question": "Auf welche Technologien ist Jack Alloussi spezialisiert?",
+        "answer": "TypeScript, Node.js und NestJS, Laravel, React und Next.js, React Native und Expo, PostgreSQL, Redis und Docker — eingesetzt mit Clean Architecture und Domain-Driven Design, wo das Problem den Aufwand rechtfertigt."
+      }
+    ]
+  },
+
+  "experiencePage": {
+    "eyebrow": "System.laufbahn",
+    "title": "Stationen",
+    "description": "Lückenloser Werdegang, deckungsgleich mit dem Lebenslauf. Eine Station aufklappen zeigt Ergebnisse und Stack. Kundenarbeit ist bewusst allgemein gehalten."
+  },
+
+  "contactPage": {
+    "eyebrow": "System.kontakt",
+    "title": "Lassen Sie uns über eine Stelle sprechen",
+    "description": "Lieber per E-Mail? Nutzen Sie die Adresse unten — das Formular ist optional.",
+    "intro": "Offen für Backend- oder Full-Stack-Stellen in Deutschland und der übrigen EU. Standort: {location} ({timezone}).",
+    "email": "E-Mail",
+    "phone": "Telefon",
+    "workAuthorisation": "Arbeitserlaubnis"
+  },
+
+  "projectsPage": {
+    "eyebrow": "System.projekte",
+    "title": "Technische Fallstudien",
+    "description": "{count, plural, one {Ein System} other {# Systeme}}, jeweils entlang von Problem, Architektur, Entscheidungen und Ergebnis erörtert — einschließlich der Teile, die nicht funktioniert haben. Kundenidentitäten bleiben vertraulich; die Technik nicht.",
+    "empty": "Kein Projekt passt zu diesem Filter. Setzen Sie ihn zurück, um alles zu sehen."
+  },
+
+  "projectsFilter": {
+    "searchLabel": "Projekte nach Namen durchsuchen",
+    "searchPlaceholder": "Projekte nach Namen durchsuchen…",
+    "countFiltered": "{shown} von {total}",
+    "countAll": "{total, plural, one {# Projekt} other {# Projekte}}",
+    "discipline": "Disziplin",
+    "stack": "Stack",
+    "all": "Alle"
+  },
+
+  "projectCard": {
+    "caseStudy": "Fallstudie",
+    "liveSite": "Live-Seite von {title}",
+    "repository": "Repository von {title}"
+  },
+
+  "projectPage": {
+    "breadcrumb": "Brotkrumennavigation",
+    "adjacent": "Benachbarte Projekte",
+    "previous": "Zurück",
+    "next": "Weiter",
+    "confidential": "Vertrauliche Kundenarbeit",
+    "training": "Ausbildungsprojekt",
+    "visitLive": "Live-Seite besuchen",
+    "viewSource": "Quellcode ansehen",
+    "getInTouch": "Kontakt aufnehmen",
+    "demoAccess": "Demo-Zugang",
+    "contents": "Inhalt",
+    "onThisPage": "Auf dieser Seite",
+    "stack": "Stack",
+    "discussWork": "Über diese Arbeit sprechen",
+    "toc": {
+      "problem": "Das Problem",
+      "approach": "Vorgehen",
+      "architecture": "Architektur",
+      "decisions": "Entscheidungen",
+      "outcome": "Ergebnis",
+      "retrospective": "Rückblick",
+      "stack": "Stack",
+      "interface": "Oberfläche"
+    },
+    "theProblem": "Das Problem",
+    "challenge": "Herausforderung",
+    "approachHeading": "Vorgehen",
+    "technicalApproach": "Technisches Vorgehen",
+    "hardParts": "Die schwierigen Stellen",
+    "architectureHeading": "Architektur",
+    "decisionsHeading": "Entscheidungen & Zielkonflikte",
+    "insteadOf": "Statt",
+    "why": "Warum",
+    "tradeoff": "Zielkonflikt",
+    "outcomeHeading": "Ergebnis",
+    "retrospectiveHeading": "Was ich anders machen würde",
+    "stackDetail": "Stack im Detail",
+    "summaryOnly": "Kurzprojekt — die vollständige Fallstudie folgt, sobald veröffentlichungsfähige Details vorliegen.",
+    "interface": "Oberfläche"
+  },
+
+  "contactForm": {
+    "name": "Name",
+    "namePlaceholder": "Ihr Name",
+    "email": "E-Mail",
+    "emailPlaceholder": "sie@unternehmen.de",
+    "subject": "Betreff",
+    "subjectPlaceholder": "Stelle, Kennenlerngespräch oder Frage",
+    "message": "Nachricht",
+    "messagePlaceholder": "Eine kurze Notiz zur Stelle oder zu dem, was Sie besprechen möchten…",
+    "honeypot": "Website",
+    "send": "Nachricht senden",
+    "sending": "Wird gesendet…",
+    "success": "Nachricht gesendet. Ich melde mich bald bei Ihnen.",
+    "validation": {
+      "nameRequired": "Bitte geben Sie Ihren Namen an",
+      "nameMin": "Der Name muss mindestens 2 Zeichen lang sein",
+      "nameMax": "Der Name darf höchstens 100 Zeichen lang sein",
+      "emailRequired": "Bitte geben Sie Ihre E-Mail-Adresse an",
+      "emailInvalid": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
+      "subjectRequired": "Bitte geben Sie einen Betreff an",
+      "subjectMin": "Der Betreff muss mindestens 3 Zeichen lang sein",
+      "subjectMax": "Der Betreff darf höchstens 120 Zeichen lang sein",
+      "messageRequired": "Bitte geben Sie eine Nachricht ein",
+      "messageMin": "Die Nachricht muss mindestens 20 Zeichen lang sein",
+      "messageMax": "Die Nachricht darf höchstens 5000 Zeichen lang sein"
+    },
+    "errors": {
+      "rate_limited": "Zu viele Anfragen. Bitte versuchen Sie es später erneut oder schreiben Sie mir direkt per E-Mail.",
+      "invalid_json": "Die Anfrage konnte nicht gelesen werden. Bitte versuchen Sie es erneut.",
+      "validation_failed": "Die Prüfung ist fehlgeschlagen. Bitte kontrollieren Sie Ihre Angaben und versuchen Sie es erneut.",
+      "unavailable": "Der Versand über das Kontaktformular ist vorübergehend nicht verfügbar. Bitte schreiben Sie direkt an {email}.",
+      "misconfigured": "Das Kontaktformular ist falsch konfiguriert. Bitte schreiben Sie direkt an {email}.",
+      "send_failed": "Ihre Nachricht konnte nicht gesendet werden. Bitte schreiben Sie mir direkt per E-Mail.",
+      "generic": "Etwas ist schiefgelaufen. Bitte schreiben Sie mir direkt per E-Mail.",
+      "network": "Netzwerkfehler. Bitte schreiben Sie stattdessen an {email}."
+    }
+  },
+
+  "errorPage": {
+    "eyebrow": "Fehler",
+    "title": "Etwas ist schiefgelaufen",
+    "description": "Die Seite konnte nicht dargestellt werden. Sie können es erneut versuchen oder zu einer funktionierenden Seite wechseln."
+  },
+
+  "notFoundPage": {
+    "eyebrow": "404",
+    "title": "Diese Seite gibt es nicht",
+    "description": "Die Seite wurde möglicherweise verschoben. Probieren Sie es mit Projekten, Erfahrung oder Kontakt."
+  },
+
+  "rail": {
+    "label": "Seitenabschnitte",
+    "hero": "Einstieg",
+    "about": "Über mich",
+    "skills": "Skills",
+    "projects": "Projekte",
+    "experience": "Erfahrung",
+    "education": "Ausbildung",
+    "contact": "Kontakt"
+  }
+}

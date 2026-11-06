@@ -1,0 +1,133 @@
+{
+  "title": "Cloudix — zweisprachige Unternehmens- und Lead-Generierungs-Website",
+  "summary": "Eine arabisch-first konzipierte Marketing-Website mit sieben Routen für ein Boutique-Entwicklungshaus: ~45 Section-Komponenten, ein faktenbasierter KI-Assistent und Lead-Erfassung ohne Backend — von drei Personen pflegbar, mit Enterprise-Wirkung.",
+  "description": "Eine Unternehmenswebsite für ein Softwaredienstleistungsunternehmen mit Zielmarkt Saudi-Arabien und Jordanien. Arabisch ist die Standardsprache und keine nachgelagerte Übersetzungsschicht, die Lead-Erfassung kommt ohne jede Backend-Infrastruktur aus, und ein KI-Assistent beantwortet Interessentenfragen aus denselben typisierten Daten, die auch die Website rendert — beide können sich bei Fakten also nicht widersprechen.",
+  "role": "Frontend Developer",
+  "timeframe": "2025",
+  "metrics": [
+    {
+      "label": "Section-Komponenten",
+      "value": "~45"
+    },
+    {
+      "label": "Umfang des Quellcodes",
+      "value": "~7.300 Zeilen"
+    },
+    {
+      "label": "Routen",
+      "value": "7, vollständig zweisprachig"
+    }
+  ],
+  "thumbnail": {
+    "alt": "Die Startseite von Cloudix: ein dunkelblauer Hero-Bereich mit der Überschrift “Building Smarter Connected Systems” über einem Büro-Foto, im Header ein AR/EN-Sprachumschalter und darunter vier Leistungskarten."
+  },
+  "gallery": [
+    {
+      "alt": "Das geöffnete Services-Megamenü von Cloudix über der Seite, mit Karten für IT Solutions, Backend Engineering und Cloud & Deployment.",
+      "caption": "Das Services-Megamenü. Eine solche Navigationstiefe lässt ein kleines Haus wie eine größere Firma wirken. Es wird aus demselben Pool von rund 45 kombinierbaren Section-Komponenten zusammengesetzt wie jede andere Seite, statt pro Route von Hand gebaut zu werden."
+    },
+    {
+      "alt": "Die Projektseite von Cloudix mit der Überschrift “Driving innovation through successful projects”, einer Liefer-Checkliste und einem Foto mit der eingeblendeten Zahl von über 150 abgeschlossenen Projekten.",
+      "caption": "Die Projektseite beginnt mit der Zahl, die ein Interessent tatsächlich gewichtet. Der AR/EN-Umschalter im Header jeder dieser Ansichten ändert Schreibrichtung und Layout, nicht nur die Texte — Arabisch ist hier die Standardsprache und keine Übersetzung, die nachträglich auf ein westliches Design aufgesetzt wurde."
+    },
+    {
+      "alt": "Der Hero-Bereich der Über-uns-Seite von Cloudix: eine “Smart Solutions”-Pille über der Zeile “Cloudix delivering intelligent solutions for growth”, über einem getönten Büro-Foto.",
+      "caption": "Sieben Routen teilen eine visuelle Sprache — getönter Foto-Hero, Eyebrow-Pille, ein einziger Call-to-Action —, sodass eine neue Seite die Komposition vorhandener Bausteine ist und kein neues Design."
+    },
+    {
+      "alt": "Die Kontaktseite von Cloudix mit Foto-Header und Karten für Telefon, E-Mail und Standort.",
+      "caption": "Lead-Erfassung ohne Backend dahinter. Ein Unternehmen, das Websites für andere Unternehmen baut, würde nie einen Server betreiben, nur um ein Kontaktformular zu empfangen. Anfragen landen daher in einem echten Postfach, ohne dass eine Datenbank oder ein E-Mail-Dienst betrieben werden muss."
+    }
+  ],
+  "caseStudy": {
+    "context": "Ein Boutique-Entwicklungshaus brauchte eine Website, die drei Aufgaben erfüllt, die ein typisches Agentur-Template nicht abdeckt. Sie musste nach Enterprise aussehen und dabei von einem kleinen Team betrieben werden — das größte Verkaufshindernis für ein Haus dieser Größe ist, klein zu wirken, die Website brauchte also die visuelle Dichte einer großen Engineering-Firma und musste zugleich von wenigen Personen wartbar bleiben. Sie musste als echtes zweisprachiges Produkt für einen primär arabischsprachigen Markt funktionieren statt als westliche Website mit aufgesetztem Arabisch. Und sie musste ohne Marketing-Ops-Budget qualifizierte Leads erzeugen.",
+    "problem": "Zwei harte Randbedingungen prägten die Architektur. Ein Unternehmen, das Websites für andere baut, wird vernünftigerweise kein eigenes Backend betreiben, nur um Kontaktformular-Anfragen zu empfangen — Leads mussten also ohne Server, Datenbank oder E-Mail-Dienst in einem echten Postfach ankommen. Und Interessenten wollten die Fragen, die ein Verkaufsgespräch sonst ausbremsen, selbst beantworten können — was machen Sie, wer ist im Team, haben Sie so etwas schon gebaut —, in beiden Sprachen und ohne dass die Website Fakten über das Unternehmen erfindet.",
+    "approach": "Seiten aus unabhängig benannten und unabhängig gestylten Section-Komponenten ohne Glue-Logik zusammensetzen, sodass eine neue Section eine Datei und ein Import ist statt einer Routing-Änderung. Arabisch als Fallback-Locale mit aktivem Erkennen der Browsersprache festlegen, damit der Markt von Anfang an eingeplant statt nachgerüstet ist. Den KI-Assistenten verankern, indem sein System-Prompt zur Renderzeit aus denselben typisierten Datenmodulen erzeugt wird, die auch die UI rendert, und ihn mit klaren Regeln begrenzen — keine Mitarbeitenden nennen, im Themenbereich bleiben, in der Sprache antworten, in der die Besucherin oder der Besucher schreibt. Formularanfragen direkt aus dem Browser über einen Drittanbieter-Zustelldienst senden, abgesichert durch ein Honeypot statt durch ein CAPTCHA.",
+    "architecture": {
+      "altText": "Eine React-Router-7-Single-Page-App mit sieben Routen, jede Seite aus einzeln importierbaren Section-Komponenten zusammengesetzt; typisierte Datenmodule speisen sowohl die gerenderte UI als auch den erzeugten System-Prompt für einen browserseitigen KI-Assistenten, während Kontaktanfragen über einen clientseitigen E-Mail-Zustelldienst laufen und i18next die Lokalisierung mit Arabisch als Standard durchgängig auflöst."
+    },
+    "decisions": [
+      {
+        "decision": "Arabisch als Fallback-Locale, mit aktiver Erkennung der Browsersprache",
+        "alternatives": "Englisch als Standard und Arabisch als sekundäre Übersetzungsschicht",
+        "reasoning": "Der Zielmarkt ist primär arabischsprachig. Arabisch zum Fallback statt zur Alternative zu machen, ist das deutlichste Signal im Code, dass der Markt von Anfang an mitgedacht wurde.",
+        "tradeoff": "Jeder sichtbare Text — darunter mehr als vierzig FAQ-Einträge, zwei Rechtsdokumente und die Fehlertexte des Assistenten — braucht eine echte parallele arabische Fassung, keine maschinelle Übersetzung."
+      },
+      {
+        "decision": "Ein Assistent, der nur über den System-Prompt gesteuert wird, statt Retrieval oder Fine-Tuning",
+        "alternatives": "Eine Vektordatenbank mit Retrieval-Pipeline oder ein feinabgestimmtes Modell",
+        "reasoning": "Weil der Faktenblock zur Renderzeit aus denselben Service- und Projektdaten neu aufgebaut wird, die auch die UI rendert, können sich Assistent und Website bei Fakten nicht widersprechen — höchstens im Ton. Bei einem Korpus dieser Größe würde Retrieval zusätzliche Infrastruktur bringen, ohne die Genauigkeit zu erhöhen.",
+        "tradeoff": "Der Prompt wächst mit der Website und belegt bei jeder Anfrage Kontext; sobald der Korpus über einen einzelnen Prompt hinauswächst, skaliert der Ansatz nicht mehr."
+      },
+      {
+        "decision": "Ein Honeypot-Feld statt eines CAPTCHAs",
+        "alternatives": "Ein CAPTCHA-Widget eines Drittanbieters im Kontaktformular",
+        "reasoning": "Es kostete keine Nutzerreibung, brachte kein Drittanbieter-Skript mit und wurde ergänzt, weil tatsächlich Spam-Anfragen eingingen — eine dauerhafte Lösung für einen realen Fehlerfall statt einer bloßen Vorsichtsmaßnahme.",
+        "tradeoff": "Es stoppt naive Bots, aber keine entschlossenen. Wer gezielt sendet und das Markup liest, kommt durch."
+      },
+      {
+        "decision": "Ein generischer Renderer für Rechtsdokumente statt zwei handgeschriebener Seiten",
+        "alternatives": "Getrennte, individuell gebaute Seiten für Datenschutz und Nutzungsbedingungen",
+        "reasoning": "Beide Dokumente sind in zwei Sprachen strukturell identisch; ein einziger Renderer über strukturierte Inhalte hält vier Seitenvarianten konstruktionsbedingt konsistent.",
+        "tradeoff": "Ein Dokument, das irgendwann eine wirklich andere Struktur braucht, muss aus dem gemeinsamen Renderer ausbrechen."
+      }
+    ],
+    "challenges": [
+      "Eine Website wie eine Enterprise-Engineering-Firma wirken zu lassen — Megamenüs, Fallstudien, Branchenseiten, eine Why-choose-us-Story — und sie dabei für drei Personen wartbar zu halten.",
+      "Den Assistenten faktisch an die Website zu binden: eine harte Themengrenze, die themenfremde Fragen umleitet statt sie zu beantworten, und eine feste Regel, keine Einzelpersonen zu nennen.",
+      "Absicherung gegen die Abkündigung eines Modells durch einen expliziten Fallback, nachdem ich den Fehler im Produktivbetrieb erlebt hatte, statt ihn vorherzusehen."
+    ],
+    "outcomes": [
+      "Sieben vollständig zweisprachige Routen — Home, Services, Portfolio, About, Kontakt, Datenschutz und Nutzungsbedingungen — mit direkt verlinkbaren Service-Ankern aus einem Hover-Megamenü.",
+      "Rund fünfundvierzig Section-Komponenten auf etwa 7.300 Zeilen, jede einzeln kombinierbar, sodass eine neue Section eine Datei und ein Import ist.",
+      "Ein faktenbasierter KI-Assistent mit Quick-Prompt-Chips, automatisch verlinkten Antworten, Tippindikator und eigenen Texten für fünf verschiedene Fehlerfälle.",
+      "Lead-Erfassung, persistentes Light-/Dark-Theming, das der Systemeinstellung folgt, bis es überschrieben wird, und vollständige SEO-Metadaten einschließlich Open Graph, Twitter Cards, strukturierter Organisationsdaten und Web-Manifest."
+    ],
+    "retrospective": "Die Komposition mit einer Datei pro Section ist genau wie geplant skaliert, und die Arabisch-first-Lokalisierung hat sich als die Entscheidung erwiesen, die den Rest stimmig macht. Der System-Prompt des Assistenten ist der Teil, auf den ich besonders verweisen würde: Themengrenze, Kürzeregel und die Regel, keine Personen zu nennen, sind alle durch Testen entstanden — ich habe ihn bei Fehlverhalten ertappt und daraus eine dauerhafte Regel geschrieben —, kein erster Entwurf. Drei Dinge würde ich ändern. Ein Drittanbieter-API-Key im Browser braucht einen schlanken serverseitigen Proxy, der die echten Zugangsdaten hält und Rate-Limiting durchsetzt; erst die clientseitige Integration zu bauen und den Proxy aufzuschieben, ist die falsche Reihenfolge, denn die saubere Behandlung eines fehlenden Keys lässt die Lücke geschlossen aussehen, obwohl sie es nicht ist. Das Aufteilen der i18n-Dateien wurde für drei Domänen begonnen und für den Rest aufgegeben, sodass ein Modul mit 854 Zeilen übrig blieb, das eher nach einem Refactoring aussieht, dem die Zeit ausgegangen ist, als nach einer bewussten Ausnahme. Und es wurde eine gemeinsame Komponentenbibliothek gebaut — Buttons mit vier Varianten, Karten, Section-Überschriften —, die dann von nichts importiert wurde, während jede Section ihre eigenen Entsprechungen von Hand schrieb; ein Design-System, das niemand übernimmt, ist schlimmer als keines, weil es eine Konsistenz suggeriert, die die Seiten tatsächlich nicht haben. Die übergeordnete Lehre betrifft Platzhalterinhalte: Sie sind während des Aufbaus vertretbar und zum Launch gefährlich, denn sobald eine Seite live ist, wird Vorläufiges als Tatsache gelesen. Alles, was echte Inhalte vertritt, braucht vor dem Deployment ein explizites Entfernungs-Gate, nicht bloß den guten Vorsatz.",
+    "stackDetail": [
+      {
+        "category": "Sprache & Framework",
+        "items": [
+          "TypeScript 5.8",
+          "React 19",
+          "React Router 7",
+          "Vite 6"
+        ]
+      },
+      {
+        "category": "Styling",
+        "items": [
+          "Tailwind CSS v4 (CSS-first @theme config)",
+          "Eigene Dark-Mode-Variante",
+          "clsx + tailwind-merge",
+          "Inter + Noto Sans Arabic mit RTL-Wechsel der Body-Schrift"
+        ]
+      },
+      {
+        "category": "Internationalisierung",
+        "items": [
+          "i18next + react-i18next",
+          "i18next-browser-languagedetector",
+          "Arabisch als Fallback-Locale",
+          "Übersetzungsmodule pro Domäne für About, Legal und Projects"
+        ]
+      },
+      {
+        "category": "Integrationen",
+        "items": [
+          "@google/genai (Assistent, verankert in den Website-Daten)",
+          "@emailjs/browser (Lead-Zustellung ohne Backend)",
+          "Honeypot als Spam-Schutz"
+        ]
+      },
+      {
+        "category": "Animation & Icons",
+        "items": [
+          "Motion",
+          "lucide-react",
+          "Marquee mit CSS-Keyframes"
+        ]
+      }
+    ]
+  }
+}
