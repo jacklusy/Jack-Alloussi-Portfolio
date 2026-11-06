@@ -21,9 +21,9 @@
   ],
   "ctas": [
     { "id": "projects", "label": "Projekte ansehen" },
-    { "id": "cv", "label": "Lebenslauf herunterladen (PDF, EN)" }
+    { "id": "cv", "label": "Lebenslauf herunterladen (PDF)" }
   ],
-  "cvLabel": "Lebenslauf herunterladen (PDF, EN)",
+  "cvLabel": "Lebenslauf herunterladen (PDF)",
   "spokenLanguages": [
     { "language": "Arabisch", "level": "Muttersprache" },
     { "language": "Englisch", "level": "Professionelle Arbeitssprache" },

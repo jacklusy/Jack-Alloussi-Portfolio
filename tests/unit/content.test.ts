@@ -77,7 +77,12 @@ describe.each(locales)('content (%s)', (locale) => {
     expect(content.profile.socials.find((s) => s.id === 'github')?.href).toBe(
       'https://github.com/jacklusy',
     );
-    expect(content.profile.cv.href).toBe('/pdf/CV_Jack_Alloussi.pdf');
+    // German gets its own native CV; every other language falls back to the English one.
+    expect(content.profile.cv.href).toBe(
+      locale === 'de'
+        ? '/pdf/Jack_Alloussi_Lebenslauf_Software_Engineer.pdf'
+        : '/pdf/CV_Jack_Alloussi.pdf',
+    );
     expect(content.profile.spokenLanguages.map((l) => l.code)).toEqual(['ar', 'en', 'de']);
   });
 

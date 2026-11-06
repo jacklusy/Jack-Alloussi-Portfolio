@@ -342,7 +342,15 @@ export const profileStructureSchema = z.object({
   socials: z.array(
     z.object({ id: z.string(), href: z.string().min(1), external: z.boolean().default(true) }),
   ),
-  cv: z.object({ href: z.string(), filename: z.string() }),
+  /**
+   * CV file per language, keyed by locale code (plus a required `default`
+   * fallback for any locale without its own PDF). Keyed by plain string
+   * rather than typed against `Locale` to keep this schema decoupled from
+   * `@/i18n/config`.
+   */
+  cv: z
+    .record(z.string(), z.object({ href: z.string(), filename: z.string() }))
+    .refine((map) => 'default' in map, { message: 'cv map must include a "default" entry' }),
   spokenLanguageCodes: z.array(z.string()),
   ctas: z.array(
     z.object({

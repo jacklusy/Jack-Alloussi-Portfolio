@@ -23,9 +23,17 @@ export const profileStructure = {
     { id: 'projects', href: '/projects', variant: 'primary' },
     { id: 'cv', href: '/pdf/CV_Jack_Alloussi.pdf', variant: 'secondary', download: true },
   ],
+  /** German visitors get the native German CV; every other language falls
+   *  back to the English one. */
   cv: {
-    href: '/pdf/CV_Jack_Alloussi.pdf',
-    filename: 'CV_Jack_Alloussi.pdf',
+    default: {
+      href: '/pdf/CV_Jack_Alloussi.pdf',
+      filename: 'CV_Jack_Alloussi.pdf',
+    },
+    de: {
+      href: '/pdf/Jack_Alloussi_Lebenslauf_Software_Engineer.pdf',
+      filename: 'Jack_Alloussi_Lebenslauf_Software_Engineer.pdf',
+    },
   },
   /** Same order as `spokenLanguages` in the locale JSON. */
   spokenLanguageCodes: ['ar', 'en', 'de'],

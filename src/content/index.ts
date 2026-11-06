@@ -100,7 +100,10 @@ function mergeProfile(locale: Locale, raw: unknown): Profile {
         `${locale}/profile ctas`,
       ),
     })),
-    cv: { ...s.cv, label: text.cvLabel },
+    cv: {
+      ...((s.cv as Record<string, { href: string; filename: string }>)[locale] ?? s.cv.default),
+      label: text.cvLabel,
+    },
     spokenLanguages: s.spokenLanguageCodes.map((code, i) => ({
       code,
       ...nth(text.spokenLanguages, i, `${locale}/profile spokenLanguages`),
